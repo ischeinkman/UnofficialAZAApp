@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:orientation="vertical"
-    tools:context="org.ramonaza.officialramonapp.people.rides.ui.fragments.RidesDriverManipFragment">
+    tools:context="org.ramonaza.unofficialazaapp.people.rides.ui.fragments.RidesDriverManipFragment">
     <TableLayout
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"

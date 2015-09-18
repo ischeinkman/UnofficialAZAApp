@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="org.ramonaza.officialramonapp.people.rides.ui.activities.RidesActivity">
+    tools:context="org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesActivity">
     <item android:id="@+id/action_generate" android:title="@string/action_rides_generate"
         android:orderInCategory="1" android:showAsAction="always"/>
     <item android:id="@+id/action_settings" android:title="@string/action_settings"

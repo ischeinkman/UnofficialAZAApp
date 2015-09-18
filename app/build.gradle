@@ -4,7 +4,7 @@ android {
     compileSdkVersion 19
     buildToolsVersion "20.0.0"
     defaultConfig {
-        applicationId "org.ramonaza.officialramonapp"
+        applicationId "org.ramonaza.unofficialazaapp"
         minSdkVersion 16
         targetSdkVersion 19
         versionCode 1
