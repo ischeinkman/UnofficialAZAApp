@@ -12,13 +12,5 @@
         android:title="@string/pref_title_dev"
         android:defaultValue="false"
         />
-    <Preference
-        android:key="databaserefresh"
-        android:title="@string/pref_refdata_button_title"
-        android:summary="@string/pref_refdata_button_summary"/>
-    <Preference
-        android:key="databasesave"
-        android:title="@string/pref_savedata_button_title"
-        android:summary="@string/pref_savedata_button_summary"/>
 
 </PreferenceScreen>

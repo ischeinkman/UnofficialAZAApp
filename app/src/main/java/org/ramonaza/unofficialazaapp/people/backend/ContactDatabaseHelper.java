@@ -4,6 +4,9 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandler;
+import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
+
 /**
  * A simple database helper for accessing the contact/rides database.
  * All database interactions should be handled by a separate handler.
@@ -50,15 +53,9 @@ public class ContactDatabaseHelper extends SQLiteOpenHelper{
         }
     }
     public void genDatabaseFromCSV(SQLiteDatabase db) throws ContactCSVReadError{
-        ContactInfoWrapper[] csvContacts= ContactCSVSupport.getCSVHandler(context).getCtactInfoListFromCSV();
-        ContactDatabaseHandler contactDatabaseHandler = new ContactDatabaseHandler(db);
-        for(ContactInfoWrapper cAleph: csvContacts){
-            try {
-                contactDatabaseHandler.addContact(cAleph);
-            } catch (ContactDatabaseHandler.ContactCSVReadError contactCSVReadError) {
-                throw new ContactCSVReadError(contactCSVReadError.getMessage(), cAleph);
-            }
-        }
+        ChapterPackHandler c = ChapterPackHandlerSupport.getChapterPackHandler(context);
+        c.reLoadContactList(db);
+
     }
 
     

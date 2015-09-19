@@ -3,8 +3,6 @@ package org.ramonaza.unofficialazaapp.settings.ui.activities;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -15,10 +13,6 @@ import android.preference.PreferenceManager;
 import android.view.MenuItem;
 
 import org.ramonaza.unofficialazaapp.R;
-import org.ramonaza.unofficialazaapp.people.backend.ContactCSVSupport;
-import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
-import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHelper;
-import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
 
 import java.util.List;
 
@@ -79,28 +73,7 @@ public class SettingsActivity extends PreferenceActivity {
         addPreferencesFromResource(R.xml.pref_general);
 
 
-        // Bind the summaries of EditText/List/Dialog/Ringtone preferences to
-        // their values. When their values change, their summaries are updated
-        // to reflect the new value, per the Android Design guidelines.
 
-        Preference refDataButton= findPreference("databaserefresh");
-        bindPreferenceSummaryToValue(refDataButton);
-        refDataButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                new refreshDatabase(SettingsActivity.this).execute();
-                return false;
-            }
-        });
-        Preference saveDataButton=findPreference("databasesave");
-        bindPreferenceSummaryToValue(saveDataButton);
-        saveDataButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                new saveDatabase(SettingsActivity.this).execute();
-                return false;
-            }
-        });
     }
 
     /**
@@ -214,39 +187,5 @@ public class SettingsActivity extends PreferenceActivity {
 
         }
     }
-
-    public class saveDatabase extends AsyncTask<Void,Void,Void>{
-        Context context;
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            ContactDatabaseHandler handler=new ContactDatabaseHandler(context);
-            ContactInfoWrapper[] allContacts=handler.getContacts(null, null);
-            ContactCSVSupport.getCSVHandler(context).writesContactsToCSV(allContacts, false);
-            return null;
-        }
-
-        public saveDatabase(Context context){
-            this.context=context;
-        }
-    }
-
-     public class refreshDatabase extends AsyncTask<Void,Void,Void>{
-
-         Context context;
-         @Override
-         protected Void doInBackground(Void... params) {
-             ContactDatabaseHelper dbH=new ContactDatabaseHelper(context);
-             SQLiteDatabase db=dbH.getWritableDatabase();
-             dbH.onDelete(db);
-             dbH.onCreate(db);
-             return null;
-         }
-         public refreshDatabase(Context context1){
-             this.context=context1;
-         }
-     }
-
-
 
 }

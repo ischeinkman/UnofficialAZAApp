@@ -1,13 +1,11 @@
 package org.ramonaza.unofficialazaapp.events.ui.fragments;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 
 import org.ramonaza.unofficialazaapp.events.backend.EventRSSHandler;
-import org.ramonaza.unofficialazaapp.events.backend.EventRSSSupport;
 import org.ramonaza.unofficialazaapp.events.ui.activities.EventPageActivity;
+import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.unofficialazaapp.helpers.backend.InfoWrapper;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextListFragment;
 
@@ -40,8 +38,8 @@ public class EventListFragment extends InfoWrapperTextListFragment {
 
     @Override
     public InfoWrapper[] generateInfo() {
-        SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(getActivity());
-        EventRSSHandler handler= EventRSSSupport.getEventRSSHandler(getActivity());
+        ChapterPackHandlerSupport.getChapterPackHandler(getActivity(), ChapterPackHandlerSupport.getOptions()[0]);
+        EventRSSHandler handler= ChapterPackHandlerSupport.getEventHandler(getActivity());
         return handler.getEventsFromRss();
     }
 }

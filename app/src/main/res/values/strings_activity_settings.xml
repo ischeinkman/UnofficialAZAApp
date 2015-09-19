@@ -8,9 +8,5 @@
 
 
     <string name="pref_title_rides">Rides Mode</string>
-    <string name="pref_refdata_button_title">Refresh Database</string>
-    <string name="pref_refdata_button_summary">Refreshes the contact list and rides databases.</string>
-    <string name="pref_savedata_button_title">Save Database</string>
-    <string name="pref_savedata_button_summary">Saves the current contact list.</string>
 
 </resources>
