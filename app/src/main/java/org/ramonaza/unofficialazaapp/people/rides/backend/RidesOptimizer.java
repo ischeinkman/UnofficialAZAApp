@@ -88,13 +88,11 @@ public class RidesOptimizer {
         if (algorithm < 0 || driversToOptimize.isEmpty()) return;
         if(!retainPreexisting){
             for(DriverInfoWrapper driver:driversToOptimize){
-                for(ContactInfoWrapper aleph : driver.getAlephsInCar()){
-                    alephsToOptimize.add(aleph);
-                }
-                int dSize=driver.getAlephsInCar().size();
-                while(dSize>0){
-                    driver.removeAlephFromCar(driver.getAlephsInCar().get(dSize-1));
-                    dSize=driver.getAlephsInCar().size();
+                for(ContactInfoWrapper aleph : new ArrayList<ContactInfoWrapper>(driver.getAlephsInCar())){
+                    if (distBetweenHouses(driver, aleph) != 0) {
+                        driver.removeAlephFromCar(aleph);
+                        alephsToOptimize.add(aleph);
+                    }
                 }
             }
         }
