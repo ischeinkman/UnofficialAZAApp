@@ -39,7 +39,7 @@ public class EventListFragment extends InfoWrapperTextListFragment {
     @Override
     public InfoWrapper[] generateInfo() {
         ChapterPackHandlerSupport.getChapterPackHandler(getActivity(), ChapterPackHandlerSupport.getOptions()[0]);
-        EventRSSHandler handler= ChapterPackHandlerSupport.getEventHandler(getActivity());
+        handler= ChapterPackHandlerSupport.getEventHandler(getActivity());
         return handler.getEventsFromRss();
     }
 }
