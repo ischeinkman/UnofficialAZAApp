@@ -41,7 +41,11 @@ public class EventRSSHandler {
             e.printStackTrace();
         }
         String totalRss=builder.toString();
-        String strippedRss=totalRss.substring(totalRss.indexOf(ITEM_SPLITTER)+ITEM_SPLITTER.length());
+        String strippedRss;
+        if(totalRss.contains(ITEM_SPLITTER)) {
+            strippedRss=totalRss.substring(totalRss.indexOf(ITEM_SPLITTER) + ITEM_SPLITTER.length());
+        }
+        else strippedRss=null;
         return strippedRss;
     }
     
