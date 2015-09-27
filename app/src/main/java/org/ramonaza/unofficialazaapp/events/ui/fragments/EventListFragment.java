@@ -3,6 +3,7 @@ package org.ramonaza.unofficialazaapp.events.ui.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 
+import org.ramonaza.unofficialazaapp.events.backend.EventInfoWrapper;
 import org.ramonaza.unofficialazaapp.events.backend.EventRSSHandler;
 import org.ramonaza.unofficialazaapp.events.ui.activities.EventPageActivity;
 import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
@@ -38,8 +39,13 @@ public class EventListFragment extends InfoWrapperTextListFragment {
 
     @Override
     public InfoWrapper[] generateInfo() {
+        if(ChapterPackHandlerSupport.getOptions().length == 0){
+            return new EventInfoWrapper[0];
+        }
         ChapterPackHandlerSupport.getChapterPackHandler(getActivity(), ChapterPackHandlerSupport.getOptions()[0]);
         handler= ChapterPackHandlerSupport.getEventHandler(getActivity());
         return handler.getEventsFromRss();
     }
+
+
 }
