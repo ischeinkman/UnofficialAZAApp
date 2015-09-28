@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.unofficialazaapp.helpers.backend.InfoWrapper;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperCheckBoxesFragment;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
@@ -49,7 +50,7 @@ public class PresentAlephFromListFragment extends InfoWrapperCheckBoxesFragment 
 
         @Override
         protected Void doInBackground(InfoWrapper ... params) {
-            ContactDatabaseHandler handler=new ContactDatabaseHandler(getActivity());
+            ContactDatabaseHandler handler= ChapterPackHandlerSupport.getContactHandler(getActivity());
             ContactInfoWrapper[] alephs= Arrays.copyOf(params,params.length,ContactInfoWrapper[].class);
             handler.updateField(ContactDatabaseContract.ContactListTable.COLUMN_PRESENT,"1",alephs);
             return null;
