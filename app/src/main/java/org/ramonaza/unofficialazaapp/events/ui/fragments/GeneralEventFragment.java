@@ -48,7 +48,13 @@ public class GeneralEventFragment extends Fragment {
         String myEventRss = getArguments().getString(EVENT_DATA);
         final EventInfoWrapper myEvent=new EventRSSHandler(myEventRss, false).getEvent(0);
         actionBar.setTitle(myEvent.getName());
-        String displayText = String.format("<b><u>%s</u></b><br><br>Description: %s<br>Bring: %s<br>Meet: %s<br>Planned By: %s<br>", myEvent.getName(), myEvent.getDesc(), myEvent.getBring(), myEvent.getMeet(), myEvent.getPlanner());
+        String displayText = String.format(
+                "<b><u>%s</u></b><br><br>Description: %s<br>Bring: %s<br>Meet: %s<br>Planned By: %s<br>",
+                myEvent.getName(),
+                myEvent.getDesc(),
+                myEvent.getBring(),
+                myEvent.getMeet(),
+                myEvent.getPlanner());
         tView.setTextSize(22);
         tView.setText(Html.fromHtml(displayText));
         Button dirButton = new Button(getActivity());
