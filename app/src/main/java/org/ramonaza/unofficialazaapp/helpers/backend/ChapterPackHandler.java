@@ -124,7 +124,10 @@ public class ChapterPackHandler {
     public boolean loadContactList(){
         if(contactsLoaded) return true;
         ContactCSVHandler csvHandler=(isZip) ? loadZipContactList() : loadFolderContactList();
-        if(csvHandler == null) contactsLoaded = false;
+        if(csvHandler == null){
+            contactsLoaded = false;
+            return false;
+        }
         ContactDatabaseHandler databaseHandler = new ContactDatabaseHandler(context);
         databaseHandler.deleteContacts(null, null);
         for(ContactInfoWrapper contact : csvHandler.getCtactInfoListFromCSV())
@@ -132,6 +135,7 @@ public class ChapterPackHandler {
                 databaseHandler.addContact(contact);
             } catch (ContactDatabaseHandler.ContactCSVReadError contactCSVReadError) {
                 contactsLoaded = false;
+                return false;
             }
         contactsLoaded = true;
         return contactsLoaded;
@@ -139,13 +143,17 @@ public class ChapterPackHandler {
 
     public boolean reLoadContactList(SQLiteDatabase db){
         ContactCSVHandler csvHandler=(isZip) ? loadZipContactList() : loadFolderContactList();
-        if(csvHandler == null) contactsLoaded = false;
+        if(csvHandler == null){
+            contactsLoaded = false;
+            return contactsLoaded;
+        }
         ContactDatabaseHandler databaseHandler = new ContactDatabaseHandler(db);
         for(ContactInfoWrapper contact : csvHandler.getCtactInfoListFromCSV())
             try {
                 databaseHandler.addContact(contact);
             } catch (ContactDatabaseHandler.ContactCSVReadError contactCSVReadError) {
                 contactsLoaded = false;
+                return false;
             }
         contactsLoaded = true;
         return contactsLoaded;
