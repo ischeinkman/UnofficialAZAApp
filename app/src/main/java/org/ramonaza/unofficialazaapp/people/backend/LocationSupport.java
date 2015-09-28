@@ -4,6 +4,8 @@ import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 
+import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
+
 /**
  * Created by ilanscheinkman on 9/1/15.
  */
@@ -25,7 +27,7 @@ public class LocationSupport {
     }
 
     public static void recalculateLatLong(Context context){
-        ContactDatabaseHandler handler=new ContactDatabaseHandler(context);
+        ContactDatabaseHandler handler= ChapterPackHandlerSupport.getContactHandler(context);
         ContactInfoWrapper[] toCalc = handler.getContacts(null, null);
         for(ContactInfoWrapper aleph:toCalc){
             double[] coords=getCoordsFromAddress(aleph.getAddress(), context);

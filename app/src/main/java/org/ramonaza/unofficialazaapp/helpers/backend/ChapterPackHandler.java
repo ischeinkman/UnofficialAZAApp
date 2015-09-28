@@ -41,10 +41,26 @@ public class ChapterPackHandler {
     private boolean contactsLoaded;
 
     public ChapterPackHandler(File chapterPackFile, Context context){
-        this.chapterPack=chapterPackFile;
-        isZip=chapterPack.getName().contains(".zip");
         this.context=context;
         this.prefs= PreferenceManager.getDefaultSharedPreferences(context);
+        isZip=chapterPackFile.getName().contains(".zip");
+
+        File dataDir=context.getExternalFilesDir(null);
+        File newFile;
+        if(isZip){
+            newFile= new File(dataDir, "lastloadedpack");
+        }
+        else {
+            for(File packFile:chapterPackFile.listFiles()){
+                File newPackFile=new File(dataDir+"lastloadedpack/",packFile.getName());
+                newPackFile.mkdirs();
+                newPackFile.delete();
+                packFile.renameTo(newPackFile);
+            }
+            newFile=new File(dataDir+"lastloadedpack");
+            chapterPackFile.delete();
+        }
+        this.chapterPack=newFile;
     }
 
     public String getPackName(){
@@ -89,7 +105,7 @@ public class ChapterPackHandler {
                 return s.equals(EVENT_FILE_NAME);
             }
         });
-        if (eventFile.length <= 0) return false;
+        if (eventFile == null ||eventFile.length <= 0) return false;
         Scanner fileStream;
         try {
             fileStream=new Scanner(eventFile[0]);
@@ -110,6 +126,7 @@ public class ChapterPackHandler {
         ContactCSVHandler csvHandler=(isZip) ? loadZipContactList() : loadFolderContactList();
         if(csvHandler == null) contactsLoaded = false;
         ContactDatabaseHandler databaseHandler = new ContactDatabaseHandler(context);
+        databaseHandler.deleteContacts(null, null);
         for(ContactInfoWrapper contact : csvHandler.getCtactInfoListFromCSV())
             try {
                 databaseHandler.addContact(contact);

@@ -130,6 +130,7 @@ public class FrontalActivity extends BaseActivity
             Intent ridesIntent=new Intent(this,RidesActivity.class);
             startActivity(ridesIntent);
         }
+        mTitle=getActionBarTitle(fragSwitch);
     }
 
     public void onSectionAttached(int number) {

@@ -10,6 +10,7 @@ import android.view.MenuItem;
 
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.frontpage.ui.activities.FrontalActivity;
+import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.unofficialazaapp.helpers.backend.InfoWrapper;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextListFragment;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
@@ -79,7 +80,7 @@ public class ContactListFragment  extends InfoWrapperTextListFragment {
 
     @Override
     public InfoWrapper[] generateInfo() {
-        ContactDatabaseHandler handler=new ContactDatabaseHandler(getActivity());
+        ContactDatabaseHandler handler= ChapterPackHandlerSupport.getContactHandler(getActivity());
         ContactInfoWrapper[] currentContacts= handler.getContacts(null, ContactDatabaseContract.ContactListTable.COLUMN_NAME+" ASC");
         if(currentContacts.length <= 1){
             ContactDatabaseHelper dbh=new ContactDatabaseHelper(getActivity());

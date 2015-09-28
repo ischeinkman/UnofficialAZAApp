@@ -3,6 +3,7 @@ package org.ramonaza.unofficialazaapp.people.rides.ui.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 
+import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.unofficialazaapp.helpers.backend.InfoWrapper;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextListFragment;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
@@ -33,7 +34,7 @@ public class AddContactDriverFragment extends InfoWrapperTextListFragment {
 
     @Override
     public InfoWrapper[] generateInfo() {
-        ContactDatabaseHandler handler=new ContactDatabaseHandler(getActivity());
+        ContactDatabaseHandler handler= ChapterPackHandlerSupport.getContactHandler(getActivity());
         ContactInfoWrapper[] currentContacts= handler.getContacts(null, ContactDatabaseContract.ContactListTable.COLUMN_NAME+" ASC");
         return currentContacts;
     }

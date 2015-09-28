@@ -52,13 +52,15 @@ public class ChapterPackHandlerSupport {
     }
 
     public static EventRSSHandler getEventHandler(Context context){
-        if(currentHandler == null) getChapterPackHandler(context);
-        return currentHandler.getEventRSSHandler();
+        if(currentHandler != null || getChapterPackHandler(context) != null) return currentHandler.getEventRSSHandler();
+        String url=PreferenceManager.getDefaultSharedPreferences(context).getString(ChapterPackHandler.PREF_EVENT_FEED,null);
+        if(url == null) return null;
+        return new EventRSSHandler(url,true);
     }
 
     public static ContactDatabaseHandler getContactHandler(Context context){
-        if(currentHandler == null) getChapterPackHandler(context);
-        return currentHandler.getContactDatabase();
+        if(currentHandler != null || getChapterPackHandler(context) != null) return currentHandler.getContactDatabase();
+        return new ContactDatabaseHandler(context);
     }
 
     public static boolean loadChapterPack(Context context){

@@ -3,6 +3,7 @@ package org.ramonaza.unofficialazaapp.people.rides.ui.fragments;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.unofficialazaapp.helpers.backend.InfoWrapper;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperCheckBoxesFragment;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
@@ -42,7 +43,7 @@ public class AddAlephToDriverFragment extends InfoWrapperCheckBoxesFragment {
 
     @Override
     public InfoWrapper[] generateInfo() {
-        ContactDatabaseHandler dbhandler=new ContactDatabaseHandler(getActivity());
+        ContactDatabaseHandler dbhandler= ChapterPackHandlerSupport.getContactHandler(getActivity());
         return dbhandler.getContacts(new String[]{
                 ContactDatabaseContract.ContactListTable.COLUMN_PRESENT + "=1",
                 ContactDatabaseContract.ContactListTable._ID + " NOT IN (" + "SELECT " + ContactDatabaseContract.RidesListTable.COLUMN_ALEPH + " FROM " + ContactDatabaseContract.RidesListTable.TABLE_NAME + ")"

@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.ramonaza.unofficialazaapp.R;
+import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHelper;
 import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
@@ -82,7 +83,7 @@ public class AddCustomDriverFragment extends Fragment {
         protected Void doInBackground(Void... params) {
             if(contactID<1) return null;
             presContact=new ContactInfoWrapper();
-            ContactDatabaseHandler dbHandler=new ContactDatabaseHandler(context);
+            ContactDatabaseHandler dbHandler= ChapterPackHandlerSupport.getContactHandler(context);
             presContact=dbHandler.getContact(contactID);
             return null;
         }

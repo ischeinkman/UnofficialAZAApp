@@ -95,6 +95,10 @@ public class ContactDatabaseHandler {
         });
     }
 
+    public void deleteContacts(@Nullable String whereClauses, @Nullable String[] whereArgs){
+        db.delete(ContactDatabaseContract.ContactListTable.TABLE_NAME, whereClauses, whereArgs);
+    }
+
     public ContactInfoWrapper getContact(int id){
         String query=String.format("SELECT * FROM %s WHERE %s=%d LIMIT 1",
                 ContactDatabaseContract.ContactListTable.TABLE_NAME,

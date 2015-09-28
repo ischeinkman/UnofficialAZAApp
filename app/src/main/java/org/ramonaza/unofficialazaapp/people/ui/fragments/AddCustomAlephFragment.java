@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.ramonaza.unofficialazaapp.R;
+import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
 import org.ramonaza.unofficialazaapp.people.backend.LocationSupport;
@@ -92,7 +93,7 @@ public class AddCustomAlephFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            ContactDatabaseHandler handler=new ContactDatabaseHandler(context);
+            ContactDatabaseHandler handler= ChapterPackHandlerSupport.getContactHandler(context);
 
             EditText nameField=(EditText) myView.findViewById(R.id.AddAlephName);
             EditText addressField=(EditText) myView.findViewById(R.id.AddAlephAddress);

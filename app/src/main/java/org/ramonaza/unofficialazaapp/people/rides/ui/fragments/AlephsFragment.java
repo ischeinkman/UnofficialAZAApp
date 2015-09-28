@@ -96,7 +96,7 @@ public class AlephsFragment extends InfoWrapperTextWithButtonFragment {
 
     @Override
     public InfoWrapper[] generateInfo() {
-        ContactDatabaseHandler handler=new ContactDatabaseHandler(db);
+        ContactDatabaseHandler handler= new ContactDatabaseHandler(db);
         return handler.getContacts(new String[]{
                 ContactDatabaseContract.ContactListTable.COLUMN_PRESENT+"=1",
         }, ContactDatabaseContract.ContactListTable.COLUMN_NAME+" ASC");
