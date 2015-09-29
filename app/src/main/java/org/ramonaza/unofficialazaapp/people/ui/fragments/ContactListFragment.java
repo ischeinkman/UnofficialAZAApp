@@ -80,6 +80,9 @@ public class ContactListFragment  extends InfoWrapperTextListFragment {
 
     @Override
     public InfoWrapper[] generateInfo() {
+        if(!ChapterPackHandlerSupport.chapterPackIsLoaded() && ChapterPackHandlerSupport.getOptions().length > 0){
+            ChapterPackHandlerSupport.getChapterPackHandler(getActivity(), ChapterPackHandlerSupport.getOptions()[0]);
+        }
         ContactDatabaseHandler handler= ChapterPackHandlerSupport.getContactHandler(getActivity());
         ContactInfoWrapper[] currentContacts= handler.getContacts(null, ContactDatabaseContract.ContactListTable.COLUMN_NAME+" ASC");
         if(currentContacts.length <= 1){

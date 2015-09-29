@@ -17,6 +17,10 @@ public class ChapterPackHandlerSupport {
 
     private static ChapterPackHandler currentHandler;
 
+    public static boolean chapterPackIsLoaded(){
+        return currentHandler == null;
+    }
+
     public static File[] getOptions(){
         File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         File[] ddFiles = downloadDir.listFiles(new FilenameFilter() {
