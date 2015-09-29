@@ -24,14 +24,14 @@ import java.util.zip.ZipFile;
  */
 public class ChapterPackHandler {
 
-    public static final String PREFIX="Chapter Pack";
-    public static final String PREF_CHAPTERPACK="Cpack";
+    public static final String PREFIX = "Chapter Pack";
+    public static final String PREF_CHAPTERPACK = "Cpack";
 
-    public static final String EVENT_FILE_NAME="EventFeed.txt";
-    public static final String PREF_EVENT_FEED="EventFeed";
+    public static final String EVENT_FILE_NAME = "EventFeed.txt";
+    public static final String PREF_EVENT_FEED = "EventFeed";
 
     public static final String CSV_NAME = "AlephNameSchYAddMailNum.csv";
-    public static final String DEFAULT_CSV_NAME="DefaultContactFileTemplate.csv";
+    public static final String DEFAULT_CSV_NAME = "DefaultContactFileTemplate.csv";
 
     private File chapterPack;
     private boolean isZip;
@@ -40,97 +40,116 @@ public class ChapterPackHandler {
     private boolean eventsLoaded;
     private boolean contactsLoaded;
 
-    public ChapterPackHandler(File chapterPackFile, Context context){
-        this.context=context;
-        this.prefs= PreferenceManager.getDefaultSharedPreferences(context);
-        isZip=chapterPackFile.getName().contains(".zip");
+    /**
+     * This object is used to manipulate data in files/folders called
+     * "Chapter Packs". These Chapter Packs contain event feed information
+     * and contact information in either a zip file or directory, and can
+     * then be loaded into the app's database and preferences.
+     * @param chapterPackFile the Chapter Pack file to read from
+     * @param context the context to use
+     */
+    public ChapterPackHandler(File chapterPackFile, Context context) {
+        this.context = context;
+        this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        isZip = chapterPackFile.getName().contains(".zip");
 
-        File dataDir=context.getExternalFilesDir(null);
+        File dataDir = context.getExternalFilesDir(null);
         File newFile;
-        if(isZip){
-            newFile= new File(dataDir, "lastloadedpack");
-        }
-        else {
-            for(File packFile:chapterPackFile.listFiles()){
-                File newPackFile=new File(dataDir+"lastloadedpack/",packFile.getName());
+        if (isZip) {
+            newFile = new File(dataDir, "lastloadedpack");
+        } else {
+            for (File packFile : chapterPackFile.listFiles()) {
+                File newPackFile = new File(dataDir + "lastloadedpack/", packFile.getName());
                 newPackFile.mkdirs();
                 newPackFile.delete();
                 packFile.renameTo(newPackFile);
             }
-            newFile=new File(dataDir+"lastloadedpack");
+            newFile = new File(dataDir + "lastloadedpack");
             chapterPackFile.delete();
         }
-        this.chapterPack=newFile;
+        this.chapterPack = newFile;
     }
 
-    public String getPackName(){
+    /**
+     * Get the name of the Chapter Pack.
+     * @return the Chapter Pack's name
+     */
+    public String getPackName() {
         return chapterPack.getName();
     }
 
-    public boolean loadEventFeed(){
-        if(eventsLoaded) return true;
-        if(isZip) eventsLoaded = loadZipEvents();
+    /**
+     * Loads event feed information into app storage.
+     * @return whether the information was loaded successfully
+     */
+    public boolean loadEventFeed() {
+        if (eventsLoaded) return true;
+        if (isZip) eventsLoaded = loadZipEvents();
         else eventsLoaded = loadFolderEvents();
         return eventsLoaded;
     }
 
-    private boolean loadZipEvents(){
+    private boolean loadZipEvents() {
         ZipFile file;
         try {
-            file=new ZipFile(chapterPack);
+            file = new ZipFile(chapterPack);
         } catch (IOException e) {
             return false;
         }
-        ZipEntry eventZipFile=file.getEntry(EVENT_FILE_NAME);
+        ZipEntry eventZipFile = file.getEntry(EVENT_FILE_NAME);
         InputStream fileStream;
         try {
-            fileStream=file.getInputStream(eventZipFile);
+            fileStream = file.getInputStream(eventZipFile);
         } catch (IOException e) {
             return false;
         }
-        Scanner streamScanner=new Scanner(fileStream);
-        StringBuilder builder=new StringBuilder(100);
-        while(streamScanner.hasNext()){
+        Scanner streamScanner = new Scanner(fileStream);
+        StringBuilder builder = new StringBuilder(100);
+        while (streamScanner.hasNext()) {
             builder.append(streamScanner.next());
         }
-        String url=builder.toString();
+        String url = builder.toString();
         prefs.edit().putString(PREF_EVENT_FEED, url).commit();
         return true;
     }
 
-    private boolean loadFolderEvents(){
-        File[] eventFile=chapterPack.listFiles(new FilenameFilter() {
+    private boolean loadFolderEvents() {
+        File[] eventFile = chapterPack.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File file, String s) {
                 return s.equals(EVENT_FILE_NAME);
             }
         });
-        if (eventFile == null ||eventFile.length <= 0) return false;
+        if (eventFile == null || eventFile.length <= 0) return false;
         Scanner fileStream;
         try {
-            fileStream=new Scanner(eventFile[0]);
+            fileStream = new Scanner(eventFile[0]);
         } catch (FileNotFoundException e) {
             return false;
         }
-        StringBuilder builder= new StringBuilder(1000);
-        while(fileStream.hasNext()){
+        StringBuilder builder = new StringBuilder(1000);
+        while (fileStream.hasNext()) {
             builder.append(fileStream.next());
         }
-        String url=builder.toString();
+        String url = builder.toString();
         prefs.edit().putString(PREF_EVENT_FEED, url).commit();
         return true;
     }
 
-    public boolean loadContactList(){
-        if(contactsLoaded) return true;
-        ContactCSVHandler csvHandler=(isZip) ? loadZipContactList() : loadFolderContactList();
-        if(csvHandler == null){
+    /**
+     * Loads contact information into app storage.
+     * @return whether the information was loaded successfully
+     */
+    public boolean loadContactList() {
+        if (contactsLoaded) return true;
+        ContactCSVHandler csvHandler = (isZip) ? loadZipContactList() : loadFolderContactList();
+        if (csvHandler == null) {
             contactsLoaded = false;
             return false;
         }
         ContactDatabaseHandler databaseHandler = new ContactDatabaseHandler(context);
         databaseHandler.deleteContacts(null, null);
-        for(ContactInfoWrapper contact : csvHandler.getCtactInfoListFromCSV())
+        for (ContactInfoWrapper contact : csvHandler.getCtactInfoListFromCSV())
             try {
                 databaseHandler.addContact(contact);
             } catch (ContactDatabaseHandler.ContactCSVReadError contactCSVReadError) {
@@ -141,14 +160,19 @@ public class ChapterPackHandler {
         return contactsLoaded;
     }
 
-    public boolean reLoadContactList(SQLiteDatabase db){
-        ContactCSVHandler csvHandler=(isZip) ? loadZipContactList() : loadFolderContactList();
-        if(csvHandler == null){
+    /**
+     * Reload contact information into a specific database.
+     * @param db the database to be loaded
+     * @return whether the information was loaded successfully
+     */
+    public boolean reLoadContactList(SQLiteDatabase db) {
+        ContactCSVHandler csvHandler = (isZip) ? loadZipContactList() : loadFolderContactList();
+        if (csvHandler == null) {
             contactsLoaded = false;
             return contactsLoaded;
         }
         ContactDatabaseHandler databaseHandler = new ContactDatabaseHandler(db);
-        for(ContactInfoWrapper contact : csvHandler.getCtactInfoListFromCSV())
+        for (ContactInfoWrapper contact : csvHandler.getCtactInfoListFromCSV())
             try {
                 databaseHandler.addContact(contact);
             } catch (ContactDatabaseHandler.ContactCSVReadError contactCSVReadError) {
@@ -159,25 +183,25 @@ public class ChapterPackHandler {
         return contactsLoaded;
     }
 
-    private ContactCSVHandler loadZipContactList(){
+    private ContactCSVHandler loadZipContactList() {
         ZipFile file;
         try {
-            file=new ZipFile(chapterPack);
+            file = new ZipFile(chapterPack);
         } catch (IOException e) {
             return null;
         }
-        ZipEntry contactZipEntry=file.getEntry(CSV_NAME);
+        ZipEntry contactZipEntry = file.getEntry(CSV_NAME);
         InputStream fileStream;
         try {
-            fileStream=file.getInputStream(contactZipEntry);
+            fileStream = file.getInputStream(contactZipEntry);
         } catch (IOException e) {
             return null;
         }
         return new ContactCSVHandler(fileStream);
     }
 
-    private ContactCSVHandler loadFolderContactList(){
-        File[] eventFile=chapterPack.listFiles(new FilenameFilter() {
+    private ContactCSVHandler loadFolderContactList() {
+        File[] eventFile = chapterPack.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File file, String s) {
                 return s.equals(CSV_NAME);
@@ -191,14 +215,23 @@ public class ChapterPackHandler {
         }
     }
 
-    public ContactDatabaseHandler getContactDatabase(){
+    /**
+     * Gets the handler to access and manipulate this pack's contacts.
+     * @return the contact handler with this pack's contacts
+     */
+    public ContactDatabaseHandler getContactDatabase() {
         loadContactList();
         return new ContactDatabaseHandler(context);
     }
 
-    public EventRSSHandler getEventRSSHandler(){
+    /**
+     * Gets the handler to access and manipulate this pack's event feed
+     * and the events at that feed.
+     * @return the event handler based on this pack's event feed
+     */
+    public EventRSSHandler getEventRSSHandler() {
         loadEventFeed();
-        String url=prefs.getString(PREF_EVENT_FEED,null);
+        String url = prefs.getString(PREF_EVENT_FEED, null);
         return new EventRSSHandler(url, true);
     }
 
