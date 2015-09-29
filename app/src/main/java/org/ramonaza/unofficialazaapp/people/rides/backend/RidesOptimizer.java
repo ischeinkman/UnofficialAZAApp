@@ -18,30 +18,42 @@ public class RidesOptimizer {
      * and assigning them a driver.
      */
     public static final int ALGORITHM_LATLONG_ALEPHS_FIRST=0;
+
     /**
      * Calculate rides based on latitude and longitude, iterating over the drivers
      * and assigning them passengers.
      */
     public static final int ALGORITHM_LATLONG_DRIVERS_FIRST=1;
+
     /**
      * Calculate rides based on latitude and longitude, finding the optimal assignment of passengers
      * to drivers in order to minimize total distance traveled by all drivers. Makes the simplifying
      * assumption that all drivers return to their home in between each drop-off.
      */
     public static final int ALGORITHM_NAIVE_HUNGARIAN=2;
+
     private Set<ContactInfoWrapper> alephsToOptimize;
     private List<DriverInfoWrapper> driversToOptimize;
     private int algorithm;
     private boolean retainPreexisting;
+
     public RidesOptimizer(){
         this.alephsToOptimize=new HashSet<ContactInfoWrapper>();
         this.driversToOptimize=new ArrayList<DriverInfoWrapper>();
     }
 
+    /**
+     * Get the loaded alephs not currently in a car.
+     * @return the driverless alephs
+     */
     public ContactInfoWrapper[] getDriverless() {
         return alephsToOptimize.toArray(new ContactInfoWrapper[alephsToOptimize.size()]);
     }
 
+    /**
+     * Get the currently loaded drivers (including all of the alephs in their cars).
+     * @return the loaded drivers
+     */
     public DriverInfoWrapper[] getDrivers() {
         return driversToOptimize.toArray(new DriverInfoWrapper[driversToOptimize.size()]);
     }

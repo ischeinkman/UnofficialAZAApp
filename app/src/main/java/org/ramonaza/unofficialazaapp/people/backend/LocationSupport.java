@@ -11,6 +11,12 @@ import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
  */
 public class LocationSupport {
 
+    /**
+     * Gets latitude and longitude of an address.
+     * @param address the address to get the coordinates from
+     * @param context the context to use to retrieve the coordinates
+     * @return the coordinates for this address
+     */
     public static double[] getCoordsFromAddress(String address, Context context){
         if(!Geocoder.isPresent()) return null;
         Geocoder geocoder=new Geocoder(context);
@@ -26,6 +32,10 @@ public class LocationSupport {
         };
     }
 
+    /**
+     * Debug method to recalculate latitudes and longitudes for all contacts.
+     * @param context the context to retrieve contacts from and get coordinates
+     */
     public static void recalculateLatLong(Context context){
         ContactDatabaseHandler handler= ChapterPackHandlerSupport.getContactHandler(context);
         ContactInfoWrapper[] toCalc = handler.getContacts(null, null);

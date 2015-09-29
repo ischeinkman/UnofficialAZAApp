@@ -7,21 +7,35 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 
 /**
+ * An object for easily manipulating the Contact-Rides database.
  * Created by ilanscheinkman on 7/16/15.
  */
 public class ContactDatabaseHandler {
 
     private SQLiteDatabase db;
 
+    /**
+     * Creates a handler based on a context.
+     * @param context the context to retrieve the database from
+     */
     public ContactDatabaseHandler(Context context) {
         ContactDatabaseHelper dbHelper = new ContactDatabaseHelper(context);
         db = dbHelper.getWritableDatabase();
     }
 
+    /**
+     * Creates a handler based on a preexisting database.
+     * @param db the database to use
+     */
     public ContactDatabaseHandler(SQLiteDatabase db) {
         this.db = db;
     }
 
+    /**
+     * Retrieve the ContactInfoWrapper objects from raw cursor data.
+     * @param queryResults the cursor to read from
+     * @return the retrieved contacts
+     */
     public static ContactInfoWrapper[] getContactsFromCursor(Cursor queryResults) {
         if (queryResults.getCount() == 0) {
             return new ContactInfoWrapper[0];
@@ -52,10 +66,18 @@ public class ContactDatabaseHandler {
         return alephs;
     }
 
+    /**
+     * Closes the database connection.
+     */
     public void close() {
         db.close();
     }
 
+    /**
+     * Adds a contact to the database.
+     * @param toAdd the contact to add
+     * @throws ContactCSVReadError
+     */
     public void addContact(ContactInfoWrapper toAdd) throws ContactCSVReadError {
         ContentValues value = new ContentValues();
         value.put(ContactDatabaseContract.ContactListTable.COLUMN_NAME, toAdd.getName());
@@ -72,6 +94,11 @@ public class ContactDatabaseHandler {
         else toAdd.setId((int) rowId);
     }
 
+    /**
+     * Updates a preexisting contact in the database.
+     * @param toUpdate the contact to update
+     * @throws ContactCSVReadError
+     */
     public void updateContact(ContactInfoWrapper toUpdate) throws ContactCSVReadError {
         ContentValues value = new ContentValues();
         value.put(ContactDatabaseContract.ContactListTable.COLUMN_NAME, toUpdate.getName());
@@ -88,6 +115,10 @@ public class ContactDatabaseHandler {
         if (rowId == -1l) throw new ContactCSVReadError("Null Contact Read", toUpdate);
     }
 
+    /**
+     * Delete a contact by its ID.
+     * @param toDelete the ID of the contact to delete
+     */
     public void deleteContact(int toDelete) {
         db.delete(ContactDatabaseContract.ContactListTable.TABLE_NAME, "?=?", new String[]{
                 ContactDatabaseContract.ContactListTable._ID,
@@ -95,10 +126,20 @@ public class ContactDatabaseHandler {
         });
     }
 
+    /**
+     * Delete multiple contacts.
+     * @param whereClauses an SQL string detailing the where clause using android's native format
+     * @param whereArgs an array of arguements for the where clauses
+     */
     public void deleteContacts(@Nullable String whereClauses, @Nullable String[] whereArgs){
         db.delete(ContactDatabaseContract.ContactListTable.TABLE_NAME, whereClauses, whereArgs);
     }
 
+    /**
+     * Get a contact by its ID.
+     * @param id the ID of the contact
+     * @return the retrieved contact
+     */
     public ContactInfoWrapper getContact(int id){
         String query=String.format("SELECT * FROM %s WHERE %s=%d LIMIT 1",
                 ContactDatabaseContract.ContactListTable.TABLE_NAME,
@@ -110,6 +151,12 @@ public class ContactDatabaseHandler {
         return contactArray[0];
     }
 
+    /**
+     * Update a certain field on a group of contacts.
+     * @param field the field to update
+     * @param value the value to update to
+     * @param toUpdate the contacts to update
+     */
     public void updateField(String field, String value, ContactInfoWrapper[] toUpdate) {
         String query = String.format("UPDATE %s SET %s=%s WHERE %s IN (",
                 ContactDatabaseContract.ContactListTable.TABLE_NAME,
@@ -122,6 +169,12 @@ public class ContactDatabaseHandler {
         db.execSQL(query, new String[0]);
     }
 
+    /**
+     * Update a certain field on a group of contacts by their IDs.
+     * @param field the field to update
+     * @param value the value to update to
+     * @param toUpdate an array containing the IDs of the contacts to update
+     */
     public void updateFieldByIDs(String field, String value, int[] toUpdate) {
         String query = String.format("UPDATE %s SET %s=%s WHERE %s IN (",
                 ContactDatabaseContract.ContactListTable.TABLE_NAME,
@@ -134,6 +187,12 @@ public class ContactDatabaseHandler {
         db.execSQL(query, new String[0]);
     }
 
+    /**
+     * Retrieves contacts from the database.
+     * @param whereclauses a string array containing raw SQL where clauses
+     * @param orderBy an SQL string dictating the order to return the contacts in
+     * @return the retrieved contacts
+     */
     public ContactInfoWrapper[] getContacts(@Nullable String[] whereclauses, @Nullable String orderBy) {
         String query = String.format("SELECT * FROM %s ", ContactDatabaseContract.ContactListTable.TABLE_NAME);
         if (whereclauses != null && whereclauses.length > 0) {

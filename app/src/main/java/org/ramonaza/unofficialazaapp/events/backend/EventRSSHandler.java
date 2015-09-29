@@ -22,7 +22,12 @@ public class EventRSSHandler {
         if(isStream && rssSource != null) rawRSS=getRssFromStream(rssSource);
         else rawRSS=rssSource;
     }
-    
+
+    /**
+     * Retrieves the textual RSS source of the events located at the provided URL.
+     * @param url the url to retrieve data from
+     * @return a string containing the RSS source
+     */
     private static String getRssFromStream(String url){
         StringBuilder builder = new StringBuilder(100000);
 
@@ -48,7 +53,11 @@ public class EventRSSHandler {
         else strippedRss=null;
         return strippedRss;
     }
-    
+
+    /**
+     * Convert the RSS the handler currently has into event objects.
+     * @return the converted event objects
+     */
     public EventInfoWrapper[] getEventsFromRss(){
         if(rawRSS == null) return new EventInfoWrapper[0];
         String[] itemmedRSS = rawRSS.split(ITEM_SPLITTER);
@@ -73,12 +82,22 @@ public class EventRSSHandler {
         return rawRSS;
     }
 
+    /**
+     * Get a specific event from the stored event list via index.
+     * @param index the index to retrieve
+     * @return the event at that index
+     */
     public EventInfoWrapper getEvent(int index){
         if(rawRSS == null) return null;
         EventInfoWrapper[] allEvents=getEventsFromRss();
         return allEvents[index];
     }
 
+    /**
+     * Get the raw RSS of an event from the stored event list via index.
+     * @param index the index to retrieve
+     * @return the raw RSS of the event at that index
+     */
     public String getEventRSS(int index){
         if(rawRSS == null) return null;
         String[] itemmedRSS=rawRSS.split(ITEM_SPLITTER);
