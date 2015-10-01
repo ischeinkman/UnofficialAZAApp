@@ -22,7 +22,7 @@ public class ChapterPackHandlerSupport {
      * @return if we have a loaded Chapter Pack
      */
     public static boolean chapterPackIsLoaded(){
-        return currentHandler == null;
+        return currentHandler != null;
     }
 
     /**
