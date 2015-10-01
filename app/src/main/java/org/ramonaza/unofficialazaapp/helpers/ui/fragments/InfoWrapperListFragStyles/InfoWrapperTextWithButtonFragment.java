@@ -38,9 +38,9 @@ public abstract class InfoWrapperTextWithButtonFragment extends InfoWrapperListF
     }
 
 
-
     /**
      * Method to get each button name.
+     *
      * @return the name of the button.
      */
     public abstract String buttonName();
@@ -55,10 +55,10 @@ public abstract class InfoWrapperTextWithButtonFragment extends InfoWrapperListF
 
     /**
      * The action pressing on each entry's name performs.
+     *
      * @param mWrapper the button's InfoWrapper; can be cast as necessary
      */
     public abstract void onTextClick(InfoWrapper mWrapper);
-
 
 
 }

@@ -24,7 +24,7 @@ public abstract class InfoWrapperTextListFragment extends InfoWrapperListFragmen
 
     @Override
     public ArrayAdapter getAdapter() {
-       return new InfoWrapperTextListAdapter(getActivity(), InfoWrapperTextListAdapter.NAME_ONLY);
+        return new InfoWrapperTextListAdapter(getActivity(), InfoWrapperTextListAdapter.NAME_ONLY);
     }
 
     @Override
@@ -40,7 +40,6 @@ public abstract class InfoWrapperTextListFragment extends InfoWrapperListFragmen
         });
         return rootView;
     }
-
 
 
     /**

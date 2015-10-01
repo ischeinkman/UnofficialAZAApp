@@ -6,7 +6,7 @@ import org.ramonaza.unofficialazaapp.helpers.backend.InfoWrapper;
 /**
  * Created by ilanscheinkman on 1/29/15.
  */
-public class EventInfoWrapper  implements InfoWrapper {
+public class EventInfoWrapper implements InfoWrapper {
 
     private String name;
     private String desc;
@@ -72,8 +72,9 @@ public class EventInfoWrapper  implements InfoWrapper {
     public void setDate(String date) {
         this.date = date;
     }
+
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return name.hashCode();
     }
 

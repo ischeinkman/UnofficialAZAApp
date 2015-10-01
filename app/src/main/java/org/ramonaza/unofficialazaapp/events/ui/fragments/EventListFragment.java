@@ -20,8 +20,6 @@ public class EventListFragment extends InfoWrapperTextListFragment {
     private EventRSSHandler handler;
 
 
-
-
     public static EventListFragment newInstance(int sectionNumber) {
         EventListFragment fragment = new EventListFragment();
         Bundle args = new Bundle();
@@ -32,38 +30,36 @@ public class EventListFragment extends InfoWrapperTextListFragment {
 
     @Override
     public void onButtonClick(InfoWrapper mWrapper) {
-        if(mWrapper.getId() <0) return;
-        Intent intent=new Intent(getActivity(), EventPageActivity.class);
+        if (mWrapper.getId() < 0) return;
+        Intent intent = new Intent(getActivity(), EventPageActivity.class);
         intent.putExtra(EventPageActivity.EVENT_DATA, handler.getEventRSS(mWrapper.getId()));
         startActivity(intent);
     }
 
     @Override
     public InfoWrapper[] generateInfo() {
-        if(!ChapterPackHandlerSupport.chapterPackIsLoaded() && ChapterPackHandlerSupport.getOptions().length > 0){
+        if (!ChapterPackHandlerSupport.chapterPackIsLoaded() && ChapterPackHandlerSupport.getOptions().length > 0) {
             ChapterPackHandlerSupport.getChapterPackHandler(getActivity(), ChapterPackHandlerSupport.getOptions()[0]);
         }
-        handler= ChapterPackHandlerSupport.getEventHandler(getActivity());
-        if(handler == null){
-            EventInfoWrapper noLoadedHandler=new EventInfoWrapper();
+        handler = ChapterPackHandlerSupport.getEventHandler(getActivity());
+        if (handler == null) {
+            EventInfoWrapper noLoadedHandler = new EventInfoWrapper();
             noLoadedHandler.setName("Please download a Chapter Pack to access this feature.");
             noLoadedHandler.setId(-1);
             return new EventInfoWrapper[]{noLoadedHandler};
         }
-        EventInfoWrapper[] handlerEvents=handler.getEventsFromRss();
-        if(handlerEvents == null){
-            EventInfoWrapper nullEvent=new EventInfoWrapper();
+        EventInfoWrapper[] handlerEvents = handler.getEventsFromRss();
+        if (handlerEvents == null) {
+            EventInfoWrapper nullEvent = new EventInfoWrapper();
             nullEvent.setName("An error occured. Please try again later.");
             nullEvent.setId(-1);
             return new EventInfoWrapper[]{nullEvent};
-        }
-        else if(handlerEvents.length == 0){
-            EventInfoWrapper noEvent=new EventInfoWrapper();
+        } else if (handlerEvents.length == 0) {
+            EventInfoWrapper noEvent = new EventInfoWrapper();
             noEvent.setName("No events posted.");
             noEvent.setId(-1);
             return new EventInfoWrapper[]{noEvent};
-        }
-        else return handlerEvents;
+        } else return handlerEvents;
     }
 
 

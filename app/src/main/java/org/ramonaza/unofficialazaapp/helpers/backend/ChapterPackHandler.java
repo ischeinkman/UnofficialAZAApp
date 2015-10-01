@@ -45,8 +45,9 @@ public class ChapterPackHandler {
      * "Chapter Packs". These Chapter Packs contain event feed information
      * and contact information in either a zip file or directory, and can
      * then be loaded into the app's database and preferences.
+     *
      * @param chapterPackFile the Chapter Pack file to read from
-     * @param context the context to use
+     * @param context         the context to use
      */
     public ChapterPackHandler(File chapterPackFile, Context context) {
         this.context = context;
@@ -72,6 +73,7 @@ public class ChapterPackHandler {
 
     /**
      * Get the name of the Chapter Pack.
+     *
      * @return the Chapter Pack's name
      */
     public String getPackName() {
@@ -80,6 +82,7 @@ public class ChapterPackHandler {
 
     /**
      * Loads event feed information into app storage.
+     *
      * @return whether the information was loaded successfully
      */
     public boolean loadEventFeed() {
@@ -138,6 +141,7 @@ public class ChapterPackHandler {
 
     /**
      * Loads contact information into app storage.
+     *
      * @return whether the information was loaded successfully
      */
     public boolean loadContactList() {
@@ -162,6 +166,7 @@ public class ChapterPackHandler {
 
     /**
      * Reload contact information into a specific database.
+     *
      * @param db the database to be loaded
      * @return whether the information was loaded successfully
      */
@@ -217,6 +222,7 @@ public class ChapterPackHandler {
 
     /**
      * Gets the handler to access and manipulate this pack's contacts.
+     *
      * @return the contact handler with this pack's contacts
      */
     public ContactDatabaseHandler getContactDatabase() {
@@ -227,6 +233,7 @@ public class ChapterPackHandler {
     /**
      * Gets the handler to access and manipulate this pack's event feed
      * and the events at that feed.
+     *
      * @return the event handler based on this pack's event feed
      */
     public EventRSSHandler getEventRSSHandler() {

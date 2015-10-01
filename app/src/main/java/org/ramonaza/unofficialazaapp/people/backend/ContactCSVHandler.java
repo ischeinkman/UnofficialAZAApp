@@ -18,22 +18,22 @@ import java.util.List;
 public class ContactCSVHandler {
 
 
-
     private File file;
     private InputStream csvInputStream;
 
     public ContactCSVHandler(File file) throws FileNotFoundException {
-        this.file=file;
-        this.csvInputStream=new FileInputStream(file);
+        this.file = file;
+        this.csvInputStream = new FileInputStream(file);
     }
 
-    public ContactCSVHandler(InputStream inputStream){
-        this.csvInputStream=inputStream;
-        this.file=null;
+    public ContactCSVHandler(InputStream inputStream) {
+        this.csvInputStream = inputStream;
+        this.file = null;
     }
 
     /**
      * Retrieves contacts from the file.
+     *
      * @return the contacts from the CSV file in an array
      */
     public ContactInfoWrapper[] getCtactInfoListFromCSV() {
@@ -48,19 +48,20 @@ public class ContactCSVHandler {
 
     /**
      * Writes contacts to the CSV file in the downloads folder.
+     *
      * @param toSave the contacts to save
      * @param append whether or not to append to the CSV or rewrite it
      * @return whether or not the writing succeeded
      */
-    public boolean writesContactsToCSV(ContactInfoWrapper[] toSave, boolean append){
-        if(file == null) return false;
-        String dataToWrite="";
-        for(ContactInfoWrapper aleph: toSave){
-            dataToWrite+= aleph.getName()+","+aleph.getSchool()+","+aleph.getGradYear()+",\""+aleph.getAddress()+"\","
-                            +aleph.getLatitude()+","+aleph.getLongitude()+","+aleph.getEmail()+","+aleph.getPhoneNumber()+"\n";
+    public boolean writesContactsToCSV(ContactInfoWrapper[] toSave, boolean append) {
+        if (file == null) return false;
+        String dataToWrite = "";
+        for (ContactInfoWrapper aleph : toSave) {
+            dataToWrite += aleph.getName() + "," + aleph.getSchool() + "," + aleph.getGradYear() + ",\"" + aleph.getAddress() + "\","
+                    + aleph.getLatitude() + "," + aleph.getLongitude() + "," + aleph.getEmail() + "," + aleph.getPhoneNumber() + "\n";
         }
         try {
-            FileOutputStream outputStream=new FileOutputStream(file,append);
+            FileOutputStream outputStream = new FileOutputStream(file, append);
             outputStream.write(dataToWrite.getBytes());
             outputStream.flush();
             outputStream.close();
@@ -90,21 +91,16 @@ public class ContactCSVHandler {
     }
 
 
-
-
-
-
     private ContactInfoWrapper createContactInfoWrapperFromCSVargs(String[] args) {
         ContactInfoWrapper rRapper = new ContactInfoWrapper();
-        if(args.length <=6){
+        if (args.length <= 6) {
             rRapper.setName(args[0]);
             rRapper.setSchool(args[1]);
             rRapper.setGradYear(args[2]);
             rRapper.setAddress(args[3]);
             rRapper.setEmail(args[4]);
             rRapper.setPhoneNumber(args[5]);
-        }
-        else{
+        } else {
             rRapper.setName(args[0]);
             rRapper.setSchool(args[1]);
             rRapper.setGradYear(args[2]);

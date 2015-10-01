@@ -27,14 +27,18 @@ import org.ramonaza.unofficialazaapp.people.rides.backend.RidesOptimizer;
  */
 public class DisplayRidesFragment extends Fragment {
 
-    private static final String EXTRA_ALGORITHM="org.ramonaza.unofficialazaapp.algorithm";
-    private static final String EXTRA_RETAIN_RIDES="org.ramonaza.unofficialazaapp.retainrides";
+    private static final String EXTRA_ALGORITHM = "org.ramonaza.unofficialazaapp.algorithm";
+    private static final String EXTRA_RETAIN_RIDES = "org.ramonaza.unofficialazaapp.retainrides";
 
     private TextView ridesDisplay;
     private ProgressBar mBar;
 
     private int optimizationAlgorithm;
     private boolean retainRides;
+
+    public DisplayRidesFragment() {
+        // Required empty public constructor
+    }
 
     /**
      * Use this factory method to create a new instance of
@@ -51,8 +55,22 @@ public class DisplayRidesFragment extends Fragment {
         return fragment;
     }
 
-    public DisplayRidesFragment() {
-        // Required empty public constructor
+    private static String createRidesList(DriverInfoWrapper[] drivers, ContactInfoWrapper[] driverless) {
+        String ridesList = "";
+        for (DriverInfoWrapper driver : drivers) {
+            ridesList += String.format("<h1><b><u>%s</u></b></h1>", driver.getName(), driver.getFreeSpots());
+            for (ContactInfoWrapper alephInCar : driver.getAlephsInCar()) {
+                ridesList += String.format("-%s<br/>", alephInCar.getName());
+            }
+            ridesList += "<b>Free Spots: " + driver.getFreeSpots();
+            ridesList += "</b><br/><br/>";
+        }
+        if (driverless.length > 0) {
+            ridesList += "<h1><b><u>Driverless</u></b></h1>";
+            for (ContactInfoWrapper driverlessAleph : driverless)
+                ridesList += String.format("-%s<br/>", driverlessAleph.getName());
+        }
+        return ridesList;
     }
 
     @Override
@@ -64,36 +82,21 @@ public class DisplayRidesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView= inflater.inflate(R.layout.fragment_display_rides, container, false);
-        ridesDisplay=(TextView)rootView.findViewById(R.id.RidesTextList);
-        mBar=(ProgressBar) rootView.findViewById(R.id.cProgressBar);
-        optimizationAlgorithm=getArguments().getInt(EXTRA_ALGORITHM);
-        retainRides=getArguments().getBoolean(EXTRA_RETAIN_RIDES);
+        View rootView = inflater.inflate(R.layout.fragment_display_rides, container, false);
+        ridesDisplay = (TextView) rootView.findViewById(R.id.RidesTextList);
+        mBar = (ProgressBar) rootView.findViewById(R.id.cProgressBar);
+        optimizationAlgorithm = getArguments().getInt(EXTRA_ALGORITHM);
+        retainRides = getArguments().getBoolean(EXTRA_RETAIN_RIDES);
         new CreateRidesText().execute();
         return rootView;
     }
 
-
-
-
-    private static String createRidesList(DriverInfoWrapper[] drivers, ContactInfoWrapper[] driverless){
-        String ridesList="";
-        for(DriverInfoWrapper driver:drivers){
-            ridesList+=String.format("<h1><b><u>%s</u></b></h1>",driver.getName(), driver.getFreeSpots());
-            for (ContactInfoWrapper alephInCar:driver.getAlephsInCar()){
-                ridesList+=String.format("-%s<br/>",alephInCar.getName());
-            }
-            ridesList+="<b>Free Spots: "+driver.getFreeSpots();
-            ridesList+="</b><br/><br/>";
-        }
-        if(driverless.length >0){
-            ridesList+="<h1><b><u>Driverless</u></b></h1>";
-            for(ContactInfoWrapper driverlessAleph: driverless) ridesList+=String.format("-%s<br/>",driverlessAleph.getName());
-        }
-        return ridesList;
+    @Override
+    public void onDetach() {
+        super.onDetach();
     }
 
-    private class CreateRidesText extends AsyncTask<Void, Void, String>{
+    private class CreateRidesText extends AsyncTask<Void, Void, String> {
 
         DriverInfoWrapper[] rides;
         ContactInfoWrapper[] driverless;
@@ -101,16 +104,16 @@ public class DisplayRidesFragment extends Fragment {
         @Override
         protected String doInBackground(Void... params) {
             createRides();
-            if(optimizationAlgorithm>=0){
-                RidesOptimizer optimizer=new RidesOptimizer();
+            if (optimizationAlgorithm >= 0) {
+                RidesOptimizer optimizer = new RidesOptimizer();
                 optimizer.loadDriver(rides);
                 optimizer.loadPassengers(driverless);
                 optimizer.setAlgorithm(optimizationAlgorithm, retainRides);
                 optimizer.optimize();
-                RidesDatabaseHandler ridesDatabaseHandler=new RidesDatabaseHandler(getActivity());
-                ridesDatabaseHandler.updateRides(optimizer.getDrivers(),optimizer.getDriverless());
-                rides=optimizer.getDrivers();
-                driverless=optimizer.getDriverless();
+                RidesDatabaseHandler ridesDatabaseHandler = new RidesDatabaseHandler(getActivity());
+                ridesDatabaseHandler.updateRides(optimizer.getDrivers(), optimizer.getDriverless());
+                rides = optimizer.getDrivers();
+                driverless = optimizer.getDriverless();
             }
             return createRidesList(rides, driverless);
         }
@@ -122,24 +125,19 @@ public class DisplayRidesFragment extends Fragment {
             ridesDisplay.setText(Html.fromHtml(s));
         }
 
-        private void createRides(){
-            SQLiteDatabase db= new ContactDatabaseHelper(getActivity()).getWritableDatabase();
-            RidesDatabaseHandler rhandler=new RidesDatabaseHandler(db);
-            rides=rhandler.getDrivers(null, ContactDatabaseContract.DriverListTable.COLUMN_NAME + " ASC");
-            ContactDatabaseHandler chandler= new ContactDatabaseHandler(db);
+        private void createRides() {
+            SQLiteDatabase db = new ContactDatabaseHelper(getActivity()).getWritableDatabase();
+            RidesDatabaseHandler rhandler = new RidesDatabaseHandler(db);
+            rides = rhandler.getDrivers(null, ContactDatabaseContract.DriverListTable.COLUMN_NAME + " ASC");
+            ContactDatabaseHandler chandler = new ContactDatabaseHandler(db);
             String[] whereclause;
-            whereclause= new String[]{
+            whereclause = new String[]{
                     String.format("%s = %d", ContactDatabaseContract.ContactListTable.COLUMN_PRESENT, 1),
                     String.format("not %s in (SELECT %s FROM %s)", ContactDatabaseContract.ContactListTable._ID,
                             ContactDatabaseContract.RidesListTable.COLUMN_ALEPH, ContactDatabaseContract.RidesListTable.TABLE_NAME)
             };
-            driverless= chandler.getContacts(whereclause, null);
+            driverless = chandler.getContacts(whereclause, null);
         }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
     }
 
 }

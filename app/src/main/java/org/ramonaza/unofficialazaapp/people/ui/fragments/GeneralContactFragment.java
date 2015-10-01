@@ -29,7 +29,7 @@ import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
 /**
  * Created by Ilan Scheinkman on 1/13/15.
  */
-public class GeneralContactFragment extends Fragment{
+public class GeneralContactFragment extends Fragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     private ContactInfoWrapper aleph;
@@ -43,22 +43,23 @@ public class GeneralContactFragment extends Fragment{
         fragment.setArguments(args);
         return fragment;
     }
-    public void setAlpeh(ContactInfoWrapper aleph){
-        this.aleph=aleph;
-    }
-    protected void refreshInfoView(TextView inView){
-        String infoDump=String.format("N" +
-                "ame:   %s\nGrade:   %s\nSchool:  %s\nAddress:   %s\nEmail:  %s\nPhone:   %s\n",aleph.getName(), aleph.getYear(), aleph.getSchool(),aleph.getAddress(),aleph.getEmail(),aleph.getPhoneNumber());
 
-        if(sp.getBoolean("admin",false)){
-            infoDump+="ID: "+aleph.getId()+"\n";
-            infoDump+="Lat: "+aleph.getLatitude()+"\n";
-            infoDump+="Long: "+aleph.getLongitude()+"\n";
-            if(aleph.isPresent()){
-                infoDump+="RIDES: PRESENT";
-            }
-            else{
-                infoDump+="RIDES: ABSENT";
+    public void setAlpeh(ContactInfoWrapper aleph) {
+        this.aleph = aleph;
+    }
+
+    protected void refreshInfoView(TextView inView) {
+        String infoDump = String.format("N" +
+                "ame:   %s\nGrade:   %s\nSchool:  %s\nAddress:   %s\nEmail:  %s\nPhone:   %s\n", aleph.getName(), aleph.getYear(), aleph.getSchool(), aleph.getAddress(), aleph.getEmail(), aleph.getPhoneNumber());
+
+        if (sp.getBoolean("admin", false)) {
+            infoDump += "ID: " + aleph.getId() + "\n";
+            infoDump += "Lat: " + aleph.getLatitude() + "\n";
+            infoDump += "Long: " + aleph.getLongitude() + "\n";
+            if (aleph.isPresent()) {
+                infoDump += "RIDES: PRESENT";
+            } else {
+                infoDump += "RIDES: ABSENT";
             }
         }
         inView.setText(infoDump);
@@ -69,48 +70,47 @@ public class GeneralContactFragment extends Fragment{
                              Bundle savedInstanceState) {
         ActionBar actionBar = getActivity().getActionBar();
         actionBar.setTitle(this.aleph.getName());
-        View rootView=inflater.inflate(R.layout.fragment_contact_data,container,false);
-        LinearLayout rootLayout=(LinearLayout) rootView.findViewById(R.id.cPageLayout);
-        final TextView information=(TextView) rootView.findViewById(R.id.ContactInfoView);
+        View rootView = inflater.inflate(R.layout.fragment_contact_data, container, false);
+        LinearLayout rootLayout = (LinearLayout) rootView.findViewById(R.id.cPageLayout);
+        final TextView information = (TextView) rootView.findViewById(R.id.ContactInfoView);
         information.setTextSize(22);
-        sp= PreferenceManager.getDefaultSharedPreferences(getActivity());
+        sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
         refreshInfoView(information);
 
 
-        Button callButton=(Button) rootView.findViewById(R.id.ContactCallButton);
+        Button callButton = (Button) rootView.findViewById(R.id.ContactCallButton);
         callButton.setOnClickListener(new CallButtonListener(this.aleph));
 
-        Button textButton=(Button) rootView.findViewById(R.id.ContactTextButton);
+        Button textButton = (Button) rootView.findViewById(R.id.ContactTextButton);
         textButton.setOnClickListener(new TextButtonListener(this.aleph));
 
-        Button emailButton=(Button) rootView.findViewById(R.id.ContactEmailButton);
+        Button emailButton = (Button) rootView.findViewById(R.id.ContactEmailButton);
         emailButton.setOnClickListener(new EmailButtonListener(this.aleph));
 
-        Button addContactButton=(Button) rootView.findViewById(R.id.ContactAddButton);
+        Button addContactButton = (Button) rootView.findViewById(R.id.ContactAddButton);
         addContactButton.setOnClickListener(new AddContactButtonListener(this.aleph));
 
-        Button navButton=(Button) rootView.findViewById(R.id.ContactDirButton);
+        Button navButton = (Button) rootView.findViewById(R.id.ContactDirButton);
         navButton.setOnClickListener(new NavigatorButtonListener(this.aleph));
 
-        if(sp.getBoolean("admin",false)){
-            Button presentSwitch=new Button(getActivity());
+        if (sp.getBoolean("admin", false)) {
+            Button presentSwitch = new Button(getActivity());
             presentSwitch.setText("Set Present");
             presentSwitch.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ContactDatabaseHelper dbH=new ContactDatabaseHelper(getActivity());
-                    SQLiteDatabase db=dbH.getWritableDatabase();
-                    ContentValues cValues=new ContentValues();
+                    ContactDatabaseHelper dbH = new ContactDatabaseHelper(getActivity());
+                    SQLiteDatabase db = dbH.getWritableDatabase();
+                    ContentValues cValues = new ContentValues();
                     if (aleph.isPresent()) {
                         aleph.setPresent(false);
                         cValues.put(ContactDatabaseContract.ContactListTable.COLUMN_PRESENT, 0);
-                    }
-                    else{
+                    } else {
                         aleph.setPresent(true);
                         cValues.put(ContactDatabaseContract.ContactListTable.COLUMN_PRESENT, 1);
                     }
                     refreshInfoView(information);
-                    db.update(ContactDatabaseContract.ContactListTable.TABLE_NAME,cValues, ContactDatabaseContract.ContactListTable._ID+"=?",new String[]{""+aleph.getId()});
+                    db.update(ContactDatabaseContract.ContactListTable.TABLE_NAME, cValues, ContactDatabaseContract.ContactListTable._ID + "=?", new String[]{"" + aleph.getId()});
                 }
             });
             rootLayout.addView(presentSwitch);
@@ -126,91 +126,100 @@ public class GeneralContactFragment extends Fragment{
         super.onAttach(activity);
     }
 
-    public class CallButtonListener implements View.OnClickListener{
+    public class CallButtonListener implements View.OnClickListener {
         ContactInfoWrapper contactInfoWrapperAleph;
-        public CallButtonListener(ContactInfoWrapper inAleph){
-            this.contactInfoWrapperAleph =inAleph;
+
+        public CallButtonListener(ContactInfoWrapper inAleph) {
+            this.contactInfoWrapperAleph = inAleph;
         }
-        public void onClick(View v){
+
+        public void onClick(View v) {
             try {
                 Intent callIntent = new Intent(Intent.ACTION_DIAL);
                 callIntent.setData(Uri.parse("tel:" + contactInfoWrapperAleph.getPhoneNumber()));
                 startActivity(callIntent);
             } catch (ActivityNotFoundException activityException) {
-                Log.d("Calling Phone Number: "+ contactInfoWrapperAleph.getPhoneNumber(), "Call failed", activityException);
+                Log.d("Calling Phone Number: " + contactInfoWrapperAleph.getPhoneNumber(), "Call failed", activityException);
             }
         }
     }
 
-    public class EmailButtonListener implements View.OnClickListener{
+    public class EmailButtonListener implements View.OnClickListener {
         ContactInfoWrapper contactInfoWrapperAleph;
-        public EmailButtonListener(ContactInfoWrapper inAleph){
-            this.contactInfoWrapperAleph =inAleph;
+
+        public EmailButtonListener(ContactInfoWrapper inAleph) {
+            this.contactInfoWrapperAleph = inAleph;
         }
-        public void onClick(View v){
+
+        public void onClick(View v) {
             try {
-                Intent emailIntent=new Intent(Intent.ACTION_SEND);
+                Intent emailIntent = new Intent(Intent.ACTION_SEND);
                 emailIntent.setType("text/plain");
-                emailIntent.putExtra(Intent.EXTRA_EMAIL,new String[]{this.contactInfoWrapperAleph.getEmail()});
-                startActivity(Intent.createChooser(emailIntent,"Email using:"));
-            }catch (ActivityNotFoundException activityException) {
-                Log.d("Emailing:: "+ contactInfoWrapperAleph.getEmail(), "Email failed", activityException);
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{this.contactInfoWrapperAleph.getEmail()});
+                startActivity(Intent.createChooser(emailIntent, "Email using:"));
+            } catch (ActivityNotFoundException activityException) {
+                Log.d("Emailing:: " + contactInfoWrapperAleph.getEmail(), "Email failed", activityException);
             }
         }
     }
 
-    public class AddContactButtonListener implements View.OnClickListener{
+    public class AddContactButtonListener implements View.OnClickListener {
         ContactInfoWrapper contactInfoWrapperAleph;
-        public AddContactButtonListener(ContactInfoWrapper inAleph){
-            this.contactInfoWrapperAleph =inAleph;
+
+        public AddContactButtonListener(ContactInfoWrapper inAleph) {
+            this.contactInfoWrapperAleph = inAleph;
         }
-        public void onClick(View v){
+
+        public void onClick(View v) {
             try {
-                Intent contactIntent=new Intent(ContactsContract.Intents.Insert.ACTION);
+                Intent contactIntent = new Intent(ContactsContract.Intents.Insert.ACTION);
                 contactIntent.setType(ContactsContract.Contacts.CONTENT_TYPE);
                 contactIntent.putExtra(ContactsContract.Intents.Insert.NAME, contactInfoWrapperAleph.getName());
                 contactIntent.putExtra(ContactsContract.Intents.Insert.PHONE, contactInfoWrapperAleph.getPhoneNumber());
                 contactIntent.putExtra(ContactsContract.Intents.Insert.EMAIL, contactInfoWrapperAleph.getEmail());
                 contactIntent.putExtra(ContactsContract.Intents.Insert.POSTAL, contactInfoWrapperAleph.getAddress());
                 startActivity(contactIntent);
-            }catch (ActivityNotFoundException activityException) {
-                Log.d("Adding Contact: "+ contactInfoWrapperAleph.getName(), "Failed", activityException);
+            } catch (ActivityNotFoundException activityException) {
+                Log.d("Adding Contact: " + contactInfoWrapperAleph.getName(), "Failed", activityException);
             }
         }
     }
 
-    public class NavigatorButtonListener implements View.OnClickListener{
+    public class NavigatorButtonListener implements View.OnClickListener {
         ContactInfoWrapper contactInfoWrapperAleph;
-        public NavigatorButtonListener(ContactInfoWrapper inAleph){
-            this.contactInfoWrapperAleph =inAleph;
+
+        public NavigatorButtonListener(ContactInfoWrapper inAleph) {
+            this.contactInfoWrapperAleph = inAleph;
         }
-        public void onClick(View v){
+
+        public void onClick(View v) {
             try {
-                if(aleph.getAddress().equals("Not Submitted")){
+                if (aleph.getAddress().equals("Not Submitted")) {
                     Toast.makeText(getActivity(), "Address Not Submitted", Toast.LENGTH_SHORT).show();
-                }
-                else {
+                } else {
                     String uri = String.format("google.navigation:q=%s", contactInfoWrapperAleph.getAddress().replace(" ", "+"));
                     Intent navIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                     startActivity(navIntent);
                 }
-            }catch (ActivityNotFoundException activityException){
-                Log.d("Directions to:"+ contactInfoWrapperAleph.getAddress(), "Failed", activityException);
+            } catch (ActivityNotFoundException activityException) {
+                Log.d("Directions to:" + contactInfoWrapperAleph.getAddress(), "Failed", activityException);
             }
         }
     }
 
-    public class TextButtonListener implements View.OnClickListener{
+    public class TextButtonListener implements View.OnClickListener {
         ContactInfoWrapper contactInfoWrapperAleph;
-        public TextButtonListener(ContactInfoWrapper inAleph){
-            this.contactInfoWrapperAleph =inAleph;
+
+        public TextButtonListener(ContactInfoWrapper inAleph) {
+            this.contactInfoWrapperAleph = inAleph;
         }
-        public void onClick(View v){
+
+        public void onClick(View v) {
             try {
-                Intent textIntent=new Intent(Intent.ACTION_VIEW,Uri.fromParts("sms",this.contactInfoWrapperAleph.getPhoneNumber(),null));
+                Intent textIntent = new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", this.contactInfoWrapperAleph.getPhoneNumber(), null));
                 startActivity(textIntent);
-            }catch (ActivityNotFoundException activityException){
-                Log.d("Directions to:"+ contactInfoWrapperAleph.getAddress(), "Failed", activityException);
+            } catch (ActivityNotFoundException activityException) {
+                Log.d("Directions to:" + contactInfoWrapperAleph.getAddress(), "Failed", activityException);
             }
         }
     }

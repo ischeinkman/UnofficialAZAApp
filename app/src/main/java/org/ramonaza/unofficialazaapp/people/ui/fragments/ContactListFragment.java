@@ -23,22 +23,22 @@ import org.ramonaza.unofficialazaapp.people.ui.activities.ContactDataActivity;
 /**
  * Created by Ilan Scheinkman on 1/12/15.
  */
-public class ContactListFragment  extends InfoWrapperTextListFragment {
+public class ContactListFragment extends InfoWrapperTextListFragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
-    private static final String PAGE_NAME="Contact List";
+    private static final String PAGE_NAME = "Contact List";
     public int fraglayer;
+
+    public ContactListFragment() {
+    }
 
     public static ContactListFragment newInstance(int sectionNumber) {
         ContactListFragment fragment = new ContactListFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
-        fragment.fraglayer=sectionNumber;
+        fragment.fraglayer = sectionNumber;
         return fragment;
-    }
-
-    public ContactListFragment() {
     }
 
     @Override
@@ -49,15 +49,15 @@ public class ContactListFragment  extends InfoWrapperTextListFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_contact_list,menu);
+        inflater.inflate(R.menu.menu_contact_list, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_add_custom_aleph:
-                Intent intent=new Intent(getActivity(), AddCustomAlephActivity.class);
-                intent.putExtra(AddCustomAlephActivity.EXTRA_PARENT_ACTIVITY,getActivity().getClass());
+                Intent intent = new Intent(getActivity(), AddCustomAlephActivity.class);
+                intent.putExtra(AddCustomAlephActivity.EXTRA_PARENT_ACTIVITY, getActivity().getClass());
                 startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
@@ -80,21 +80,20 @@ public class ContactListFragment  extends InfoWrapperTextListFragment {
 
     @Override
     public InfoWrapper[] generateInfo() {
-        if(!ChapterPackHandlerSupport.chapterPackIsLoaded() && ChapterPackHandlerSupport.getOptions().length > 0){
+        if (!ChapterPackHandlerSupport.chapterPackIsLoaded() && ChapterPackHandlerSupport.getOptions().length > 0) {
             ChapterPackHandlerSupport.getChapterPackHandler(getActivity(), ChapterPackHandlerSupport.getOptions()[0]);
         }
-        ContactDatabaseHandler handler= ChapterPackHandlerSupport.getContactHandler(getActivity());
-        ContactInfoWrapper[] currentContacts= handler.getContacts(null, ContactDatabaseContract.ContactListTable.COLUMN_NAME+" ASC");
-        if(currentContacts.length <= 1){
-            ContactDatabaseHelper dbh=new ContactDatabaseHelper(getActivity());
-            SQLiteDatabase db= dbh.getWritableDatabase();
+        ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(getActivity());
+        ContactInfoWrapper[] currentContacts = handler.getContacts(null, ContactDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
+        if (currentContacts.length <= 1) {
+            ContactDatabaseHelper dbh = new ContactDatabaseHelper(getActivity());
+            SQLiteDatabase db = dbh.getWritableDatabase();
             dbh.onDelete(db);
             dbh.onCreate(db);
-            currentContacts= handler.getContacts(null, ContactDatabaseContract.ContactListTable.COLUMN_NAME+" ASC");
+            currentContacts = handler.getContacts(null, ContactDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
         }
         return currentContacts;
     }
-
 
 
 }

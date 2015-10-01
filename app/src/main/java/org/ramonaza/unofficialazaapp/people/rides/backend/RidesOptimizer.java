@@ -17,33 +17,34 @@ public class RidesOptimizer {
      * Calculate rides based on latitude and longitude, iterating over the passengers
      * and assigning them a driver.
      */
-    public static final int ALGORITHM_LATLONG_ALEPHS_FIRST=0;
+    public static final int ALGORITHM_LATLONG_ALEPHS_FIRST = 0;
 
     /**
      * Calculate rides based on latitude and longitude, iterating over the drivers
      * and assigning them passengers.
      */
-    public static final int ALGORITHM_LATLONG_DRIVERS_FIRST=1;
+    public static final int ALGORITHM_LATLONG_DRIVERS_FIRST = 1;
 
     /**
      * Calculate rides based on latitude and longitude, finding the optimal assignment of passengers
      * to drivers in order to minimize total distance traveled by all drivers. Makes the simplifying
      * assumption that all drivers return to their home in between each drop-off.
      */
-    public static final int ALGORITHM_NAIVE_HUNGARIAN=2;
+    public static final int ALGORITHM_NAIVE_HUNGARIAN = 2;
 
     private Set<ContactInfoWrapper> alephsToOptimize;
     private List<DriverInfoWrapper> driversToOptimize;
     private int algorithm;
     private boolean retainPreexisting;
 
-    public RidesOptimizer(){
-        this.alephsToOptimize=new HashSet<ContactInfoWrapper>();
-        this.driversToOptimize=new ArrayList<DriverInfoWrapper>();
+    public RidesOptimizer() {
+        this.alephsToOptimize = new HashSet<ContactInfoWrapper>();
+        this.driversToOptimize = new ArrayList<DriverInfoWrapper>();
     }
 
     /**
      * Get the loaded alephs not currently in a car.
+     *
      * @return the driverless alephs
      */
     public ContactInfoWrapper[] getDriverless() {
@@ -52,6 +53,7 @@ public class RidesOptimizer {
 
     /**
      * Get the currently loaded drivers (including all of the alephs in their cars).
+     *
      * @return the loaded drivers
      */
     public DriverInfoWrapper[] getDrivers() {
@@ -60,35 +62,38 @@ public class RidesOptimizer {
 
     /**
      * Load driverless passengers into the optimizer.
+     *
      * @param passengersToLoad the passengers to load
      * @return this
      */
-    public RidesOptimizer loadPassengers(ContactInfoWrapper... passengersToLoad){
-        for(ContactInfoWrapper a:passengersToLoad) alephsToOptimize.add(a);
+    public RidesOptimizer loadPassengers(ContactInfoWrapper... passengersToLoad) {
+        for (ContactInfoWrapper a : passengersToLoad) alephsToOptimize.add(a);
         return this;
     }
 
     /**
      * Load drivers into the optimizer.
+     *
      * @param driversToLoad the drivers to load
      * @return this
      */
-    public RidesOptimizer loadDriver(DriverInfoWrapper... driversToLoad){
-        for(DriverInfoWrapper d:driversToLoad) driversToOptimize.add(d);
+    public RidesOptimizer loadDriver(DriverInfoWrapper... driversToLoad) {
+        for (DriverInfoWrapper d : driversToLoad) driversToOptimize.add(d);
         return this;
     }
 
     /**
      * Set the algorithm and strength of the optimization.
-     * @param algorithm the algorithm to use, based on public constants.
+     *
+     * @param algorithm         the algorithm to use, based on public constants.
      * @param retainPreexisting whether or not the optimizer should keep preexisting rides settings.
      *                          If set to false, current rides are clears and all preconfigured passengers
      *                          are loaded as driverless passengers.
      * @return this
      */
-    public RidesOptimizer setAlgorithm(int algorithm, boolean retainPreexisting){
-        this.algorithm=algorithm;
-        this.retainPreexisting=retainPreexisting;
+    public RidesOptimizer setAlgorithm(int algorithm, boolean retainPreexisting) {
+        this.algorithm = algorithm;
+        this.retainPreexisting = retainPreexisting;
         return this;
     }
 
@@ -96,27 +101,26 @@ public class RidesOptimizer {
      * Optimize the rides. This app results in either all loaded passengers being in a car or all
      * loaded cars being full.
      */
-    public void optimize(){
+    public void optimize() {
         if (algorithm < 0 || driversToOptimize.isEmpty()) return;
-        if(!retainPreexisting){
-            for(DriverInfoWrapper driver:driversToOptimize){
-                for(ContactInfoWrapper aleph : new ArrayList<ContactInfoWrapper>(driver.getAlephsInCar())){
+        if (!retainPreexisting) {
+            for (DriverInfoWrapper driver : driversToOptimize) {
+                for (ContactInfoWrapper aleph : new ArrayList<ContactInfoWrapper>(driver.getAlephsInCar())) {
                     if (distBetweenHouses(driver, aleph) != 0) {
                         driver.removeAlephFromCar(aleph);
                         alephsToOptimize.add(aleph);
                     }
                 }
             }
-        }
-        else{
-            for(DriverInfoWrapper driver : driversToOptimize){
-                for(ContactInfoWrapper contact : driver.getAlephsInCar()){
-                    if(alephsToOptimize.contains(contact)) alephsToOptimize.remove(contact);
+        } else {
+            for (DriverInfoWrapper driver : driversToOptimize) {
+                for (ContactInfoWrapper contact : driver.getAlephsInCar()) {
+                    if (alephsToOptimize.contains(contact)) alephsToOptimize.remove(contact);
                 }
             }
         }
-        if(alephsToOptimize.isEmpty()) return;
-        switch (algorithm){
+        if (alephsToOptimize.isEmpty()) return;
+        switch (algorithm) {
             case ALGORITHM_LATLONG_ALEPHS_FIRST:
                 latLongAlephsFirst();
                 break;
@@ -129,54 +133,54 @@ public class RidesOptimizer {
         }
     }
 
-    private void latLongAlephsFirst(){
-        List<ContactInfoWrapper> allContacts=new ArrayList<ContactInfoWrapper>(alephsToOptimize);
-        for(ContactInfoWrapper toOptimize : allContacts){
-            DriverInfoWrapper driver=getClosestDriver(toOptimize);
-            if(driver == null) break;
+    private void latLongAlephsFirst() {
+        List<ContactInfoWrapper> allContacts = new ArrayList<ContactInfoWrapper>(alephsToOptimize);
+        for (ContactInfoWrapper toOptimize : allContacts) {
+            DriverInfoWrapper driver = getClosestDriver(toOptimize);
+            if (driver == null) break;
             driver.addAlephToCar(toOptimize);
             alephsToOptimize.remove(toOptimize);
         }
     }
 
-    private DriverInfoWrapper getClosestDriver(ContactInfoWrapper aleph){
-        double minDist=Double.MAX_VALUE;
-        DriverInfoWrapper rDriver=null;
-        for(DriverInfoWrapper driver:driversToOptimize){
-            if(driver.getFreeSpots()<=0) continue;
-            double curDist=distBetweenHouses(driver, aleph);
-            if(curDist <minDist){
-                minDist=curDist;
-                rDriver=driver;
+    private DriverInfoWrapper getClosestDriver(ContactInfoWrapper aleph) {
+        double minDist = Double.MAX_VALUE;
+        DriverInfoWrapper rDriver = null;
+        for (DriverInfoWrapper driver : driversToOptimize) {
+            if (driver.getFreeSpots() <= 0) continue;
+            double curDist = distBetweenHouses(driver, aleph);
+            if (curDist < minDist) {
+                minDist = curDist;
+                rDriver = driver;
             }
         }
         return rDriver;
     }
 
 
-    private void latLongDriversFirst(){
-        boolean allFull=false;
-        while(!alephsToOptimize.isEmpty() && !allFull){
-            allFull=true;
-            for(DriverInfoWrapper toOptimize:driversToOptimize){
-                if(toOptimize.getFreeSpots()<=0) continue;
-                ContactInfoWrapper aleph=getClosestAleph(toOptimize);
-                if(aleph == null) break;
+    private void latLongDriversFirst() {
+        boolean allFull = false;
+        while (!alephsToOptimize.isEmpty() && !allFull) {
+            allFull = true;
+            for (DriverInfoWrapper toOptimize : driversToOptimize) {
+                if (toOptimize.getFreeSpots() <= 0) continue;
+                ContactInfoWrapper aleph = getClosestAleph(toOptimize);
+                if (aleph == null) break;
                 toOptimize.addAlephToCar(aleph);
                 alephsToOptimize.remove(aleph);
-                allFull=false;
+                allFull = false;
             }
         }
     }
 
-    private ContactInfoWrapper getClosestAleph(DriverInfoWrapper driver){
-        double minDist=Double.MAX_VALUE;
-        ContactInfoWrapper rAleph=null;
-        for(ContactInfoWrapper aleph:alephsToOptimize){
-            double curDist=distBetweenHouses(driver, aleph);
-            if(curDist <minDist){
-                minDist=curDist;
-                rAleph=aleph;
+    private ContactInfoWrapper getClosestAleph(DriverInfoWrapper driver) {
+        double minDist = Double.MAX_VALUE;
+        ContactInfoWrapper rAleph = null;
+        for (ContactInfoWrapper aleph : alephsToOptimize) {
+            double curDist = distBetweenHouses(driver, aleph);
+            if (curDist < minDist) {
+                minDist = curDist;
+                rAleph = aleph;
             }
         }
         return rAleph;
@@ -206,19 +210,27 @@ public class RidesOptimizer {
         }
     }
 
+    private double distBetweenHouses(DriverInfoWrapper driver, ContactInfoWrapper aleph) {
+        return Math.sqrt((
+                aleph.getLatitude() - driver.getLatitude())
+                * (aleph.getLatitude() - driver.getLatitude())
+                + (aleph.getLongitude() - driver.getLongitude())
+                * (aleph.getLongitude() - driver.getLongitude()));
+    }
+
     /**
      * Copyright (c) 2012 Kevin L. Stern
-     *
+     * <p/>
      * Permission is hereby granted, free of charge, to any person obtaining a copy
      * of this software and associated documentation files (the "Software"), to deal
      * in the Software without restriction, including without limitation the rights
      * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
      * copies of the Software, and to permit persons to whom the Software is
      * furnished to do so, subject to the following conditions:
-     *
+     * <p/>
      * The above copyright notice and this permission notice shall be included in
      * all copies or substantial portions of the Software.
-     *
+     * <p/>
      * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
      * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
      * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -226,7 +238,7 @@ public class RidesOptimizer {
      * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
      * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
      * SOFTWARE.
-     *
+     * <p/>
      * An implementation of the Hungarian algorithm for solving the assignment
      * problem. An instance of the assignment problem consists of a number of
      * workers along with a number of jobs and a cost matrix which gives the cost of
@@ -234,8 +246,8 @@ public class RidesOptimizer {
      * find an assignment of workers to jobs so that no job is assigned more than
      * one worker and so that no worker is assigned to more than one job in such a
      * manner so as to minimize the total cost of completing the jobs.
-     * <p>
-     *
+     * <p/>
+     * <p/>
      * An assignment for a cost matrix that has more workers than jobs will
      * necessarily include unassigned workers, indicated by an assignment value of
      * -1; in no other circumstance will there be unassigned workers. Similarly, an
@@ -243,8 +255,8 @@ public class RidesOptimizer {
      * include unassigned jobs; in no other circumstance will there be unassigned
      * jobs. For completeness, an assignment for a square cost matrix will give
      * exactly one unique worker to each job.
-     * <p>
-     *
+     * <p/>
+     * <p/>
      * This version of the Hungarian algorithm runs in time O(n^3), where n is the
      * maximum among the number of workers and the number of jobs.
      *
@@ -263,10 +275,9 @@ public class RidesOptimizer {
         /**
          * Construct an instance of the algorithm.
          *
-         * @param costMatrix
-         *          the cost matrix, where matrix[i][j] holds the cost of assigning
-         *          worker i to job j, for all i, j. The cost matrix must not be
-         *          irregular in the sense that all rows must be the same length.
+         * @param costMatrix the cost matrix, where matrix[i][j] holds the cost of assigning
+         *                   worker i to job j, for all i, j. The cost matrix must not be
+         *                   irregular in the sense that all rows must be the same length.
          */
         public HungarianAlgorithm(double[][] costMatrix) {
             this.dim = Math.max(costMatrix.length, costMatrix[0].length);
@@ -317,8 +328,8 @@ public class RidesOptimizer {
          * Execute the algorithm.
          *
          * @return the minimum cost matching of workers to jobs based upon the
-         *         provided cost matrix. A matching value of -1 indicates that the
-         *         corresponding worker is unassigned.
+         * provided cost matrix. A matching value of -1 indicates that the
+         * corresponding worker is unassigned.
          */
         public int[] execute() {
     /*
@@ -355,8 +366,8 @@ public class RidesOptimizer {
          * the minimum slack among committed workers and non-committed jobs to create
          * more zero-slack edges (the labels of committed jobs are simultaneously
          * decreased by the same amount in order to maintain a feasible labeling).
-         * <p>
-         *
+         * <p/>
+         * <p/>
          * The runtime of a single phase of the algorithm is O(n^2), where n is the
          * dimension of the internal square cost matrix, since each edge is visited at
          * most once and since increasing the labeling is accomplished in time O(n) by
@@ -418,7 +429,6 @@ public class RidesOptimizer {
         }
 
         /**
-         *
          * @return the first unmatched worker or {@link #dim} if none.
          */
         protected int fetchUnmatchedWorker() {
@@ -451,8 +461,7 @@ public class RidesOptimizer {
          * workers and jobs sets and by initializing the slack arrays to the values
          * corresponding to the specified root worker.
          *
-         * @param w
-         *          the worker at which to root the next phase.
+         * @param w the worker at which to root the next phase.
          */
         protected void initializePhase(int w) {
             Arrays.fill(committedWorkers, false);
@@ -528,14 +537,6 @@ public class RidesOptimizer {
                 }
             }
         }
-    }
-
-    private double distBetweenHouses(DriverInfoWrapper driver, ContactInfoWrapper aleph) {
-        return Math.sqrt((
-                aleph.getLatitude()-driver.getLatitude())
-                *(aleph.getLatitude()-driver.getLatitude())
-                +(aleph.getLongitude()-driver.getLongitude())
-                *(aleph.getLongitude()-driver.getLongitude()));
     }
 
 }

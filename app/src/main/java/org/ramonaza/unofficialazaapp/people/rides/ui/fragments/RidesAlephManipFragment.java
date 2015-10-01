@@ -26,17 +26,21 @@ import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesAlephManipA
  */
 public class RidesAlephManipFragment extends Fragment {
 
+    public static final String EXTRA_ALEPHID = RidesAlephManipActivity.EXTRA_ALEPHID;
     private int alephID;
     private ContactInfoWrapper mAleph;
     private TextView dataview;
     private PopView popTask;
-    public static final String EXTRA_ALEPHID= RidesAlephManipActivity.EXTRA_ALEPHID;
+
+    public RidesAlephManipFragment() {
+        // Required empty public constructor
+    }
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param inID  the id of the aleph
+     * @param inID the id of the aleph
      * @return A new instance of fragment RidesAlephManipFragment.
      */
     public static RidesAlephManipFragment newInstance(int inID) {
@@ -47,75 +51,70 @@ public class RidesAlephManipFragment extends Fragment {
         return fragment;
     }
 
-    public RidesAlephManipFragment() {
-        // Required empty public constructor
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle args=getArguments();
-        this.alephID=args.getInt(EXTRA_ALEPHID, 0);
+        Bundle args = getArguments();
+        this.alephID = args.getInt(EXTRA_ALEPHID, 0);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView= inflater.inflate(R.layout.fragment_rides_aleph_manip, container, false);
-        this.dataview=(TextView) rootView.findViewById(R.id.ContactInfoView);
+        View rootView = inflater.inflate(R.layout.fragment_rides_aleph_manip, container, false);
+        this.dataview = (TextView) rootView.findViewById(R.id.ContactInfoView);
         refreshData();
         return rootView;
     }
 
-    private void refreshData(){
-        if(popTask != null) popTask.cancel(true);
-        popTask= new PopView(getActivity());
+    private void refreshData() {
+        if (popTask != null) popTask.cancel(true);
+        popTask = new PopView(getActivity());
         popTask.execute(alephID);
     }
 
 
-    private class PopView extends AsyncTask<Integer, Void, Void>{
+    private class PopView extends AsyncTask<Integer, Void, Void> {
 
         private Context context;
         private DriverInfoWrapper[] drivers;
 
-        public PopView(Context context){
-            this.context=context;
+        public PopView(Context context) {
+            this.context = context;
         }
 
         @Override
         protected Void doInBackground(Integer... params) {
-            SQLiteDatabase db=new ContactDatabaseHelper(context).getWritableDatabase();
-            RidesDatabaseHandler rhandler= new RidesDatabaseHandler(db);
-            ContactDatabaseHandler chandler= new ContactDatabaseHandler(db);
-            mAleph=chandler.getContact(params[0]);
-            String[] whereclause=new String[]{
+            SQLiteDatabase db = new ContactDatabaseHelper(context).getWritableDatabase();
+            RidesDatabaseHandler rhandler = new RidesDatabaseHandler(db);
+            ContactDatabaseHandler chandler = new ContactDatabaseHandler(db);
+            mAleph = chandler.getContact(params[0]);
+            String[] whereclause = new String[]{
                     String.format("%s in (SELECT %s FROM %s WHERE %s = %s)", ContactDatabaseContract.DriverListTable._ID,
-                            ContactDatabaseContract.RidesListTable.COLUMN_CAR,ContactDatabaseContract.RidesListTable.TABLE_NAME,
-                            ContactDatabaseContract.RidesListTable.COLUMN_ALEPH,mAleph.getId())
+                            ContactDatabaseContract.RidesListTable.COLUMN_CAR, ContactDatabaseContract.RidesListTable.TABLE_NAME,
+                            ContactDatabaseContract.RidesListTable.COLUMN_ALEPH, mAleph.getId())
             };
-            drivers=rhandler.getDrivers(whereclause, null);
+            drivers = rhandler.getDrivers(whereclause, null);
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            String viewData="Name: "+mAleph.getName()+"\n\n"+
-                    "Address: "+mAleph.getAddress()+"\n\n"+
-                    "School: "+mAleph.getSchool()+"\n\n";
-            for(DriverInfoWrapper driver: drivers){
-                viewData+="Currently in car: "+driver.getName()+"\n";
+            String viewData = "Name: " + mAleph.getName() + "\n\n" +
+                    "Address: " + mAleph.getAddress() + "\n\n" +
+                    "School: " + mAleph.getSchool() + "\n\n";
+            for (DriverInfoWrapper driver : drivers) {
+                viewData += "Currently in car: " + driver.getName() + "\n";
             }
-            if(drivers.length == 0) viewData+="Not currently in car.";
+            if (drivers.length == 0) viewData += "Not currently in car.";
             dataview.setTextSize(20);
             dataview.setText(viewData);
             getActivity().getActionBar().setTitle(mAleph.getName());
-            popTask=null;
+            popTask = null;
         }
     }
-
 
 
 }

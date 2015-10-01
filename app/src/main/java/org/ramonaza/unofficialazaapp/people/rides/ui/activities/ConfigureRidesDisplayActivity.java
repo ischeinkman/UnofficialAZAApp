@@ -9,7 +9,7 @@ import org.ramonaza.unofficialazaapp.people.rides.ui.fragments.ConfigureRidesDis
 /**
  * Created by ilanscheinkman on 9/1/15.
  */
-public class ConfigureRidesDisplayActivity extends BaseActivity{
+public class ConfigureRidesDisplayActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

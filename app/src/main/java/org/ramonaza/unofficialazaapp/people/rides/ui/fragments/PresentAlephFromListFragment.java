@@ -40,19 +40,19 @@ public class PresentAlephFromListFragment extends InfoWrapperCheckBoxesFragment 
 
     @Override
     public ContactInfoWrapper[] generateInfo() {
-        ContactDatabaseHandler handler=new ContactDatabaseHandler(getActivity());
-        return handler.getContacts(new String[]{ContactDatabaseContract.ContactListTable.COLUMN_PRESENT+"=0"},
-                ContactDatabaseContract.ContactListTable.COLUMN_NAME+" ASC");
+        ContactDatabaseHandler handler = new ContactDatabaseHandler(getActivity());
+        return handler.getContacts(new String[]{ContactDatabaseContract.ContactListTable.COLUMN_PRESENT + "=0"},
+                ContactDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
     }
 
 
-    private class SubmitFromList extends AsyncTask<InfoWrapper,Void,Void> {
+    private class SubmitFromList extends AsyncTask<InfoWrapper, Void, Void> {
 
         @Override
-        protected Void doInBackground(InfoWrapper ... params) {
-            ContactDatabaseHandler handler= ChapterPackHandlerSupport.getContactHandler(getActivity());
-            ContactInfoWrapper[] alephs= Arrays.copyOf(params,params.length,ContactInfoWrapper[].class);
-            handler.updateField(ContactDatabaseContract.ContactListTable.COLUMN_PRESENT,"1",alephs);
+        protected Void doInBackground(InfoWrapper... params) {
+            ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(getActivity());
+            ContactInfoWrapper[] alephs = Arrays.copyOf(params, params.length, ContactInfoWrapper[].class);
+            handler.updateField(ContactDatabaseContract.ContactListTable.COLUMN_PRESENT, "1", alephs);
             return null;
         }
 

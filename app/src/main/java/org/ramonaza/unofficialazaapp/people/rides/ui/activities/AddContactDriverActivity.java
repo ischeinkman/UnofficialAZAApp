@@ -9,7 +9,7 @@ import org.ramonaza.unofficialazaapp.people.rides.ui.fragments.AddContactDriverF
 /**
  * Created by ilanscheinkman on 8/25/15.
  */
-public class AddContactDriverActivity extends org.ramonaza.unofficialazaapp.helpers.ui.activities.BaseActivity{
+public class AddContactDriverActivity extends org.ramonaza.unofficialazaapp.helpers.ui.activities.BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

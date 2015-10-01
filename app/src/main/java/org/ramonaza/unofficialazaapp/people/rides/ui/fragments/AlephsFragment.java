@@ -28,19 +28,19 @@ import org.ramonaza.unofficialazaapp.people.ui.activities.AddCustomAlephActivity
  */
 public class AlephsFragment extends InfoWrapperTextWithButtonFragment {
 
-    private static final String EXTRA_PARENT_ACTIVITY="parent activity";
+    private static final String EXTRA_PARENT_ACTIVITY = "parent activity";
 
     private SQLiteDatabase db;
+
+    public AlephsFragment() {
+
+    }
 
     public static AlephsFragment newInstance() {
         AlephsFragment fragment = new AlephsFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public AlephsFragment() {
-
     }
 
     @Override
@@ -51,29 +51,29 @@ public class AlephsFragment extends InfoWrapperTextWithButtonFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ContactDatabaseHelper dbh=new ContactDatabaseHelper(getActivity());
-        this.db=dbh.getWritableDatabase();
+        ContactDatabaseHelper dbh = new ContactDatabaseHelper(getActivity());
+        this.db = dbh.getWritableDatabase();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mLayoutId=R.layout.fragment_rides_alephs;
-        View rootView= super.onCreateView(inflater,container,savedInstanceState); //Retrieve the parent's view to manipulate
-        Button listAdd=(Button) rootView.findViewById(R.id.AddPresetAlephButton);
+        mLayoutId = R.layout.fragment_rides_alephs;
+        View rootView = super.onCreateView(inflater, container, savedInstanceState); //Retrieve the parent's view to manipulate
+        Button listAdd = (Button) rootView.findViewById(R.id.AddPresetAlephButton);
         listAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent presListIntent=new Intent(getActivity(), PresentListedAlephActivity.class);
+                Intent presListIntent = new Intent(getActivity(), PresentListedAlephActivity.class);
                 startActivity(presListIntent);
             }
         });
-        Button customAdd=(Button) rootView.findViewById(R.id.AddCustomAlephButton);
+        Button customAdd = (Button) rootView.findViewById(R.id.AddCustomAlephButton);
         customAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent customAlephIntent = new Intent(getActivity(), AddCustomAlephActivity.class);
-                customAlephIntent.putExtra(EXTRA_PARENT_ACTIVITY,getActivity().getClass());
+                customAlephIntent.putExtra(EXTRA_PARENT_ACTIVITY, getActivity().getClass());
                 startActivity(customAlephIntent);
             }
         });
@@ -82,24 +82,24 @@ public class AlephsFragment extends InfoWrapperTextWithButtonFragment {
 
     @Override
     public void onButtonClick(InfoWrapper mWrapper) {
-        RidesDatabaseHandler handler=new RidesDatabaseHandler(db);
+        RidesDatabaseHandler handler = new RidesDatabaseHandler(db);
         handler.setAlephAbsent(mWrapper.getId());
         refreshData();
     }
 
     @Override
     public void onTextClick(InfoWrapper mWrapper) {
-        Intent intent= new Intent(getActivity(), RidesAlephManipActivity.class);
+        Intent intent = new Intent(getActivity(), RidesAlephManipActivity.class);
         intent.putExtra(RidesAlephManipActivity.EXTRA_ALEPHID, mWrapper.getId());
         startActivity(intent);
     }
 
     @Override
     public InfoWrapper[] generateInfo() {
-        ContactDatabaseHandler handler= new ContactDatabaseHandler(db);
+        ContactDatabaseHandler handler = new ContactDatabaseHandler(db);
         return handler.getContacts(new String[]{
-                ContactDatabaseContract.ContactListTable.COLUMN_PRESENT+"=1",
-        }, ContactDatabaseContract.ContactListTable.COLUMN_NAME+" ASC");
+                ContactDatabaseContract.ContactListTable.COLUMN_PRESENT + "=1",
+        }, ContactDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
     }
 
     @Override
@@ -110,8 +110,8 @@ public class AlephsFragment extends InfoWrapperTextWithButtonFragment {
 
     @Override
     public void onResume() {
-        ContactDatabaseHelper databaseHelper=new ContactDatabaseHelper(getActivity());
-        db=databaseHelper.getWritableDatabase();
+        ContactDatabaseHelper databaseHelper = new ContactDatabaseHelper(getActivity());
+        db = databaseHelper.getWritableDatabase();
         super.onResume();
     }
 }

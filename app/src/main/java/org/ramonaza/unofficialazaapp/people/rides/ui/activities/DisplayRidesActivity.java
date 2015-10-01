@@ -9,19 +9,19 @@ import org.ramonaza.unofficialazaapp.people.rides.ui.fragments.DisplayRidesFragm
 
 public class DisplayRidesActivity extends BaseActivity {
 
-    public static final String EXTRA_ALGORITHM="org.ramonaza.unofficialazaapp.algorithm";
-    public static final String EXTRA_RETAIN_RIDES="org.ramonaza.unofficialazaapp.retainrides";
+    public static final String EXTRA_ALGORITHM = "org.ramonaza.unofficialazaapp.algorithm";
+    public static final String EXTRA_RETAIN_RIDES = "org.ramonaza.unofficialazaapp.retainrides";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_fragment);
-        Intent callingIntent=getIntent();
-        int algorithm=callingIntent.getIntExtra(EXTRA_ALGORITHM, -1);
-        boolean retainRides=callingIntent.getBooleanExtra(EXTRA_RETAIN_RIDES, true);
-        if(savedInstanceState ==null){
+        Intent callingIntent = getIntent();
+        int algorithm = callingIntent.getIntExtra(EXTRA_ALGORITHM, -1);
+        boolean retainRides = callingIntent.getBooleanExtra(EXTRA_RETAIN_RIDES, true);
+        if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, DisplayRidesFragment.newInstance(algorithm,retainRides))
+                    .add(R.id.container, DisplayRidesFragment.newInstance(algorithm, retainRides))
                     .commit();
         }
     }

@@ -46,7 +46,7 @@ public class GeneralEventFragment extends Fragment {
         TextView tView = (TextView) rootView.findViewById(R.id.EventPageTextView);
         LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.EventPageScrollLayout);
         String myEventRss = getArguments().getString(EVENT_DATA);
-        final EventInfoWrapper myEvent=new EventRSSHandler(myEventRss, false).getEvent(0);
+        final EventInfoWrapper myEvent = new EventRSSHandler(myEventRss, false).getEvent(0);
         actionBar.setTitle(myEvent.getName());
         String displayText = String.format(
                 "<b><u>%s</u></b><br><br>Description: %s<br>Bring: %s<br>Meet: %s<br>Planned By: %s<br>",

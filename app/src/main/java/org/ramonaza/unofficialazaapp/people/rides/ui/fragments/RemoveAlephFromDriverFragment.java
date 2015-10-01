@@ -10,22 +10,23 @@ import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesDriverManip
 
 public class RemoveAlephFromDriverFragment extends InfoWrapperCheckBoxesFragment {
 
-    public static final String EXTRA_DRIVERID= RidesDriverManipActivity.EXTRA_DRIVERID;
+    public static final String EXTRA_DRIVERID = RidesDriverManipActivity.EXTRA_DRIVERID;
     private int driverId;
 
-    public static RemoveAlephFromDriverFragment newInstance(int driverId){
-        RemoveAlephFromDriverFragment fragment=new RemoveAlephFromDriverFragment();
-        Bundle args=new Bundle();
+    public RemoveAlephFromDriverFragment() {
+    }
+
+    public static RemoveAlephFromDriverFragment newInstance(int driverId) {
+        RemoveAlephFromDriverFragment fragment = new RemoveAlephFromDriverFragment();
+        Bundle args = new Bundle();
         args.putInt(EXTRA_DRIVERID, driverId);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public RemoveAlephFromDriverFragment(){}
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        this.driverId=getArguments().getInt(EXTRA_DRIVERID);
+        this.driverId = getArguments().getInt(EXTRA_DRIVERID);
         super.onCreate(savedInstanceState);
     }
 
@@ -36,16 +37,16 @@ public class RemoveAlephFromDriverFragment extends InfoWrapperCheckBoxesFragment
 
     @Override
     public InfoWrapper[] generateInfo() {
-        RidesDatabaseHandler handler=new RidesDatabaseHandler(getActivity());
+        RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
         return handler.getAlephsInCar(driverId);
     }
 
-    private class SubmitFromList extends AsyncTask<InfoWrapper,Void,Void> {
+    private class SubmitFromList extends AsyncTask<InfoWrapper, Void, Void> {
 
         @Override
-        protected Void doInBackground(InfoWrapper ... params) {
-            RidesDatabaseHandler handler=new RidesDatabaseHandler(getActivity());
-            for (InfoWrapper aleph:params) {
+        protected Void doInBackground(InfoWrapper... params) {
+            RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
+            for (InfoWrapper aleph : params) {
                 handler.removeAlephFromCar(aleph.getId());
             }
             return null;

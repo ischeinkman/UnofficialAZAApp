@@ -39,20 +39,32 @@ public abstract class InfoWrapperListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        if (this.mAdapter == null) this.mAdapter=getAdapter();
+        if (this.mAdapter == null) this.mAdapter = getAdapter();
         if (mLayoutId == 0) mLayoutId = R.layout.fragment_info_wrapper_list;
         rootView = inflater.inflate(mLayoutId, container, false);
         progressBar = (ProgressBar) rootView.findViewById(R.id.cProgressBar);
-        listView=(ListView) rootView.findViewById(R.id.infowrapperadapterlist);
+        listView = (ListView) rootView.findViewById(R.id.infowrapperadapterlist);
         refreshData();
         listView.setAdapter(mAdapter);
         return rootView;
     }
 
     public void refreshData() {
-        if(currentAsync != null) currentAsync.cancel(true);
-        currentAsync = new GetInfoWrappers(getActivity(),mAdapter,progressBar);
+        if (currentAsync != null) currentAsync.cancel(true);
+        currentAsync = new GetInfoWrappers(getActivity(), mAdapter, progressBar);
         currentAsync.execute();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshData();
+    }
+
+    @Override
+    public void onDetach() {
+        if (currentAsync != null) currentAsync.cancel(true);
+        super.onDetach();
     }
 
     /**
@@ -66,14 +78,14 @@ public abstract class InfoWrapperListFragment extends Fragment {
         /**
          * Constructs the activity.
          *
-         * @param context      the context to use
-         * @param adapter      adapter to populate
-         * @param progressBar  the bar to report progress to
+         * @param context     the context to use
+         * @param adapter     adapter to populate
+         * @param progressBar the bar to report progress to
          */
         public GetInfoWrappers(Context context, ArrayAdapter adapter, ProgressBar progressBar) {
             this.mContext = context;
             this.mBar = progressBar;
-            this.mAdapter=adapter;
+            this.mAdapter = adapter;
         }
 
         @Override
@@ -97,19 +109,6 @@ public abstract class InfoWrapperListFragment extends Fragment {
             mAdapter.addAll(infoWrappers);
             mBar.setVisibility(View.GONE);
         }
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        refreshData();
-    }
-
-    @Override
-    public void onDetach() {
-        if(currentAsync != null) currentAsync.cancel(true);
-        super.onDetach();
     }
 
 }

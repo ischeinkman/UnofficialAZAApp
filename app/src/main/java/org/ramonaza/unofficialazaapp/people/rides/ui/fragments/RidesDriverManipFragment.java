@@ -28,7 +28,7 @@ import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesDriverManip
  */
 public class RidesDriverManipFragment extends Fragment {
 
-    public static final String EXTRA_DRIVERID= RidesDriverManipActivity.EXTRA_DRIVERID;
+    public static final String EXTRA_DRIVERID = RidesDriverManipActivity.EXTRA_DRIVERID;
 
     private DriverInfoWrapper mDriver;
     private int driverId;
@@ -41,10 +41,10 @@ public class RidesDriverManipFragment extends Fragment {
     public RidesDriverManipFragment() {
     }
 
-    public static RidesDriverManipFragment newInstance(int inDriver){
-        RidesDriverManipFragment rFrag=new RidesDriverManipFragment();
-        Bundle args=new Bundle();
-        args.putInt(EXTRA_DRIVERID,inDriver);
+    public static RidesDriverManipFragment newInstance(int inDriver) {
+        RidesDriverManipFragment rFrag = new RidesDriverManipFragment();
+        Bundle args = new Bundle();
+        args.putInt(EXTRA_DRIVERID, inDriver);
         rFrag.setArguments(args);
         return rFrag;
     }
@@ -52,17 +52,17 @@ public class RidesDriverManipFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle args=getArguments();
-        driverId= args.getInt(EXTRA_DRIVERID);
+        Bundle args = getArguments();
+        driverId = args.getInt(EXTRA_DRIVERID);
     }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView= inflater.inflate(R.layout.fragment_rides_driver_manip, container, false);
-        this.rootView=rootView;
-        passengersView=(ListView) rootView.findViewById(R.id.Passengers);
-        this.mAdapter=new InfoWrapperTextWithButtonAdapter(getActivity()) {
+        View rootView = inflater.inflate(R.layout.fragment_rides_driver_manip, container, false);
+        this.rootView = rootView;
+        passengersView = (ListView) rootView.findViewById(R.id.Passengers);
+        this.mAdapter = new InfoWrapperTextWithButtonAdapter(getActivity()) {
             @Override
             public String getButtonText() {
                 return "Delete";
@@ -70,16 +70,16 @@ public class RidesDriverManipFragment extends Fragment {
 
             @Override
             public void onButton(InfoWrapper info) {
-                if(deleteTask != null) deleteTask.cancel(true);
-                deleteTask=new DeleteFromCarTask();
+                if (deleteTask != null) deleteTask.cancel(true);
+                deleteTask = new DeleteFromCarTask();
                 deleteTask.execute(info);
                 refreshData();
             }
 
             @Override
             public void onText(InfoWrapper info) {
-                ContactInfoWrapper aleph= (ContactInfoWrapper) info;
-                Toast toast=Toast.makeText(getActivity(), aleph.getAddress(), Toast.LENGTH_SHORT);
+                ContactInfoWrapper aleph = (ContactInfoWrapper) info;
+                Toast toast = Toast.makeText(getActivity(), aleph.getAddress(), Toast.LENGTH_SHORT);
                 toast.show();
             }
         };
@@ -107,21 +107,21 @@ public class RidesDriverManipFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private void refreshData(){
-        popTask= new PopulateViewTask(this.driverId,this.rootView, this.mAdapter);
+    private void refreshData() {
+        popTask = new PopulateViewTask(this.driverId, this.rootView, this.mAdapter);
         popTask.execute();
     }
 
-    private class PopulateViewTask extends AsyncTask<Void,Void,ContactInfoWrapper[]>{
+    private class PopulateViewTask extends AsyncTask<Void, Void, ContactInfoWrapper[]> {
 
         int driverId;
         View view;
         ArrayAdapter mAdapter;
 
-        public PopulateViewTask(int id, View rootView, ArrayAdapter adapter){
-            this.driverId=id;
-            this.view=rootView;
-            this.mAdapter=adapter;
+        public PopulateViewTask(int id, View rootView, ArrayAdapter adapter) {
+            this.driverId = id;
+            this.view = rootView;
+            this.mAdapter = adapter;
         }
 
         @Override
@@ -131,7 +131,7 @@ public class RidesDriverManipFragment extends Fragment {
 
         @Override
         protected ContactInfoWrapper[] doInBackground(Void... params) {
-            RidesDatabaseHandler handler=new RidesDatabaseHandler(getActivity());
+            RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
             return handler.getAlephsInCar(driverId);
         }
 
@@ -142,9 +142,9 @@ public class RidesDriverManipFragment extends Fragment {
                 return; //In case the calling activity is no longer attached
             }
             mAdapter.clear();
-            RidesDatabaseHandler handler=new RidesDatabaseHandler(getActivity());
-            mDriver= handler.getDriver(driverId);
-            ActionBar actionBar=getActivity().getActionBar();
+            RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
+            mDriver = handler.getDriver(driverId);
+            ActionBar actionBar = getActivity().getActionBar();
             actionBar.setTitle(mDriver.getName());
             ((TextView) view.findViewById(R.id.DriverName)).setText(mDriver.getName());
             ((TextView) view.findViewById(R.id.FreeSpots)).setText("" + mDriver.getFreeSpots());
@@ -152,12 +152,12 @@ public class RidesDriverManipFragment extends Fragment {
         }
     }
 
-    private class DeleteFromCarTask extends AsyncTask<InfoWrapper,Void,Void> {
+    private class DeleteFromCarTask extends AsyncTask<InfoWrapper, Void, Void> {
 
         @Override
-        protected Void doInBackground(InfoWrapper ... params) {
-            RidesDatabaseHandler handler=new RidesDatabaseHandler(getActivity());
-            for (InfoWrapper aleph:params) {
+        protected Void doInBackground(InfoWrapper... params) {
+            RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
+            for (InfoWrapper aleph : params) {
                 handler.removeAlephFromCar(aleph.getId());
             }
             return null;

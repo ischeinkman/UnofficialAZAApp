@@ -7,7 +7,7 @@ import java.util.Calendar;
 /**
  * Created by Ilan Scheinkman on 1/12/15.
  */
-public class ContactInfoWrapper implements InfoWrapper{
+public class ContactInfoWrapper implements InfoWrapper {
     private String name;
     private String email;
     private String school;
@@ -22,18 +22,19 @@ public class ContactInfoWrapper implements InfoWrapper{
     private double latitude;
     private double longitude;
 
-    public ContactInfoWrapper(){
+    public ContactInfoWrapper() {
         this.setPresent(false);
         this.setArea(-1);
     }
 
     /**
      * Returns the year string (Freshman, Sophomore, etc) from a given grade;
+     *
      * @param grade the grade integer;
      * @return the year string
      */
-    private static String yearStringFromGrade(int grade){
-        switch (grade){
+    private static String yearStringFromGrade(int grade) {
+        switch (grade) {
             case -1:
                 return "Advisor";
             case 6:
@@ -58,48 +59,49 @@ public class ContactInfoWrapper implements InfoWrapper{
 
     /**
      * Gets a graduation year from a given grade;
+     *
      * @param grade the grade integer
      * @return the graduation year;
      */
 
-    private static int gradYearFromGrade(int grade){
-        Calendar c=Calendar.getInstance();
-        int year=c.get(Calendar.YEAR);
-        int month=c.get(Calendar.MONTH);
-        if(month>8) year--;
-        return year+(12-grade);
+    private static int gradYearFromGrade(int grade) {
+        Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        if (month > 8) year--;
+        return year + (12 - grade);
     }
 
-    private static int gradeFromGradYear(int gradYear){
-        Calendar c=Calendar.getInstance();
-        int year=c.get(Calendar.YEAR);
-        int month=c.get(Calendar.MONTH);
-        if(month>8) year++;
-        return 12-(gradYear-year);
+    private static int gradeFromGradYear(int gradYear) {
+        Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        if (month > 8) year++;
+        return 12 - (gradYear - year);
     }
 
     public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
     public void setLatitude(String latitude) {
         this.latitude = Double.valueOf(latitude);
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 
     public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
     public void setLongitude(String longitude) {
         this.longitude = Double.valueOf(longitude);
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     public boolean isPresent() {
@@ -110,12 +112,12 @@ public class ContactInfoWrapper implements InfoWrapper{
         this.present = present;
     }
 
-    public int getArea(){
+    public int getArea() {
         return area;
     }
 
-    public void setArea(int inArea){
-        if(this.area==-1)this.area=inArea;
+    public void setArea(int inArea) {
+        if (this.area == -1) this.area = inArea;
     }
 
     public String getName() {
@@ -123,7 +125,7 @@ public class ContactInfoWrapper implements InfoWrapper{
     }
 
     public void setName(String name) {
-        if(this.name==null) this.name = name;
+        if (this.name == null) this.name = name;
     }
 
     public String getEmail() {
@@ -131,7 +133,7 @@ public class ContactInfoWrapper implements InfoWrapper{
     }
 
     public void setEmail(String email) {
-        if(this.email==null) this.email = email;
+        if (this.email == null) this.email = email;
     }
 
     public String getSchool() {
@@ -139,7 +141,7 @@ public class ContactInfoWrapper implements InfoWrapper{
     }
 
     public void setSchool(String school) {
-        if(this.school==null)this.school = school;
+        if (this.school == null) this.school = school;
     }
 
     public String getPhoneNumber() {
@@ -147,7 +149,7 @@ public class ContactInfoWrapper implements InfoWrapper{
     }
 
     public void setPhoneNumber(String phoneNumber) {
-        if(this.phoneNumber==null)this.phoneNumber = phoneNumber;
+        if (this.phoneNumber == null) this.phoneNumber = phoneNumber;
     }
 
     public String getAddress() {
@@ -155,7 +157,7 @@ public class ContactInfoWrapper implements InfoWrapper{
     }
 
     public void setAddress(String address) {
-        if(this.address==null) this.address = address;
+        if (this.address == null) this.address = address;
     }
 
     public String getGradYear() {
@@ -164,20 +166,21 @@ public class ContactInfoWrapper implements InfoWrapper{
 
     /**
      * Sets graduation year, year string, and grade from graduation year
+     *
      * @param gradYear the graduation year to calculate from
      */
     public void setGradYear(String gradYear) {
-        if(this.gradYear==null) {
+        if (this.gradYear == null) {
             this.gradYear = gradYear;
             try {
-                int gYear=Integer.parseInt(gradYear);
-                this.grade=gradeFromGradYear(gYear);
-            } catch (NumberFormatException e){
-                if (gradYear.equals("Advisor")){
-                    grade=-1;
+                int gYear = Integer.parseInt(gradYear);
+                this.grade = gradeFromGradYear(gYear);
+            } catch (NumberFormatException e) {
+                if (gradYear.equals("Advisor")) {
+                    grade = -1;
                 }
             }
-            this.year=yearStringFromGrade(grade);
+            this.year = yearStringFromGrade(grade);
         }
     }
 
@@ -187,13 +190,14 @@ public class ContactInfoWrapper implements InfoWrapper{
 
     /**
      * Sets graduation year, year string, and grade from grade integer
+     *
      * @param grade the grade to calculate from
      */
     public void setGrade(int grade) {
-        if(this.grade==0){
+        if (this.grade == 0) {
             this.grade = grade;
-            this.gradYear=""+gradYearFromGrade(grade);
-            this.year=yearStringFromGrade(grade);
+            this.gradYear = "" + gradYearFromGrade(grade);
+            this.year = yearStringFromGrade(grade);
         }
     }
 
@@ -201,25 +205,27 @@ public class ContactInfoWrapper implements InfoWrapper{
         return year;
     }
 
-    public int getId(){
+    public int getId() {
         return idNum;
     }
-    public void setId(int inputId){
-        this.idNum=inputId;
+
+    public void setId(int inputId) {
+        this.idNum = inputId;
     }
 
     @Override
-    public boolean equals(Object inObj){
-        if (inObj instanceof ContactInfoWrapper){
-            if(((ContactInfoWrapper) inObj).getName().equals(this.getName())){
+    public boolean equals(Object inObj) {
+        if (inObj instanceof ContactInfoWrapper) {
+            if (((ContactInfoWrapper) inObj).getName().equals(this.getName())) {
                 return true;
             }
         }
         return false;
     }
 
-    @Override public int hashCode(){
-        return idNum*name.hashCode()+idNum;
+    @Override
+    public int hashCode() {
+        return idNum * name.hashCode() + idNum;
     }
 }
         

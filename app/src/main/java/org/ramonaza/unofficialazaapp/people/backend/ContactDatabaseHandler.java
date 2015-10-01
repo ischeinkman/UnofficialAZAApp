@@ -16,6 +16,7 @@ public class ContactDatabaseHandler {
 
     /**
      * Creates a handler based on a context.
+     *
      * @param context the context to retrieve the database from
      */
     public ContactDatabaseHandler(Context context) {
@@ -25,6 +26,7 @@ public class ContactDatabaseHandler {
 
     /**
      * Creates a handler based on a preexisting database.
+     *
      * @param db the database to use
      */
     public ContactDatabaseHandler(SQLiteDatabase db) {
@@ -33,6 +35,7 @@ public class ContactDatabaseHandler {
 
     /**
      * Retrieve the ContactInfoWrapper objects from raw cursor data.
+     *
      * @param queryResults the cursor to read from
      * @return the retrieved contacts
      */
@@ -75,6 +78,7 @@ public class ContactDatabaseHandler {
 
     /**
      * Adds a contact to the database.
+     *
      * @param toAdd the contact to add
      * @throws ContactCSVReadError
      */
@@ -96,6 +100,7 @@ public class ContactDatabaseHandler {
 
     /**
      * Updates a preexisting contact in the database.
+     *
      * @param toUpdate the contact to update
      * @throws ContactCSVReadError
      */
@@ -117,6 +122,7 @@ public class ContactDatabaseHandler {
 
     /**
      * Delete a contact by its ID.
+     *
      * @param toDelete the ID of the contact to delete
      */
     public void deleteContact(int toDelete) {
@@ -128,33 +134,36 @@ public class ContactDatabaseHandler {
 
     /**
      * Delete multiple contacts.
+     *
      * @param whereClauses an SQL string detailing the where clause using android's native format
-     * @param whereArgs an array of arguements for the where clauses
+     * @param whereArgs    an array of arguements for the where clauses
      */
-    public void deleteContacts(@Nullable String whereClauses, @Nullable String[] whereArgs){
+    public void deleteContacts(@Nullable String whereClauses, @Nullable String[] whereArgs) {
         db.delete(ContactDatabaseContract.ContactListTable.TABLE_NAME, whereClauses, whereArgs);
     }
 
     /**
      * Get a contact by its ID.
+     *
      * @param id the ID of the contact
      * @return the retrieved contact
      */
-    public ContactInfoWrapper getContact(int id){
-        String query=String.format("SELECT * FROM %s WHERE %s=%d LIMIT 1",
+    public ContactInfoWrapper getContact(int id) {
+        String query = String.format("SELECT * FROM %s WHERE %s=%d LIMIT 1",
                 ContactDatabaseContract.ContactListTable.TABLE_NAME,
                 ContactDatabaseContract.ContactListTable._ID,
                 id
-                );
-        Cursor cursor=db.rawQuery(query, null);
-        ContactInfoWrapper[] contactArray=getContactsFromCursor(cursor);
+        );
+        Cursor cursor = db.rawQuery(query, null);
+        ContactInfoWrapper[] contactArray = getContactsFromCursor(cursor);
         return contactArray[0];
     }
 
     /**
      * Update a certain field on a group of contacts.
-     * @param field the field to update
-     * @param value the value to update to
+     *
+     * @param field    the field to update
+     * @param value    the value to update to
      * @param toUpdate the contacts to update
      */
     public void updateField(String field, String value, ContactInfoWrapper[] toUpdate) {
@@ -171,8 +180,9 @@ public class ContactDatabaseHandler {
 
     /**
      * Update a certain field on a group of contacts by their IDs.
-     * @param field the field to update
-     * @param value the value to update to
+     *
+     * @param field    the field to update
+     * @param value    the value to update to
      * @param toUpdate an array containing the IDs of the contacts to update
      */
     public void updateFieldByIDs(String field, String value, int[] toUpdate) {
@@ -189,8 +199,9 @@ public class ContactDatabaseHandler {
 
     /**
      * Retrieves contacts from the database.
+     *
      * @param whereclauses a string array containing raw SQL where clauses
-     * @param orderBy an SQL string dictating the order to return the contacts in
+     * @param orderBy      an SQL string dictating the order to return the contacts in
      * @return the retrieved contacts
      */
     public ContactInfoWrapper[] getContacts(@Nullable String[] whereclauses, @Nullable String orderBy) {

@@ -28,6 +28,10 @@ import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesDriverManip
 public class DriversFragment extends InfoWrapperTextWithButtonFragment {
 
 
+    public DriversFragment() {
+        // Required empty public constructor
+    }
+
     public static DriversFragment newInstance() {
         DriversFragment fragment = new DriversFragment();
         Bundle args = new Bundle();
@@ -35,17 +39,12 @@ public class DriversFragment extends InfoWrapperTextWithButtonFragment {
         return fragment;
     }
 
-    public DriversFragment() {
-        // Required empty public constructor
-    }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mLayoutId = R.layout.fragment_rides_drivers;
         View rootView = super.onCreateView(inflater, container, savedInstanceState); //Retrieve the parent's view to manipulate
-        Button presetButton= (Button) rootView.findViewById(R.id.AddPresetDriverButton);
+        Button presetButton = (Button) rootView.findViewById(R.id.AddPresetDriverButton);
         presetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,23 +84,23 @@ public class DriversFragment extends InfoWrapperTextWithButtonFragment {
 
     @Override
     public InfoWrapper[] generateInfo() {
-        RidesDatabaseHandler handler=new RidesDatabaseHandler(getActivity());
-        return handler.getDrivers(null,ContactDatabaseContract.DriverListTable.COLUMN_NAME+" ASC");
+        RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
+        return handler.getDrivers(null, ContactDatabaseContract.DriverListTable.COLUMN_NAME + " ASC");
     }
 
 
-    public class DeleteCar extends AsyncTask<Integer, Void, Void>{
+    public class DeleteCar extends AsyncTask<Integer, Void, Void> {
 
         private Context context;
 
-        public DeleteCar(Context context){
-            this.context=context;
+        public DeleteCar(Context context) {
+            this.context = context;
         }
 
         @Override
         protected Void doInBackground(Integer... params) {
             RidesDatabaseHandler handler = new RidesDatabaseHandler(context);
-            for(int id: params){
+            for (int id : params) {
                 handler.deleteDriver(id);
             }
             return null;

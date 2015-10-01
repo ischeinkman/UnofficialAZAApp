@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by ilanscheinkman on 3/14/15.
  */
-public class DriverInfoWrapper implements InfoWrapper{
+public class DriverInfoWrapper implements InfoWrapper {
     private int spots;
     private String name;
     private int area;
@@ -19,8 +19,8 @@ public class DriverInfoWrapper implements InfoWrapper{
     private int id;
     private List<ContactInfoWrapper> alephsInCar;
 
-    public DriverInfoWrapper(){
-        this.alephsInCar=new ArrayList<ContactInfoWrapper>(spots+1);
+    public DriverInfoWrapper() {
+        this.alephsInCar = new ArrayList<ContactInfoWrapper>(spots + 1);
     }
 
     public double getLatitude() {
@@ -28,7 +28,7 @@ public class DriverInfoWrapper implements InfoWrapper{
     }
 
     public void setLatitude(String latitude) {
-            this.latitude=Double.valueOf(latitude);
+        this.latitude = Double.valueOf(latitude);
     }
 
     public double getLongitude() {
@@ -47,8 +47,8 @@ public class DriverInfoWrapper implements InfoWrapper{
         this.address = address;
     }
 
-    public int getFreeSpots(){
-        return spots-alephsInCar.size();
+    public int getFreeSpots() {
+        return spots - alephsInCar.size();
     }
 
     public int getSpots() {
@@ -82,19 +82,22 @@ public class DriverInfoWrapper implements InfoWrapper{
     public void setId(int id) {
         this.id = id;
     }
-    public void addAlephToCar(ContactInfoWrapper aleph){
+
+    public void addAlephToCar(ContactInfoWrapper aleph) {
         alephsInCar.add(aleph);
     }
-    public void removeAlephFromCar(ContactInfoWrapper aleph){
+
+    public void removeAlephFromCar(ContactInfoWrapper aleph) {
         alephsInCar.remove(aleph);
     }
-    public List<ContactInfoWrapper> getAlephsInCar(){
+
+    public List<ContactInfoWrapper> getAlephsInCar() {
         return alephsInCar;
     }
 
 
     @Override
     public boolean equals(Object o) {
-        return (o instanceof DriverInfoWrapper &&((DriverInfoWrapper) o).getName().equals(getName()));
+        return (o instanceof DriverInfoWrapper && ((DriverInfoWrapper) o).getName().equals(getName()));
     }
 }

@@ -29,7 +29,7 @@ public abstract class InfoWrapperCheckBoxesFragment extends InfoWrapperListFragm
 
     @Override
     public ArrayAdapter getAdapter() {
-        this.mAdapter=  new InfoWrapperCheckboxListAdapter(getActivity());
+        this.mAdapter = new InfoWrapperCheckboxListAdapter(getActivity());
         return mAdapter;
     }
 
@@ -56,7 +56,7 @@ public abstract class InfoWrapperCheckBoxesFragment extends InfoWrapperListFragm
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_checkbox_fragment,menu);
+        inflater.inflate(R.menu.menu_checkbox_fragment, menu);
     }
 
 

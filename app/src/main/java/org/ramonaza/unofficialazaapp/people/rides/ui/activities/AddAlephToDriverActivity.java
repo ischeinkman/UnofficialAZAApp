@@ -10,16 +10,16 @@ import org.ramonaza.unofficialazaapp.people.rides.ui.fragments.AddAlephToDriverF
 
 public class AddAlephToDriverActivity extends BaseActivity {
 
-    public static final String EXTRA_DRIVERID=RidesDriverManipActivity.EXTRA_DRIVERID;
+    public static final String EXTRA_DRIVERID = RidesDriverManipActivity.EXTRA_DRIVERID;
     private int driverId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent=getIntent();
-        driverId=intent.getIntExtra(EXTRA_DRIVERID,0);
+        Intent intent = getIntent();
+        driverId = intent.getIntExtra(EXTRA_DRIVERID, 0);
         setContentView(R.layout.activity_single_fragment);
-        FragmentManager fragmentManager=getFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.container, AddAlephToDriverFragment.newInstance(driverId)).commit();
     }
 }

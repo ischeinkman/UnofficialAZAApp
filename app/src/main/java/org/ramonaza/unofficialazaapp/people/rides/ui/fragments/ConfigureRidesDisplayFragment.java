@@ -20,6 +20,10 @@ import org.ramonaza.unofficialazaapp.people.rides.ui.activities.DisplayRidesActi
  */
 public class ConfigureRidesDisplayFragment extends Fragment {
 
+    public ConfigureRidesDisplayFragment() {
+        // Required empty public constructor
+    }
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -33,10 +37,6 @@ public class ConfigureRidesDisplayFragment extends Fragment {
         return fragment;
     }
 
-    public ConfigureRidesDisplayFragment() {
-        // Required empty public constructor
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,16 +46,16 @@ public class ConfigureRidesDisplayFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View rootView= inflater.inflate(R.layout.fragment_configure_rides_display, container, false);
-        Button submitButton=(Button) rootView.findViewById(R.id.SubmitButton);
+        final View rootView = inflater.inflate(R.layout.fragment_configure_rides_display, container, false);
+        Button submitButton = (Button) rootView.findViewById(R.id.SubmitButton);
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Spinner alSpinner=(Spinner) rootView.findViewById(R.id.AlgorithmSelection);
-                int algorithm=alSpinner.getSelectedItemPosition()-1;
-                CheckBox retainBox=(CheckBox) rootView.findViewById(R.id.RetainRides);
-                boolean retain=retainBox.isChecked();
-                Intent displayIntent=new Intent(getActivity(), DisplayRidesActivity.class);
+                Spinner alSpinner = (Spinner) rootView.findViewById(R.id.AlgorithmSelection);
+                int algorithm = alSpinner.getSelectedItemPosition() - 1;
+                CheckBox retainBox = (CheckBox) rootView.findViewById(R.id.RetainRides);
+                boolean retain = retainBox.isChecked();
+                Intent displayIntent = new Intent(getActivity(), DisplayRidesActivity.class);
                 displayIntent.putExtra(DisplayRidesActivity.EXTRA_ALGORITHM, algorithm);
                 displayIntent.putExtra(DisplayRidesActivity.EXTRA_RETAIN_RIDES, retain);
                 startActivity(displayIntent);

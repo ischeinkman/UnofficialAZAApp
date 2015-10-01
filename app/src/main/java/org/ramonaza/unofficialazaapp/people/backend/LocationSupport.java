@@ -13,35 +13,37 @@ public class LocationSupport {
 
     /**
      * Gets latitude and longitude of an address.
+     *
      * @param address the address to get the coordinates from
      * @param context the context to use to retrieve the coordinates
      * @return the coordinates for this address
      */
-    public static double[] getCoordsFromAddress(String address, Context context){
-        if(!Geocoder.isPresent()) return null;
-        Geocoder geocoder=new Geocoder(context);
-        Address location= null;
+    public static double[] getCoordsFromAddress(String address, Context context) {
+        if (!Geocoder.isPresent()) return null;
+        Geocoder geocoder = new Geocoder(context);
+        Address location = null;
         try {
             location = geocoder.getFromLocationName(address, 1).get(0);
         } catch (Exception e) {
             return null;
         }
         return new double[]{
-          location.getLatitude(),
-          location.getLongitude()
+                location.getLatitude(),
+                location.getLongitude()
         };
     }
 
     /**
      * Debug method to recalculate latitudes and longitudes for all contacts.
+     *
      * @param context the context to retrieve contacts from and get coordinates
      */
-    public static void recalculateLatLong(Context context){
-        ContactDatabaseHandler handler= ChapterPackHandlerSupport.getContactHandler(context);
+    public static void recalculateLatLong(Context context) {
+        ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(context);
         ContactInfoWrapper[] toCalc = handler.getContacts(null, null);
-        for(ContactInfoWrapper aleph:toCalc){
-            double[] coords=getCoordsFromAddress(aleph.getAddress(), context);
-            if(coords == null) continue;
+        for (ContactInfoWrapper aleph : toCalc) {
+            double[] coords = getCoordsFromAddress(aleph.getAddress(), context);
+            if (coords == null) continue;
             aleph.setLatitude(coords[0]);
             aleph.setLongitude(coords[1]);
             try {

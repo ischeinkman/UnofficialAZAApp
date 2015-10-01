@@ -17,22 +17,23 @@ import java.util.Arrays;
 public class AddAlephToDriverFragment extends InfoWrapperCheckBoxesFragment {
 
 
-    public static final String EXTRA_DRIVERID= RidesDriverManipActivity.EXTRA_DRIVERID;
+    public static final String EXTRA_DRIVERID = RidesDriverManipActivity.EXTRA_DRIVERID;
     private int driverId;
 
-    public static AddAlephToDriverFragment newInstance(int driverId){
-        AddAlephToDriverFragment fragment=new AddAlephToDriverFragment();
-        Bundle args=new Bundle();
+    public AddAlephToDriverFragment() {
+    }
+
+    public static AddAlephToDriverFragment newInstance(int driverId) {
+        AddAlephToDriverFragment fragment = new AddAlephToDriverFragment();
+        Bundle args = new Bundle();
         args.putInt(EXTRA_DRIVERID, driverId);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public AddAlephToDriverFragment(){}
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        this.driverId=getArguments().getInt(EXTRA_DRIVERID);
+        this.driverId = getArguments().getInt(EXTRA_DRIVERID);
         super.onCreate(savedInstanceState);
     }
 
@@ -43,20 +44,20 @@ public class AddAlephToDriverFragment extends InfoWrapperCheckBoxesFragment {
 
     @Override
     public InfoWrapper[] generateInfo() {
-        ContactDatabaseHandler dbhandler= ChapterPackHandlerSupport.getContactHandler(getActivity());
+        ContactDatabaseHandler dbhandler = ChapterPackHandlerSupport.getContactHandler(getActivity());
         return dbhandler.getContacts(new String[]{
                 ContactDatabaseContract.ContactListTable.COLUMN_PRESENT + "=1",
                 ContactDatabaseContract.ContactListTable._ID + " NOT IN (" + "SELECT " + ContactDatabaseContract.RidesListTable.COLUMN_ALEPH + " FROM " + ContactDatabaseContract.RidesListTable.TABLE_NAME + ")"
-        }, ContactDatabaseContract.ContactListTable.COLUMN_NAME+" ASC");
+        }, ContactDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
     }
 
-    private class SubmitFromList extends AsyncTask<InfoWrapper,Void,Void> {
+    private class SubmitFromList extends AsyncTask<InfoWrapper, Void, Void> {
 
         @Override
-        protected Void doInBackground(InfoWrapper ... params) {
-            RidesDatabaseHandler rideshandler=new RidesDatabaseHandler(getActivity());
-            ContactInfoWrapper[] alephs= Arrays.copyOf(params,params.length,ContactInfoWrapper[].class);
-            rideshandler.addAlephsToCar(driverId,alephs);
+        protected Void doInBackground(InfoWrapper... params) {
+            RidesDatabaseHandler rideshandler = new RidesDatabaseHandler(getActivity());
+            ContactInfoWrapper[] alephs = Arrays.copyOf(params, params.length, ContactInfoWrapper[].class);
+            rideshandler.addAlephsToCar(driverId, alephs);
             return null;
         }
 

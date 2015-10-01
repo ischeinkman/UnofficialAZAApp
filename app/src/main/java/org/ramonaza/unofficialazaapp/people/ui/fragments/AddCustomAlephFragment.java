@@ -31,8 +31,7 @@ import java.util.Set;
 public class AddCustomAlephFragment extends Fragment {
 
     //The email to send new aleph information to
-    private static final String[] UPDATE_EMAIL={"ramon195aza@gmail.com"};
-
+    private static final String[] UPDATE_EMAIL = {"ramon195aza@gmail.com"};
 
 
     public AddCustomAlephFragment() {
@@ -61,12 +60,11 @@ public class AddCustomAlephFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView= inflater.inflate(R.layout.fragment_add_custom_aleph, container, false);
-        Button submitButton=(Button) rootView.findViewById(R.id.SubmitButton);
-        submitButton.setOnClickListener(new SubmitListener(getActivity(),rootView));
+        View rootView = inflater.inflate(R.layout.fragment_add_custom_aleph, container, false);
+        Button submitButton = (Button) rootView.findViewById(R.id.SubmitButton);
+        submitButton.setOnClickListener(new SubmitListener(getActivity(), rootView));
         return rootView;
     }
-
 
 
     @Override
@@ -80,38 +78,38 @@ public class AddCustomAlephFragment extends Fragment {
         super.onDetach();
     }
 
-    public class SubmitListener implements View.OnClickListener{
+    public class SubmitListener implements View.OnClickListener {
         Context context;
         ContactInfoWrapper mContact;
         View myView;
 
-        public SubmitListener(Context incontext, View inView){
-            this.myView=inView;
-            this.context=incontext;
-            this.mContact=new ContactInfoWrapper();
+        public SubmitListener(Context incontext, View inView) {
+            this.myView = inView;
+            this.context = incontext;
+            this.mContact = new ContactInfoWrapper();
         }
 
         @Override
         public void onClick(View v) {
-            ContactDatabaseHandler handler= ChapterPackHandlerSupport.getContactHandler(context);
+            ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(context);
 
-            EditText nameField=(EditText) myView.findViewById(R.id.AddAlephName);
-            EditText addressField=(EditText) myView.findViewById(R.id.AddAlephAddress);
-            EditText phoneField=(EditText) myView.findViewById(R.id.AddAlephPhone);
-            EditText schoolField=(EditText) myView.findViewById(R.id.AddAlephSchool);
-            EditText emailField=(EditText) myView.findViewById(R.id.AddAlephEmail);
-            EditText gradeField= (EditText) myView.findViewById(R.id.AddAlephGrade);
-            CheckBox globalUpdate=(CheckBox) myView.findViewById(R.id.AddAlephReqUpdate);
+            EditText nameField = (EditText) myView.findViewById(R.id.AddAlephName);
+            EditText addressField = (EditText) myView.findViewById(R.id.AddAlephAddress);
+            EditText phoneField = (EditText) myView.findViewById(R.id.AddAlephPhone);
+            EditText schoolField = (EditText) myView.findViewById(R.id.AddAlephSchool);
+            EditText emailField = (EditText) myView.findViewById(R.id.AddAlephEmail);
+            EditText gradeField = (EditText) myView.findViewById(R.id.AddAlephGrade);
+            CheckBox globalUpdate = (CheckBox) myView.findViewById(R.id.AddAlephReqUpdate);
 
-            String nameVal=nameField.getText().toString();
-            String addressVal=addressField.getText().toString();
-            String phoneVal=phoneField.getText().toString();
-            String schoolVal=schoolField.getText().toString();
-            String emailVal=emailField.getText().toString();
-            String gradeVal=gradeField.getText().toString();
-            Set<String> valArray=new HashSet<String>(Arrays.asList(nameVal,addressVal,phoneVal,schoolVal,emailVal,gradeVal));
-            if(valArray.contains(null)|| valArray.contains("")){
-                Toast.makeText(context,R.string.error_blank_responce,Toast.LENGTH_SHORT).show();
+            String nameVal = nameField.getText().toString();
+            String addressVal = addressField.getText().toString();
+            String phoneVal = phoneField.getText().toString();
+            String schoolVal = schoolField.getText().toString();
+            String emailVal = emailField.getText().toString();
+            String gradeVal = gradeField.getText().toString();
+            Set<String> valArray = new HashSet<String>(Arrays.asList(nameVal, addressVal, phoneVal, schoolVal, emailVal, gradeVal));
+            if (valArray.contains(null) || valArray.contains("")) {
+                Toast.makeText(context, R.string.error_blank_responce, Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -120,11 +118,11 @@ public class AddCustomAlephFragment extends Fragment {
             mContact.setPhoneNumber(phoneVal);
             mContact.setSchool(schoolVal);
             mContact.setEmail(emailVal);
-            int grade=Integer.parseInt(gradeVal);
+            int grade = Integer.parseInt(gradeVal);
             mContact.setGrade(grade);
             mContact.setPresent(true);
-            double[] coords= LocationSupport.getCoordsFromAddress(mContact.getAddress(), context);
-            if(coords != null) {
+            double[] coords = LocationSupport.getCoordsFromAddress(mContact.getAddress(), context);
+            if (coords != null) {
                 mContact.setLatitude(coords[0]);
                 mContact.setLongitude(coords[1]);
             }
@@ -134,12 +132,12 @@ public class AddCustomAlephFragment extends Fragment {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            if(globalUpdate.isChecked()){
-                Intent updateEmailIntent=new Intent(Intent.ACTION_SEND);
+            if (globalUpdate.isChecked()) {
+                Intent updateEmailIntent = new Intent(Intent.ACTION_SEND);
                 updateEmailIntent.setType("text/html");
                 updateEmailIntent.putExtra(Intent.EXTRA_EMAIL, UPDATE_EMAIL);
                 updateEmailIntent.putExtra(Intent.EXTRA_SUBJECT, "NEW CONTACT:" + mContact.getName());
-                String message=String.format("Name: %s\nSchool: %s\nGraduation year: %s\nAddress: %s\nEmail: %s\n Phone: %s\n",mContact.getName(),mContact.getSchool(),mContact.getGradYear(),mContact.getAddress(),mContact.getEmail(),mContact.getPhoneNumber());
+                String message = String.format("Name: %s\nSchool: %s\nGraduation year: %s\nAddress: %s\nEmail: %s\n Phone: %s\n", mContact.getName(), mContact.getSchool(), mContact.getGradYear(), mContact.getAddress(), mContact.getEmail(), mContact.getPhoneNumber());
                 updateEmailIntent.putExtra(Intent.EXTRA_TEXT, message);
                 startActivity(Intent.createChooser(updateEmailIntent, "Request update using..."));
             }

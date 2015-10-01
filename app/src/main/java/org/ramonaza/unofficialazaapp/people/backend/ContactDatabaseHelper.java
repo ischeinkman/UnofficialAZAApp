@@ -12,15 +12,15 @@ import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
  * All database interactions should be handled by a separate handler.
  * Created by ilanscheinkman on 3/12/15.
  */
-public class ContactDatabaseHelper extends SQLiteOpenHelper{
+public class ContactDatabaseHelper extends SQLiteOpenHelper {
 
-    public static final String DATABASE_NAME="ContactDriverDatabase";
-    public static final int DATABASE_VERSION=4;
+    public static final String DATABASE_NAME = "ContactDriverDatabase";
+    public static final int DATABASE_VERSION = 4;
     private Context context;
 
-    public ContactDatabaseHelper(Context context){
+    public ContactDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        this.context=context;
+        this.context = context;
     }
 
     @Override
@@ -34,7 +34,8 @@ public class ContactDatabaseHelper extends SQLiteOpenHelper{
             contactCSVReadError.printStackTrace();
         }
     }
-    public void onDelete(SQLiteDatabase db){
+
+    public void onDelete(SQLiteDatabase db) {
         db.execSQL(ContactDatabaseContract.DriverListTable.DELETE_TABLE);
         db.execSQL(ContactDatabaseContract.ContactListTable.DELETE_TABLE);
         db.execSQL(ContactDatabaseContract.RidesListTable.DELETE_TABLE);
@@ -52,16 +53,17 @@ public class ContactDatabaseHelper extends SQLiteOpenHelper{
             contactCSVReadError.printStackTrace();
         }
     }
-    public void genDatabaseFromCSV(SQLiteDatabase db) throws ContactCSVReadError{
+
+    public void genDatabaseFromCSV(SQLiteDatabase db) throws ContactCSVReadError {
         ChapterPackHandler c = ChapterPackHandlerSupport.getChapterPackHandler(context);
-        if(c != null) c.reLoadContactList(db);
+        if (c != null) c.reLoadContactList(db);
 
     }
 
-    
-    public class ContactCSVReadError extends Exception{
-        public ContactCSVReadError(String errorMessage, ContactInfoWrapper erroredAleph){
-            super(String.format("%s ON %s",errorMessage,erroredAleph));
+
+    public class ContactCSVReadError extends Exception {
+        public ContactCSVReadError(String errorMessage, ContactInfoWrapper erroredAleph) {
+            super(String.format("%s ON %s", errorMessage, erroredAleph));
 
         }
     }

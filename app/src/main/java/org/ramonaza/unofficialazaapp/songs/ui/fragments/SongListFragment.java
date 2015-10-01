@@ -17,8 +17,8 @@ import org.ramonaza.unofficialazaapp.songs.ui.activities.SongDataActivity;
 
 public class SongListFragment extends InfoWrapperTextListFragment {
 
-    public static final String EXTRA_CONTRUCTION_INFO="org.ramonaza.unofficialazaapp.CONSTRUCTION_INFO";
-    public static final String EXTRA_LAYER="org.ramonaza.unofficialazaapp.LAYER_NAME";
+    public static final String EXTRA_CONTRUCTION_INFO = "org.ramonaza.unofficialazaapp.CONSTRUCTION_INFO";
+    public static final String EXTRA_LAYER = "org.ramonaza.unofficialazaapp.LAYER_NAME";
 
     /**
      * The fragment argument representing the section number for this
@@ -51,8 +51,8 @@ public class SongListFragment extends InfoWrapperTextListFragment {
 
     @Override
     public void onButtonClick(InfoWrapper mWrapper) {
-        Intent intent=new Intent(getActivity(), SongDataActivity.class);
-        intent.putExtra(EXTRA_CONTRUCTION_INFO,mWrapper.getName());
+        Intent intent = new Intent(getActivity(), SongDataActivity.class);
+        intent.putExtra(EXTRA_CONTRUCTION_INFO, mWrapper.getName());
         startActivity(intent);
     }
 
@@ -60,7 +60,6 @@ public class SongListFragment extends InfoWrapperTextListFragment {
     public InfoWrapper[] generateInfo() {
         return SongInfoWrapperGenerator.allSongs(getActivity());
     }
-
 
 
 }

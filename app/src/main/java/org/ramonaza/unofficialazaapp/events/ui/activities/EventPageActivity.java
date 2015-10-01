@@ -16,8 +16,8 @@ public class EventPageActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_fragment);
-        Intent rIntent=getIntent();
-        String eventRss=rIntent.getStringExtra(EVENT_DATA);
+        Intent rIntent = getIntent();
+        String eventRss = rIntent.getStringExtra(EVENT_DATA);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
                     .add(R.id.container, GeneralEventFragment.newInstance(eventRss))

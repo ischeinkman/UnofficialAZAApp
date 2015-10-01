@@ -20,8 +20,7 @@ public class GeneralSongFragment extends Fragment {
 
     private SongInfoWrapper mySong;
 
-    public void setSong(SongInfoWrapper songInfoWrapper){
-        this.mySong=songInfoWrapper;
+    public GeneralSongFragment() {
     }
 
     public static GeneralSongFragment newInstance(SongInfoWrapper song) {
@@ -32,7 +31,8 @@ public class GeneralSongFragment extends Fragment {
         return fragment;
     }
 
-    public GeneralSongFragment() {
+    public void setSong(SongInfoWrapper songInfoWrapper) {
+        this.mySong = songInfoWrapper;
     }
 
     @Override

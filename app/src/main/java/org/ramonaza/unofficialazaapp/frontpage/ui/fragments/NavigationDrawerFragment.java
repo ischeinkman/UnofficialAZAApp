@@ -32,18 +32,16 @@ import org.ramonaza.unofficialazaapp.settings.ui.activities.SettingsActivity;
  */
 public class NavigationDrawerFragment extends Fragment {
 
-    private SharedPreferences sharedPref;
     /**
      * Remember the position of the selected item.
      */
     private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
-
     /**
      * Per the design guidelines, you should show the drawer on launch until the user manually
      * expands it. This shared preference tracks this.
      */
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
-
+    private SharedPreferences sharedPref;
     /**
      * A pointer to the current callbacks instance (the Activity).
      */
@@ -89,9 +87,9 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
-        String[] drawerlist=getDrawerTitles();
+        String[] drawerlist = getDrawerTitles();
 
         mDrawerListView.setAdapter(new ArrayAdapter<String>(
                 getActionBar().getThemedContext(),
@@ -113,7 +111,7 @@ public class NavigationDrawerFragment extends Fragment {
                 selectItem(position);
             }
         });
-        String[] drawerlist=getDrawerTitles();
+        String[] drawerlist = getDrawerTitles();
 
         mDrawerListView.setAdapter(new ArrayAdapter<String>(
                 getActionBar().getThemedContext(),
@@ -129,18 +127,17 @@ public class NavigationDrawerFragment extends Fragment {
         return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);
     }
 
-    public String[] getDrawerTitles(){
+    public String[] getDrawerTitles() {
         String[] drawerlist;
-        if (!sharedPref.getBoolean("rides",false)){
-            drawerlist=new String[]{
+        if (!sharedPref.getBoolean("rides", false)) {
+            drawerlist = new String[]{
                     getString(R.string.title_section1), //Strings n main/res/values/strings.xml
                     getString(R.string.title_section2),
                     getString(R.string.title_section4),
 
             };
-        }
-        else{
-            drawerlist=new String[]{
+        } else {
+            drawerlist = new String[]{
                     getString(R.string.title_section1), //Strings n main/res/values/strings.xml
                     getString(R.string.title_section2),
                     getString(R.string.title_section4),
@@ -284,7 +281,7 @@ public class NavigationDrawerFragment extends Fragment {
         }
 
         if (item.getItemId() == R.id.action_settings) {
-            Intent intent=new Intent(getActivity(), SettingsActivity.class);
+            Intent intent = new Intent(getActivity(), SettingsActivity.class);
             startActivity(intent);
             return true;
         }

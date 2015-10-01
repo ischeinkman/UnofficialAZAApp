@@ -10,14 +10,14 @@ import org.ramonaza.unofficialazaapp.people.rides.ui.fragments.AddCustomDriverFr
 
 public class AddCustomDriverActivity extends BaseActivity {
 
-    public static final String PRESET_CONTACT_ID="org.ramonaza.unofficialazaapp.CONTACT";
+    public static final String PRESET_CONTACT_ID = "org.ramonaza.unofficialazaapp.CONTACT";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_fragment);
-        Intent openingIntent=getIntent();
-        int presetID=openingIntent.getIntExtra(PRESET_CONTACT_ID, -1);
+        Intent openingIntent = getIntent();
+        int presetID = openingIntent.getIntExtra(PRESET_CONTACT_ID, -1);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
                     .add(R.id.container, AddCustomDriverFragment.newInstance(presetID))

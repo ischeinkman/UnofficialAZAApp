@@ -11,13 +11,13 @@ import org.ramonaza.unofficialazaapp.settings.ui.activities.SettingsActivity;
 /**
  * Created by ilanscheinkman on 5/9/15.
  */
-public abstract class BaseActivity  extends Activity{
+public abstract class BaseActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_settings:
-                Intent settingsIntent=new Intent(this,SettingsActivity.class);
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
                 startActivity(settingsIntent);
         }
         return super.onOptionsItemSelected(item);

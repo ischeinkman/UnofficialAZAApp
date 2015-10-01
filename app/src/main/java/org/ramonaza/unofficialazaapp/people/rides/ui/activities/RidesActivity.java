@@ -90,9 +90,9 @@ public class RidesActivity extends BaseActivity implements ActionBar.TabListener
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        switch (id){
+        switch (id) {
             case R.id.action_generate:
-                Intent ridesListIntent=new Intent(this,ConfigureRidesDisplayActivity.class);
+                Intent ridesListIntent = new Intent(this, ConfigureRidesDisplayActivity.class);
                 startActivity(ridesListIntent);
         }
 
@@ -129,7 +129,7 @@ public class RidesActivity extends BaseActivity implements ActionBar.TabListener
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
             //return PlaceholderFragment.newInstance(position + 1);
-            switch (position){
+            switch (position) {
                 case 0:
                     return AlephsFragment.newInstance();
                 case 1:
@@ -156,7 +156,6 @@ public class RidesActivity extends BaseActivity implements ActionBar.TabListener
             return null;
         }
     }
-
 
 
 }

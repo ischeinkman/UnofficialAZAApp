@@ -25,8 +25,8 @@ public class AddContactDriverFragment extends InfoWrapperTextListFragment {
 
     @Override
     public void onButtonClick(InfoWrapper mWrapper) {
-        ContactInfoWrapper aleph=(ContactInfoWrapper) mWrapper;
-        Intent intent=new Intent(getActivity(), AddCustomDriverActivity.class);
+        ContactInfoWrapper aleph = (ContactInfoWrapper) mWrapper;
+        Intent intent = new Intent(getActivity(), AddCustomDriverActivity.class);
         intent.putExtra(AddCustomDriverActivity.PRESET_CONTACT_ID, aleph.getId());
         startActivity(intent);
         getActivity().finish();
@@ -34,8 +34,8 @@ public class AddContactDriverFragment extends InfoWrapperTextListFragment {
 
     @Override
     public InfoWrapper[] generateInfo() {
-        ContactDatabaseHandler handler= ChapterPackHandlerSupport.getContactHandler(getActivity());
-        ContactInfoWrapper[] currentContacts= handler.getContacts(null, ContactDatabaseContract.ContactListTable.COLUMN_NAME+" ASC");
+        ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(getActivity());
+        ContactInfoWrapper[] currentContacts = handler.getContacts(null, ContactDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
         return currentContacts;
     }
 }

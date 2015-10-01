@@ -10,17 +10,18 @@ import org.ramonaza.unofficialazaapp.people.rides.ui.fragments.RidesDriverManipF
 
 public class RidesDriverManipActivity extends BaseActivity {
 
+    public static final String EXTRA_DRIVERID = "org.ramonaza.unofficialazaapp.DRIVER_ID";
     private int driverId;
-    public static final String EXTRA_DRIVERID="org.ramonaza.unofficialazaapp.DRIVER_ID";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_fragment);
-        Intent intent=getIntent();
-        driverId=intent.getIntExtra(EXTRA_DRIVERID,0);
-        if(driverId == 0 && savedInstanceState != null) driverId=savedInstanceState.getInt(EXTRA_DRIVERID, 0);
-        FragmentManager fragmentManager=getFragmentManager();
+        Intent intent = getIntent();
+        driverId = intent.getIntExtra(EXTRA_DRIVERID, 0);
+        if (driverId == 0 && savedInstanceState != null)
+            driverId = savedInstanceState.getInt(EXTRA_DRIVERID, 0);
+        FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.container, RidesDriverManipFragment.newInstance(driverId)).commit();
     }
 

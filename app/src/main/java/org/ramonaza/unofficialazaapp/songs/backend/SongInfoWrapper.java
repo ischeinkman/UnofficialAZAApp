@@ -10,14 +10,14 @@ public class SongInfoWrapper implements InfoWrapper {
     private String name;
     private String lyrics;
 
-    public SongInfoWrapper(String name,String lyrics){
-        this.name=name;
-        this.lyrics=lyrics;
+    public SongInfoWrapper(String name, String lyrics) {
+        this.name = name;
+        this.lyrics = lyrics;
     }
 
     @Override
     public int getId() {
-        return name.hashCode()*lyrics.hashCode();
+        return name.hashCode() * lyrics.hashCode();
     }
 
     @Override
@@ -25,7 +25,7 @@ public class SongInfoWrapper implements InfoWrapper {
         return name;
     }
 
-    public String getLyrics(){
+    public String getLyrics() {
         return lyrics;
     }
 

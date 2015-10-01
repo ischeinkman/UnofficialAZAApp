@@ -13,17 +13,17 @@ import org.ramonaza.unofficialazaapp.people.ui.fragments.AddCustomAlephFragment;
 public class AddCustomAlephActivity extends BaseActivity {
 
 
-    public static final String EXTRA_PARENT_ACTIVITY="parent activity";
+    public static final String EXTRA_PARENT_ACTIVITY = "parent activity";
     private Class<? extends Activity> parentActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_fragment);
-        ActionBar actionBar=getActionBar();
+        ActionBar actionBar = getActionBar();
         actionBar.setTitle("Add Aleph...");
-        Intent callingIntent=getIntent();
-        parentActivity=(Class<? extends Activity>) callingIntent.getSerializableExtra(EXTRA_PARENT_ACTIVITY);
+        Intent callingIntent = getIntent();
+        parentActivity = (Class<? extends Activity>) callingIntent.getSerializableExtra(EXTRA_PARENT_ACTIVITY);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
                     .add(R.id.container, AddCustomAlephFragment.newInstance())
@@ -37,9 +37,9 @@ public class AddCustomAlephActivity extends BaseActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
 
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
-                Intent backIntent=new Intent(this, parentActivity);
+                Intent backIntent = new Intent(this, parentActivity);
                 startActivity(backIntent);
         }
         return super.onOptionsItemSelected(item);
