@@ -55,19 +55,18 @@ public class ChapterPackHandler {
         isZip = chapterPackFile.getName().contains(".zip");
 
         File dataDir = context.getExternalFilesDir(null);
-        File newFile=null;
+        File newFile = null;
         if (isZip) {
             newFile = new File(dataDir, "lastloadedpack.zip");
             chapterPackFile.renameTo(newFile);
+        } else for (File packFile : chapterPackFile.listFiles()) {
+            File newPackFile = new File(dataDir + "lastloadedpack/", packFile.getName());
+            newPackFile.mkdirs();
+            newPackFile.delete();
+            packFile.renameTo(newPackFile);
+            newFile = new File(dataDir + "lastloadedpack");
+            chapterPackFile.renameTo(newFile);
         }
-        else for (File packFile : chapterPackFile.listFiles()) {
-                File newPackFile = new File(dataDir + "lastloadedpack/", packFile.getName());
-                newPackFile.mkdirs();
-                newPackFile.delete();
-                packFile.renameTo(newPackFile);
-                newFile = new File(dataDir + "lastloadedpack");
-                chapterPackFile.renameTo(newFile);
-            }
         this.chapterPack = newFile;
     }
 
