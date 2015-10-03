@@ -84,24 +84,24 @@ public class ContactInfoWrapper implements InfoWrapper {
         return latitude;
     }
 
-    public void setLatitude(String latitude) {
-        this.latitude = Double.valueOf(latitude);
-    }
-
     public void setLatitude(double latitude) {
         this.latitude = latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = Double.valueOf(latitude);
     }
 
     public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(String longitude) {
-        this.longitude = Double.valueOf(longitude);
-    }
-
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = Double.valueOf(longitude);
     }
 
     public boolean isPresent() {
