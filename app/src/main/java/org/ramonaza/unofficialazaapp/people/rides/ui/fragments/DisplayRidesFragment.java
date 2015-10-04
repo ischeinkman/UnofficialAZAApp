@@ -98,23 +98,24 @@ public class DisplayRidesFragment extends Fragment {
 
     private class CreateRidesText extends AsyncTask<Void, Void, String> {
 
+        private RidesDatabaseHandler rhandler;
+
         DriverInfoWrapper[] rides;
         ContactInfoWrapper[] driverless;
 
         @Override
         protected String doInBackground(Void... params) {
             createRides();
-            if (optimizationAlgorithm >= 0) {
-                RidesOptimizer optimizer = new RidesOptimizer();
-                optimizer.loadDriver(rides);
-                optimizer.loadPassengers(driverless);
-                optimizer.setAlgorithm(optimizationAlgorithm, retainRides);
-                optimizer.optimize();
-                RidesDatabaseHandler ridesDatabaseHandler = new RidesDatabaseHandler(getActivity());
-                ridesDatabaseHandler.updateRides(optimizer.getDrivers(), optimizer.getDriverless());
-                rides = optimizer.getDrivers();
-                driverless = optimizer.getDriverless();
-            }
+            RidesOptimizer optimizer = new RidesOptimizer();
+            optimizer.loadDriver(rides);
+            optimizer.loadPassengers(driverless);
+            optimizer.setAlgorithm(optimizationAlgorithm, retainRides);
+            optimizer.optimize();
+            RidesDatabaseHandler ridesDatabaseHandler = new RidesDatabaseHandler(getActivity());
+            ridesDatabaseHandler.updateRides(optimizer.getDrivers(), optimizer.getDriverless());
+            rides = optimizer.getDrivers();
+            driverless = optimizer.getDriverless();
+            rhandler.updateRides(rides,driverless);
             return createRidesList(rides, driverless);
         }
 
@@ -127,7 +128,7 @@ public class DisplayRidesFragment extends Fragment {
 
         private void createRides() {
             SQLiteDatabase db = new ContactDatabaseHelper(getActivity()).getWritableDatabase();
-            RidesDatabaseHandler rhandler = new RidesDatabaseHandler(db);
+            rhandler = new RidesDatabaseHandler(db);
             rides = rhandler.getDrivers(null, ContactDatabaseContract.DriverListTable.COLUMN_NAME + " ASC");
             ContactDatabaseHandler chandler = new ContactDatabaseHandler(db);
             String[] whereclause;

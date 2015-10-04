@@ -76,6 +76,10 @@ public abstract class AlephCluster {
         return rval;
     }
 
+    public boolean removeAlephFromCluster(ContactInfoWrapper toCheck){
+        return contactsInCluster.remove(toCheck);
+    }
+
     /**
      * Runs every time an aleph is added.
      * If a radius or center needs to be

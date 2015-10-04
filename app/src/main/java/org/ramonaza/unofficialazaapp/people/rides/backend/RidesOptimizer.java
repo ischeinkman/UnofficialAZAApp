@@ -127,7 +127,6 @@ public class RidesOptimizer {
      * loaded cars being full.
      */
     public void optimize() {
-        if (algorithm < 0 || driversToOptimize.isEmpty()) return;
         if (!retainPreexisting) {
             for (DriverInfoWrapper driver : driversToOptimize) {
                 for (ContactInfoWrapper aleph : new ArrayList<ContactInfoWrapper>(driver.getAlephsInCar())) {
@@ -137,14 +136,15 @@ public class RidesOptimizer {
                     }
                 }
             }
-        } else {
+        }
+        else {
             for (DriverInfoWrapper driver : driversToOptimize) {
                 for (ContactInfoWrapper contact : driver.getAlephsInCar()) {
                     if (alephsToOptimize.contains(contact)) alephsToOptimize.remove(contact);
                 }
             }
         }
-        if (alephsToOptimize.isEmpty()) return;
+        if (algorithm < 0 || driversToOptimize.isEmpty() || alephsToOptimize.isEmpty()) return;
         switch (algorithm) {
             case ALGORITHM_LATLONG_ALEPHS_FIRST:
                 latLongAlephsFirst();
