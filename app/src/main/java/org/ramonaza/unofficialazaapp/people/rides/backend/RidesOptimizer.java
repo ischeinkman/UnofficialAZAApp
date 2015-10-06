@@ -2,8 +2,14 @@ package org.ramonaza.unofficialazaapp.people.rides.backend;
 
 import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
 import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.HungarianAlgorithm;
+import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.AlephCluster;
+import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.ExpansionistCluster;
+import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.HungryCluster;
+import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.LazyCluster;
+import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.SnakeCluster;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +37,17 @@ public class RidesOptimizer {
      * assumption that all drivers return to their home in between each drop-off.
      */
     public static final int ALGORITHM_NAIVE_HUNGARIAN = 2;
+
+    public static final int ALGORITHM_LLAF_SNAKE=3;
+    public static final int ALGORITHM_LLAF_EXP=4;
+    public static final int ALGORITHM_LLAF_HUNGRY=5;
+    public static final int ALGORITHM_LLAF_LAZY=6;
+
+    public static final int ALGORITHM_LLDF_SNAKE=7;
+    public static final int ALGORITHM_LLDF_EXP=8;
+    public static final int ALGORITHM_LLDF_HUNGRY=9;
+    public static final int ALGORITHM_LLDF_LAZY=10;
+
 
 
     private Set<ContactInfoWrapper> alephsToOptimize;
@@ -65,6 +82,14 @@ public class RidesOptimizer {
                 * (aleph.getLatitude() - coords[0])
                 + (aleph.getLongitude() - coords[1])
                 * (aleph.getLongitude() - coords[1]));
+    }
+
+    public static double distBetweenHouses(DriverInfoWrapper driver, double[] coords) {
+        return Math.sqrt((
+                driver.getLatitude() - coords[0])
+                * (driver.getLatitude() - coords[0])
+                + (driver.getLongitude() - coords[1])
+                * (driver.getLongitude() - coords[1]));
     }
 
     /**
@@ -155,6 +180,31 @@ public class RidesOptimizer {
             case ALGORITHM_NAIVE_HUNGARIAN:
                 naiveHungarian();
                 break;
+            case ALGORITHM_LLAF_EXP:
+                latLongAlephsFirstCluster(ExpansionistCluster.class);
+                break;
+            case ALGORITHM_LLAF_HUNGRY:
+                latLongAlephsFirstCluster(HungryCluster.class);
+                break;
+            case ALGORITHM_LLAF_LAZY:
+                latLongAlephsFirstCluster(LazyCluster.class);
+                break;
+            case ALGORITHM_LLAF_SNAKE:
+                latLongAlephsFirstCluster(SnakeCluster.class);
+                break;
+            case ALGORITHM_LLDF_EXP:
+                latLongDriverFistCluster(ExpansionistCluster.class);
+                break;
+            case ALGORITHM_LLDF_HUNGRY:
+                latLongDriverFistCluster(HungryCluster.class);
+                break;
+            case ALGORITHM_LLDF_LAZY:
+                latLongDriverFistCluster(LazyCluster.class);
+                break;
+            case ALGORITHM_LLDF_SNAKE:
+                latLongDriverFistCluster(SnakeCluster.class);
+                break;
+
         }
     }
 
@@ -232,6 +282,72 @@ public class RidesOptimizer {
             driver.addAlephToCar(aleph);
             alephsToOptimize.remove(aleph);
         }
+    }
+
+    private void latLongDriverFistCluster(Class<? extends AlephCluster> clusterType){
+        Set<AlephCluster> clusters = new HashSet<AlephCluster>(AlephCluster.clusterAlephs(clusterType, alephsToOptimize));
+        boolean allFull = false;
+        while (!clusters.isEmpty() && !allFull) {
+            allFull = true;
+            for (DriverInfoWrapper toOptimize : driversToOptimize) {
+                if (toOptimize.getFreeSpots() <= 0) continue;
+                AlephCluster alephCluster = getClosestCluster(toOptimize, clusters, false);
+                if (alephCluster == null) break;
+                allFull = false;
+                ContactInfoWrapper[] inCluster=alephCluster.getAlephsInCluster();
+                for(ContactInfoWrapper clusterContact:inCluster){
+                    if(toOptimize.getFreeSpots()<=0) break;
+                    toOptimize.addAlephToCar(clusterContact);
+                    alephCluster.removeAlephFromCluster(clusterContact);
+                    alephsToOptimize.remove(clusterContact);
+                }
+                if(alephCluster.getSize()<=0) clusters.remove(alephCluster);
+            }
+        }
+    }
+
+    private AlephCluster getClosestCluster(DriverInfoWrapper driver, Collection<AlephCluster> allClusters, boolean allowSplit){
+        double minDist=Double.MAX_VALUE;
+        AlephCluster closestCluster=null;
+        for(AlephCluster cluster:allClusters){
+            if(!allowSplit && cluster.getSize()>driver.getFreeSpots()) continue;
+            double curDist=distBetweenHouses(driver,cluster.getCenter());
+            if(curDist<minDist){
+                closestCluster=cluster;
+                minDist=curDist;
+            }
+        }
+        return closestCluster;
+    }
+
+    private void latLongAlephsFirstCluster(Class<? extends AlephCluster> clusterType){
+        List<AlephCluster> clusters=AlephCluster.clusterAlephs(clusterType, alephsToOptimize);
+        for(AlephCluster cluster: clusters){
+            while(cluster.getSize()>0){
+                DriverInfoWrapper closestDriver=getClosestDriver(cluster,driversToOptimize,false);
+                if(closestDriver == null) break;
+                for(ContactInfoWrapper passengerToAdd:cluster.getAlephsInCluster()){
+                    if(closestDriver.getFreeSpots()<=0) break;
+                    closestDriver.addAlephToCar(passengerToAdd);
+                    cluster.removeAlephFromCluster(passengerToAdd);
+                    alephsToOptimize.remove(passengerToAdd);
+                }
+            }
+        }
+    }
+
+    private DriverInfoWrapper getClosestDriver(AlephCluster cluster, Collection<DriverInfoWrapper> allDrivers, boolean allowOverstuff){
+        double minDist=Double.MAX_VALUE;
+        DriverInfoWrapper closestDriver=null;
+        for(DriverInfoWrapper driver: allDrivers){
+            if(driver.getFreeSpots()<=0 && !allowOverstuff) continue;
+            double curDist=distBetweenHouses(driver,cluster.getCenter());
+            if(curDist<minDist){
+                minDist=curDist;
+                closestDriver=driver;
+            }
+        }
+        return closestDriver;
     }
 
 }

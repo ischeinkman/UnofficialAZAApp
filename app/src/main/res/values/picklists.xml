@@ -5,5 +5,13 @@
         <item>LATLONG - Alephs First</item>
         <item>LATLONG - Drivers First</item>
         <item>Naive Hungarian</item>
+        <item>LLAF-Snake</item>
+        <item>LLAF-Expansionist</item>
+        <item>LLAF-Hungry</item>
+        <item>LLAF-Lazy</item>
+        <item>LLDF-Snake</item>
+        <item>LLDF-Expansionist</item>
+        <item>LLDF-Hungry</item>
+        <item>LLDF-Lazy</item>
     </string-array>
 </resources>

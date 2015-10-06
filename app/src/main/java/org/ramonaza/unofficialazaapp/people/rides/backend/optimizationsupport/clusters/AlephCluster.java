@@ -6,6 +6,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -36,11 +37,14 @@ public abstract class AlephCluster {
      */
     public static List<AlephCluster> clusterAlephs(Class<? extends AlephCluster> clusterType, Collection<ContactInfoWrapper> toCluster) {
         List<AlephCluster> clusters = new ArrayList<AlephCluster>();
-        for (ContactInfoWrapper contact : toCluster) {
+        Set<ContactInfoWrapper> toClusterSet=new HashSet<ContactInfoWrapper>(toCluster);
+        Iterator<ContactInfoWrapper> contactIterator=toClusterSet.iterator();
+        while(contactIterator.hasNext()) {
+            ContactInfoWrapper contact=contactIterator.next();
             boolean inCluster = false;
             for (AlephCluster cluster : clusters) {
                 if (cluster.addAlephToCluster(contact)) {
-                    inCluster = false;
+                    inCluster = true;
                     break;
                 }
             }
@@ -53,6 +57,7 @@ public abstract class AlephCluster {
                     return null;
                 }
             }
+            contactIterator.remove();
         }
         return clusters;
     }
@@ -77,7 +82,9 @@ public abstract class AlephCluster {
     }
 
     public boolean removeAlephFromCluster(ContactInfoWrapper toCheck){
-        return contactsInCluster.remove(toCheck);
+        boolean isSuccess = contactsInCluster.remove(toCheck);
+        if(isSuccess) recalculate();
+        return isSuccess;
     }
 
     /**
