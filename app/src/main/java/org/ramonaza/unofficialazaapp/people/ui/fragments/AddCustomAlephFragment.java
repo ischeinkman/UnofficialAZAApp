@@ -31,7 +31,7 @@ import java.util.Set;
 public class AddCustomAlephFragment extends Fragment {
 
     //The email to send new aleph information to
-    private static final String[] UPDATE_EMAIL = {"ramon195aza@gmail.com"};
+    private static final String[] UPDATE_EMAIL = {"ramonazadev@gmail.com"};
 
 
     public AddCustomAlephFragment() {
