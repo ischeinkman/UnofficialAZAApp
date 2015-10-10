@@ -19,6 +19,11 @@ import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
 import org.ramonaza.unofficialazaapp.people.rides.backend.DriverInfoWrapper;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesOptimizer;
+import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.AlephCluster;
+import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.ExpansionistCluster;
+import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.HungryCluster;
+import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.LazyCluster;
+import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.SnakeCluster;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,11 +34,13 @@ public class DisplayRidesFragment extends Fragment {
 
     private static final String EXTRA_ALGORITHM = "org.ramonaza.unofficialazaapp.algorithm";
     private static final String EXTRA_RETAIN_RIDES = "org.ramonaza.unofficialazaapp.retainrides";
+    private static final String EXTRA_CLUSTER_TYPE = "org.ramonaza.unofficialazaapp.clusterType";
 
     private TextView ridesDisplay;
     private ProgressBar mBar;
 
     private int optimizationAlgorithm;
+    private int clusterIndex;
     private boolean retainRides;
 
     public DisplayRidesFragment() {
@@ -46,11 +53,12 @@ public class DisplayRidesFragment extends Fragment {
      *
      * @return A new instance of fragment DisplayRidesFragment.
      */
-    public static DisplayRidesFragment newInstance(int algorithm, boolean retain) {
+    public static DisplayRidesFragment newInstance(int algorithm, int clusterIndex, boolean retain) {
         DisplayRidesFragment fragment = new DisplayRidesFragment();
         Bundle args = new Bundle();
         args.putInt(EXTRA_ALGORITHM, algorithm);
         args.putBoolean(EXTRA_RETAIN_RIDES, retain);
+        args.putInt(EXTRA_CLUSTER_TYPE, clusterIndex);
         fragment.setArguments(args);
         return fragment;
     }
@@ -73,6 +81,23 @@ public class DisplayRidesFragment extends Fragment {
         return ridesList;
     }
 
+    private static Class<? extends AlephCluster> getClusterByIndex(int index) {
+        switch (index) {
+            case 0:
+                return null;
+            case 1:
+                return SnakeCluster.class;
+            case 2:
+                return ExpansionistCluster.class;
+            case 3:
+                return LazyCluster.class;
+            case 4:
+                return HungryCluster.class;
+            default:
+                return null;
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +111,7 @@ public class DisplayRidesFragment extends Fragment {
         ridesDisplay = (TextView) rootView.findViewById(R.id.RidesTextList);
         mBar = (ProgressBar) rootView.findViewById(R.id.cProgressBar);
         optimizationAlgorithm = getArguments().getInt(EXTRA_ALGORITHM);
+        clusterIndex = getArguments().getInt(EXTRA_CLUSTER_TYPE);
         retainRides = getArguments().getBoolean(EXTRA_RETAIN_RIDES);
         new CreateRidesText().execute();
         return rootView;
@@ -109,7 +135,7 @@ public class DisplayRidesFragment extends Fragment {
             RidesOptimizer optimizer = new RidesOptimizer();
             optimizer.loadDriver(rides);
             optimizer.loadPassengers(driverless);
-            optimizer.setAlgorithm(optimizationAlgorithm, retainRides);
+            optimizer.setAlgorithm(optimizationAlgorithm, retainRides, getClusterByIndex(clusterIndex));
             optimizer.optimize();
             RidesDatabaseHandler ridesDatabaseHandler = new RidesDatabaseHandler(getActivity());
             ridesDatabaseHandler.updateRides(optimizer.getDrivers(), optimizer.getDriverless());

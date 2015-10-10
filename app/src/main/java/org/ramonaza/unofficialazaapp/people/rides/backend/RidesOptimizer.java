@@ -3,15 +3,14 @@ package org.ramonaza.unofficialazaapp.people.rides.backend;
 import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
 import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.HungarianAlgorithm;
 import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.AlephCluster;
-import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.ExpansionistCluster;
-import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.HungryCluster;
-import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.LazyCluster;
-import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.SnakeCluster;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -38,21 +37,18 @@ public class RidesOptimizer {
      */
     public static final int ALGORITHM_NAIVE_HUNGARIAN = 2;
 
-    public static final int ALGORITHM_LLAF_SNAKE=3;
-    public static final int ALGORITHM_LLAF_EXP=4;
-    public static final int ALGORITHM_LLAF_HUNGRY=5;
-    public static final int ALGORITHM_LLAF_LAZY=6;
-
-    public static final int ALGORITHM_LLDF_SNAKE=7;
-    public static final int ALGORITHM_LLDF_EXP=8;
-    public static final int ALGORITHM_LLDF_HUNGRY=9;
-    public static final int ALGORITHM_LLDF_LAZY=10;
-
-
+    /**
+     * Calculate rides by grouping all alephs into clusters, and then creating cars based on the clusters
+     * of the alephs already in the car. We assume that all drivers at least have 1 passenger representing
+     * themselves.
+     * WARNING: setting no cluster type will perform no action.
+     */
+    public static final int ALGORITHM_CLUSTER_MATCHING = 3;
 
     private Set<ContactInfoWrapper> alephsToOptimize;
     private List<DriverInfoWrapper> driversToOptimize;
     private int algorithm;
+    private Class<? extends AlephCluster> clusterType;
     private boolean retainPreexisting;
 
     public RidesOptimizer() {
@@ -139,11 +135,13 @@ public class RidesOptimizer {
      * @param retainPreexisting whether or not the optimizer should keep preexisting rides settings.
      *                          If set to false, current rides are clears and all preconfigured passengers
      *                          are loaded as driverless passengers.
+     * @param clusterType       the type of cluster to use. Set to null if not clustering.
      * @return this
      */
-    public RidesOptimizer setAlgorithm(int algorithm, boolean retainPreexisting) {
+    public RidesOptimizer setAlgorithm(int algorithm, boolean retainPreexisting, Class<? extends AlephCluster> clusterType) {
         this.algorithm = algorithm;
         this.retainPreexisting = retainPreexisting;
+        this.clusterType = clusterType;
         return this;
     }
 
@@ -152,6 +150,8 @@ public class RidesOptimizer {
      * loaded cars being full.
      */
     public void optimize() {
+
+        //Clear rides if we are not retaining
         if (!retainPreexisting) {
             for (DriverInfoWrapper driver : driversToOptimize) {
                 for (ContactInfoWrapper aleph : new ArrayList<ContactInfoWrapper>(driver.getAlephsInCar())) {
@@ -169,42 +169,35 @@ public class RidesOptimizer {
                 }
             }
         }
+
+        //Double check and correct if all drivers and passengers really need optimization
+        Iterator<DriverInfoWrapper> toOptimizeIterator = driversToOptimize.iterator();
+        while (toOptimizeIterator.hasNext()) {
+            DriverInfoWrapper toTest = toOptimizeIterator.next();
+            for (ContactInfoWrapper passenger : toTest.getAlephsInCar())
+                alephsToOptimize.remove(passenger);
+            if (toTest.getFreeSpots() <= 0) toOptimizeIterator.remove();
+        }
+
+        //Do nothing if we have no algorithm or nothing to optimize
         if (algorithm < 0 || driversToOptimize.isEmpty() || alephsToOptimize.isEmpty()) return;
+
+
         switch (algorithm) {
             case ALGORITHM_LATLONG_ALEPHS_FIRST:
-                latLongAlephsFirst();
+                if (clusterType == null) latLongAlephsFirst();
+                else latLongAlephsFirstCluster(clusterType);
                 break;
             case ALGORITHM_LATLONG_DRIVERS_FIRST:
-                latLongDriversFirst();
+                if (clusterType == null) latLongDriversFirst();
+                else latLongDriverFistCluster(clusterType);
                 break;
             case ALGORITHM_NAIVE_HUNGARIAN:
                 naiveHungarian();
                 break;
-            case ALGORITHM_LLAF_EXP:
-                latLongAlephsFirstCluster(ExpansionistCluster.class);
+            case ALGORITHM_CLUSTER_MATCHING:
+                if (clusterType != null) clusterMatch(clusterType);
                 break;
-            case ALGORITHM_LLAF_HUNGRY:
-                latLongAlephsFirstCluster(HungryCluster.class);
-                break;
-            case ALGORITHM_LLAF_LAZY:
-                latLongAlephsFirstCluster(LazyCluster.class);
-                break;
-            case ALGORITHM_LLAF_SNAKE:
-                latLongAlephsFirstCluster(SnakeCluster.class);
-                break;
-            case ALGORITHM_LLDF_EXP:
-                latLongDriverFistCluster(ExpansionistCluster.class);
-                break;
-            case ALGORITHM_LLDF_HUNGRY:
-                latLongDriverFistCluster(HungryCluster.class);
-                break;
-            case ALGORITHM_LLDF_LAZY:
-                latLongDriverFistCluster(LazyCluster.class);
-                break;
-            case ALGORITHM_LLDF_SNAKE:
-                latLongDriverFistCluster(SnakeCluster.class);
-                break;
-
         }
     }
 
@@ -350,6 +343,149 @@ public class RidesOptimizer {
         return closestDriver;
     }
 
+    private void clusterMatch(Class<? extends AlephCluster> clusterType) {
+        Set<ContactInfoWrapper> allAlephs = new HashSet<ContactInfoWrapper>(alephsToOptimize);
+        for (DriverInfoWrapper driver : driversToOptimize) {
+            for (ContactInfoWrapper passenger : driver.getAlephsInCar()) {
+                allAlephs.add(passenger);
+            }
+        }
+        List<AlephCluster> clusters = AlephCluster.clusterAlephs(clusterType, allAlephs);
+        Map<DriverInfoWrapper, Set<AlephCluster>> driverMappings = new HashMap<DriverInfoWrapper, Set<AlephCluster>>();
+        Map<AlephCluster, Set<DriverInfoWrapper>> clusterMappings = new HashMap<AlephCluster, Set<DriverInfoWrapper>>();
+
+        //Create a mapping from drivers to all clusters they have passengers in.
+        //We assume that each driver has a passenger representing themselves already
+        //in their car.
+        createMappings(clusters, driverMappings, clusterMappings);
+
+        //Optimize 1-1 mappings
+        oneToOneOptimize(driverMappings, clusterMappings);
+
+        //Optimize 1 cluster to many drivers, to maximize
+        //cleared clusters
+        oneClusterManyDriversOptimize(driverMappings, clusterMappings);
+
+        //Optimize 1 driver to many clusters
+        oneDriverManyClustersOptimize(driverMappings, clusterMappings);
+
+        //Optimize the rest of the clusters
+        manyToManyOptimize(driverMappings, clusterMappings);
+
+    }
+
+    private void createMappings(List<AlephCluster> clusters,
+                                Map<DriverInfoWrapper, Set<AlephCluster>> driverMappings,
+                                Map<AlephCluster, Set<DriverInfoWrapper>> clusterMappings) {
+
+        for (DriverInfoWrapper driver : driversToOptimize)
+            driverMappings.put(driver, new HashSet<AlephCluster>());
+        for (AlephCluster cluster : clusters)
+            clusterMappings.put(cluster, new HashSet<DriverInfoWrapper>());
+        for (DriverInfoWrapper driver : driversToOptimize) {
+            for (AlephCluster cluster : clusters) {
+                for (ContactInfoWrapper passenger : driver.getAlephsInCar()) {
+                    if (cluster.containsContact(passenger)) {
+                        driverMappings.get(driver).add(cluster);
+                        clusterMappings.get(cluster).add(driver);
+                    }
+                }
+            }
+        }
+    }
+
+    private void oneToOneOptimize(Map<DriverInfoWrapper, Set<AlephCluster>> driverMappings,
+                                  Map<AlephCluster, Set<DriverInfoWrapper>> clusterMappings) {
+
+        for (DriverInfoWrapper driver : driverMappings.keySet()) {
+            Set<AlephCluster> driversClusters = driverMappings.get(driver);
+            if (driversClusters == null || driversClusters.size() != 1) continue;
+            AlephCluster onlyCluster = driversClusters.toArray(new AlephCluster[1])[0];
+            Set<DriverInfoWrapper> clustersDrivers = clusterMappings.get(onlyCluster);
+            if (clustersDrivers == null || clustersDrivers.size() != 1 || !clustersDrivers.contains(driver))
+                continue;
+            for (ContactInfoWrapper inCluster : onlyCluster.getAlephsInCluster()) {
+                if (driver.getFreeSpots() <= 0) {
+                    driversToOptimize.remove(driver);
+                    break;
+                }
+                driver.addAlephToCar(inCluster);
+                alephsToOptimize.remove(inCluster);
+                onlyCluster.removeAlephFromCluster(inCluster);
+            }
+        }
+    }
+
+    private void oneClusterManyDriversOptimize(Map<DriverInfoWrapper, Set<AlephCluster>> driverMappings,
+                                               Map<AlephCluster, Set<DriverInfoWrapper>> clusterMappings) {
+
+        for (AlephCluster cluster : clusterMappings.keySet()) {
+            Iterator<DriverInfoWrapper> clustersDriversIterator = clusterMappings.get(cluster).iterator();
+            while (clustersDriversIterator.hasNext()) {
+                DriverInfoWrapper testDriver = clustersDriversIterator.next();
+                Set<AlephCluster> driversClusters = driverMappings.get(testDriver);
+                if (driversClusters.size() > 1) clustersDriversIterator.remove();
+            }
+            if (clusterMappings.get(cluster) == null || clusterMappings.get(cluster).size() <= 1)
+                continue;
+            for (DriverInfoWrapper driver : clusterMappings.get(cluster)) {
+                ContactInfoWrapper[] alephsInCluster = cluster.getAlephsInCluster();
+                for (ContactInfoWrapper inCluster : alephsInCluster) {
+                    if (driver.getFreeSpots() <= 0) {
+                        driversToOptimize.remove(driver);
+                        break;
+                    }
+                    driver.addAlephToCar(inCluster);
+                    cluster.removeAlephFromCluster(inCluster);
+                    alephsToOptimize.remove(inCluster);
+                }
+            }
+        }
+    }
+
+    private void oneDriverManyClustersOptimize(Map<DriverInfoWrapper, Set<AlephCluster>> driverMappings,
+                                               Map<AlephCluster, Set<DriverInfoWrapper>> clusterMappings) {
+
+        for (DriverInfoWrapper driver : driverMappings.keySet()) {
+            Set<AlephCluster> driversClusters = driverMappings.get(driver);
+            for (AlephCluster testCluster : driverMappings.get(driver)) {
+                Set<DriverInfoWrapper> clustersDrivers = clusterMappings.get(testCluster);
+                if (testCluster.getSize() == 0 || clustersDrivers.size() > 1)
+                    driversClusters.remove(testCluster);
+            }
+            if (driversClusters == null || driversClusters.size() <= 1) continue;
+            for (AlephCluster cluster : driversClusters) {
+                ContactInfoWrapper[] alephsInCluster = cluster.getAlephsInCluster();
+                for (ContactInfoWrapper inCluster : alephsInCluster) {
+                    if (driver.getFreeSpots() <= 0) {
+                        driversToOptimize.remove(driver);
+                        break;
+                    }
+                    driver.addAlephToCar(inCluster);
+                    cluster.removeAlephFromCluster(inCluster);
+                    alephsToOptimize.remove(inCluster);
+                }
+            }
+        }
+    }
+
+    private void manyToManyOptimize(Map<DriverInfoWrapper, Set<AlephCluster>> driverMappings,
+                                    Map<AlephCluster, Set<DriverInfoWrapper>> clusterMappings) {
+
+        for (DriverInfoWrapper driver : driverMappings.keySet()) {
+            for (AlephCluster validCluster : driverMappings.get(driver)) {
+                if (!driversToOptimize.contains(driver)) break;
+                for (ContactInfoWrapper alephInCluster : validCluster.getAlephsInCluster()) {
+                    if (driver.getFreeSpots() <= 0) {
+                        driversToOptimize.remove(driver);
+                        break;
+                    }
+                    driver.addAlephToCar(alephInCluster);
+                }
+            }
+        }
+
+    }
 }
 
 

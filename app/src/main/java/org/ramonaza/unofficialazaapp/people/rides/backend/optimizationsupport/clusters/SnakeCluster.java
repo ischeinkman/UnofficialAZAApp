@@ -17,7 +17,7 @@ public class SnakeCluster extends AlephCluster {
     }
 
     @Override
-    public boolean alephInCluster(ContactInfoWrapper toCheck) {
+    public boolean alephLiesInCluster(ContactInfoWrapper toCheck) {
         for (ContactInfoWrapper current : contactsInCluster) {
             if (RidesOptimizer.distBetweenHouses(toCheck, current) <= RADIUS_ADDITION) return true;
         }

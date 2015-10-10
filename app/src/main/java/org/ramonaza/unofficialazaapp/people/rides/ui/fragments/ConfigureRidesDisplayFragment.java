@@ -46,18 +46,21 @@ public class ConfigureRidesDisplayFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View rootView = inflater.inflate(R.layout.fragment_configure_rides_display, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_rides_configure, container, false);
         Button submitButton = (Button) rootView.findViewById(R.id.SubmitButton);
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Spinner alSpinner = (Spinner) rootView.findViewById(R.id.AlgorithmSelection);
                 int algorithm = alSpinner.getSelectedItemPosition() - 1;
+                Spinner clustSpinner = (Spinner) rootView.findViewById(R.id.ClusterSelection);
+                int clusterIndex = clustSpinner.getSelectedItemPosition();
                 CheckBox retainBox = (CheckBox) rootView.findViewById(R.id.RetainRides);
                 boolean retain = retainBox.isChecked();
                 Intent displayIntent = new Intent(getActivity(), DisplayRidesActivity.class);
                 displayIntent.putExtra(DisplayRidesActivity.EXTRA_ALGORITHM, algorithm);
                 displayIntent.putExtra(DisplayRidesActivity.EXTRA_RETAIN_RIDES, retain);
+                displayIntent.putExtra(DisplayRidesActivity.EXTRA_CLUSTER_TYPE, clusterIndex);
                 startActivity(displayIntent);
             }
         });

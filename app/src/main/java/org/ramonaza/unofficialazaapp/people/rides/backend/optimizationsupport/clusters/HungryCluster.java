@@ -63,7 +63,7 @@ public class HungryCluster extends AlephCluster {
     }
 
     @Override
-    public boolean alephInCluster(ContactInfoWrapper toCheck) {
+    public boolean alephLiesInCluster(ContactInfoWrapper toCheck) {
         if (toCheck.getLatitude() == 0.0 && toCheck.getLongitude() == 0.0) return false;
         double distToCenter = RidesOptimizer.distBetweenHouses(toCheck, center);
         double outerRadius = innerRadius + RADIUS_ADDITION;

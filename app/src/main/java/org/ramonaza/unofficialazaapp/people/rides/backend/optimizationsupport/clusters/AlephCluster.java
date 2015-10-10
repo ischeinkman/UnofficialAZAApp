@@ -67,7 +67,7 @@ public abstract class AlephCluster {
      * @param toCheck the aleph to check
      * @return if the aleph lies within the cluster
      */
-    public abstract boolean alephInCluster(ContactInfoWrapper toCheck);
+    public abstract boolean alephLiesInCluster(ContactInfoWrapper toCheck);
 
     /**
      * Adds an aleph to the cluster.
@@ -75,7 +75,7 @@ public abstract class AlephCluster {
      * @return whether the addition was successful
      */
     public boolean addAlephToCluster(ContactInfoWrapper toCheck) {
-        if (!alephInCluster(toCheck)) return false;
+        if (!alephLiesInCluster(toCheck)) return false;
         boolean rval = contactsInCluster.add(toCheck);
         recalculate();
         return rval;
@@ -118,4 +118,16 @@ public abstract class AlephCluster {
      * @return the center of the cluster
      */
     public abstract double[] getCenter();
+
+
+    public boolean containsContact(ContactInfoWrapper contact) {
+        return contactsInCluster.contains(contact);
+    }
+
+
+    public boolean containsContact(String name) {
+        ContactInfoWrapper nameContact = new ContactInfoWrapper();
+        nameContact.setName(name);
+        return contactsInCluster.contains(nameContact);
+    }
 }

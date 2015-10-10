@@ -4,7 +4,9 @@ import org.ramonaza.unofficialazaapp.helpers.backend.InfoWrapper;
 import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by ilanscheinkman on 3/14/15.
@@ -17,10 +19,10 @@ public class DriverInfoWrapper implements InfoWrapper {
     private double latitude;
     private double longitude;
     private int id;
-    private List<ContactInfoWrapper> alephsInCar;
+    private Set<ContactInfoWrapper> alephsInCar;
 
     public DriverInfoWrapper() {
-        this.alephsInCar = new ArrayList<ContactInfoWrapper>(spots + 1);
+        this.alephsInCar = new HashSet<ContactInfoWrapper>(spots + 1);
     }
 
     public double getLatitude() {
@@ -92,12 +94,18 @@ public class DriverInfoWrapper implements InfoWrapper {
     }
 
     public List<ContactInfoWrapper> getAlephsInCar() {
-        return alephsInCar;
+        return new ArrayList<ContactInfoWrapper>(alephsInCar);
     }
 
 
     @Override
     public boolean equals(Object o) {
         return (o instanceof DriverInfoWrapper && ((DriverInfoWrapper) o).getName().equals(getName()));
+    }
+
+
+    @Override
+    public int hashCode() {
+        return id * name.hashCode() + id;
     }
 }

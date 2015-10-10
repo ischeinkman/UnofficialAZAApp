@@ -21,7 +21,7 @@ public class ExpansionistCluster extends AlephCluster {
 
 
     @Override
-    public boolean alephInCluster(ContactInfoWrapper toCheck) {
+    public boolean alephLiesInCluster(ContactInfoWrapper toCheck) {
         return (RidesOptimizer.distBetweenHouses(toCheck, center) <= innerRadius + RADIUS_ADDITION);
     }
 

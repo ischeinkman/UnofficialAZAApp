@@ -23,6 +23,28 @@
         android:entries="@array/algorithmValues"
         android:id="@+id/AlgorithmSelection"/>
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="24dp"
+            android:text="Cluster Type:"
+            android:layout_marginTop="32dp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin" />
+
+        <Spinner
+            android:layout_marginTop="32dp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:entries="@array/clusterValues"
+            android:id="@+id/ClusterSelection" />
+    </LinearLayout>
     <CheckBox
         android:layout_marginTop="32dp"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"

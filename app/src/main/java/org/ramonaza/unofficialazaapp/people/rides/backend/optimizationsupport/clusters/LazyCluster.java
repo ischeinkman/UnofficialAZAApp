@@ -19,7 +19,7 @@ public class LazyCluster extends AlephCluster {
     }
 
     @Override
-    public boolean alephInCluster(ContactInfoWrapper toCheck) {
+    public boolean alephLiesInCluster(ContactInfoWrapper toCheck) {
         return (RidesOptimizer.distBetweenHouses(toCheck, center) <= RADIUS);
     }
 

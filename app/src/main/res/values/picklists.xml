@@ -2,16 +2,16 @@
 <resources>
     <string-array name="algorithmValues">
         <item>None</item>
-        <item>LATLONG - Alephs First</item>
-        <item>LATLONG - Drivers First</item>
+        <item>Serial Arson</item>
+        <item>Flamboyant Elephant</item>
         <item>Naive Hungarian</item>
-        <item>LLAF-Snake</item>
-        <item>LLAF-Expansionist</item>
-        <item>LLAF-Hungry</item>
-        <item>LLAF-Lazy</item>
-        <item>LLDF-Snake</item>
-        <item>LLDF-Expansionist</item>
-        <item>LLDF-Hungry</item>
-        <item>LLDF-Lazy</item>
+        <item>Cluster Matching</item>
+    </string-array>
+    <string-array name="clusterValues">
+        <item>None</item>
+        <item>Snake</item>
+        <item>Expansionist</item>
+        <item>Lazy</item>
+        <item>Hungry</item>
     </string-array>
 </resources>
