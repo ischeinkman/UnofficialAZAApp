@@ -62,7 +62,7 @@ public class ChapterPackHandler {
         File dataDir = context.getExternalFilesDir(null);
         File newFile;
         if (isZip) {
-            newFile = new File(dataDir + "lastloadedpack.zip");
+            newFile = new File(dataDir + "/lastloadedpack.zip");
             boolean renamed = chapterPack.renameTo(newFile);
             if (!renamed) return false;
             chapterPack = newFile;
