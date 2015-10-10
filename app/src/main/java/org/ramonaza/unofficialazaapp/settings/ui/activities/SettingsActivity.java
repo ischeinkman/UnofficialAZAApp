@@ -2,7 +2,9 @@ package org.ramonaza.unofficialazaapp.settings.ui.activities;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -11,8 +13,13 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import org.ramonaza.unofficialazaapp.R;
+import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 
 import java.util.List;
 
@@ -146,6 +153,22 @@ public class SettingsActivity extends PreferenceActivity {
         // Add 'general' preferences.
         addPreferencesFromResource(R.xml.pref_general);
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isDebug = preferences.getBoolean("admin", false);
+        if (isDebug) {
+            Button chapterPackButton = new Button(this);
+            chapterPackButton.setText(getString(R.string.pref_title_create_pack_button));
+            chapterPackButton.setBackgroundResource(R.drawable.general_textbutton_layout);
+            chapterPackButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new PackCreator().execute();
+                }
+            });
+            ListView view = getListView();
+            view.addFooterView(chapterPackButton);
+
+        }
 
     }
 
@@ -188,4 +211,17 @@ public class SettingsActivity extends PreferenceActivity {
         }
     }
 
+    private class PackCreator extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            return ChapterPackHandlerSupport.createChapterPack(SettingsActivity.this);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            Toast.makeText(SettingsActivity.this, aBoolean.toString(), Toast.LENGTH_LONG);
+        }
+    }
 }

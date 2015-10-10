@@ -9,4 +9,9 @@
 
     <string name="pref_title_rides">Rides Mode</string>
 
+
+    <string name="pref_title_dev">Debug Mode</string>
+
+    <string name="pref_title_create_pack_button">Create Chapter Pack</string>
+
 </resources>
