@@ -1,14 +1,22 @@
 package org.ramonaza.unofficialazaapp.helpers.backend;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 
 import org.ramonaza.unofficialazaapp.events.backend.EventRSSHandler;
+import org.ramonaza.unofficialazaapp.people.backend.ContactCSVHandler;
+import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
+import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.Calendar;
 
 /**
  * Created by ilan on 9/18/15.
@@ -16,6 +24,8 @@ import java.io.FilenameFilter;
 public class ChapterPackHandlerSupport {
 
     private static ChapterPackHandler currentHandler;
+
+    public static final String NEW_PACK_DIRECTORY = "Generated Packs/";
 
     /**
      * Check if we currently have a Chapter Pack leaded into the app.
@@ -124,5 +134,71 @@ public class ChapterPackHandlerSupport {
     public static boolean loadChapterPack(Context context) {
         if (currentHandler == null) getChapterPackHandler(context);
         return (currentHandler.loadEventFeed() && currentHandler.loadContactList());
+    }
+
+    public static boolean createChapterPack(Context context) {
+
+        //Build the chapter packs data
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String packName = preferences.getString(ChapterPackHandler.PREF_CHAPTERPACK, "Chapter Pack - Ramon");
+        String url = preferences.getString(ChapterPackHandler.PREF_EVENT_FEED, "");
+        if (packName == null || url == null || packName.equals("") || url.equals("")) return false;
+        ContactDatabaseHandler handler = getContactHandler(context);
+        if (handler == null) return false;
+        ContactInfoWrapper[] allContacts = handler.getContacts(null, ContactDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
+
+        //Create the necessary files and streams
+        Calendar cal = Calendar.getInstance();
+        String suffix = String.format(
+                " -- %d - %d - %d - %d:%d:%d",
+                cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH) + 1,
+                cal.get(Calendar.DAY_OF_MONTH),
+                cal.get(Calendar.HOUR),
+                cal.get(Calendar.MINUTE),
+                cal.get(Calendar.SECOND)
+        );
+        File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File generalPackDir = new File(downloadDir, NEW_PACK_DIRECTORY);
+        File newPackDir = new File(generalPackDir, packName + suffix);
+        File eventDataFile = new File(newPackDir, ChapterPackHandler.EVENT_FILE_NAME);
+        File contactDataFile = new File(newPackDir, ChapterPackHandler.CSV_NAME);
+        try {
+            boolean rootCreated = newPackDir.mkdirs();
+            boolean eventFileCreated = eventDataFile.createNewFile();
+            boolean contactFileCreated = contactDataFile.createNewFile();
+            if (!(rootCreated && eventFileCreated && contactFileCreated)) return false;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        BufferedWriter eventWriter;
+        try {
+            eventWriter = new BufferedWriter(new FileWriter(eventDataFile));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        //Write the event information
+        try {
+            eventWriter.write(url);
+            eventWriter.flush();
+            eventWriter.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        //Write the contact information
+        try {
+            ContactCSVHandler csvWritingHandler = new ContactCSVHandler(contactDataFile);
+            csvWritingHandler.writesContactsToCSV(allContacts, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 }

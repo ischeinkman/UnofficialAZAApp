@@ -53,22 +53,28 @@ public class ChapterPackHandler {
         this.context = context;
         this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
         isZip = chapterPackFile.getName().contains(".zip");
+        this.chapterPack = chapterPackFile;
+        moveChapterPack();
 
+    }
+
+    private boolean moveChapterPack() {
         File dataDir = context.getExternalFilesDir(null);
-        File newFile=null;
+        File newFile;
         if (isZip) {
-            newFile = new File(dataDir, "lastloadedpack.zip");
-            chapterPackFile.renameTo(newFile);
+            newFile = new File(dataDir + "/lastloadedpack.zip");
+            boolean renamed = chapterPack.renameTo(newFile);
+            if (!renamed) return false;
+            chapterPack = newFile;
+        } else {
+            newFile = new File(dataDir + "/lastloadedpack/");
+            boolean mkdired = newFile.mkdirs();
+            boolean deleted = newFile.delete();
+            boolean renamed = chapterPack.renameTo(newFile);
+            if (!(renamed)) return false;
+            chapterPack = newFile;
         }
-        else for (File packFile : chapterPackFile.listFiles()) {
-                File newPackFile = new File(dataDir + "lastloadedpack/", packFile.getName());
-                newPackFile.mkdirs();
-                newPackFile.delete();
-                packFile.renameTo(newPackFile);
-                newFile = new File(dataDir + "lastloadedpack");
-                chapterPackFile.renameTo(newFile);
-            }
-        this.chapterPack = newFile;
+        return true;
     }
 
     /**
