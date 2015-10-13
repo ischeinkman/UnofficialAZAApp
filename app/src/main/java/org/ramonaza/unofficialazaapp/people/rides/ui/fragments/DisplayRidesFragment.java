@@ -65,6 +65,8 @@ public class DisplayRidesFragment extends Fragment {
 
     private static String createRidesList(DriverInfoWrapper[] drivers, ContactInfoWrapper[] driverless) {
         String ridesList = "";
+        int totalFree = 0;
+        int overStuff = 0;
         for (DriverInfoWrapper driver : drivers) {
             ridesList += String.format("<h1><b><u>%s</u></b></h1>", driver.getName(), driver.getFreeSpots());
             for (ContactInfoWrapper alephInCar : driver.getAlephsInCar()) {
@@ -72,12 +74,18 @@ public class DisplayRidesFragment extends Fragment {
             }
             ridesList += "<b>Free Spots: " + driver.getFreeSpots();
             ridesList += "</b><br/><br/>";
+            if (driver.getFreeSpots() > 0) totalFree += driver.getFreeSpots();
+            else if (driver.getFreeSpots() < 0) overStuff -= driver.getFreeSpots();
         }
         if (driverless.length > 0) {
             ridesList += "<h1><b><u>Driverless</u></b></h1>";
             for (ContactInfoWrapper driverlessAleph : driverless)
                 ridesList += String.format("-%s<br/>", driverlessAleph.getName());
         }
+        ridesList += String.format("<br/><h3><b><u>Stats:</u></b></h3>" +
+                "Total Free Spots:       %d <br/>" +
+                "Total Overstuff:        %d <br/>" +
+                "Total Driverless:       %d <br/>", totalFree, overStuff, driverless.length);
         return ridesList;
     }
 
