@@ -193,7 +193,8 @@ public class RidesOptimizer {
                 else latLongDriverFistCluster(clusterType);
                 break;
             case ALGORITHM_NAIVE_HUNGARIAN:
-                naiveHungarian();
+                if (clusterType == null) naiveHungarian();
+                else naiveHungarian(clusterType);
                 break;
             case ALGORITHM_CLUSTER_MATCHING:
                 if (clusterType != null) clusterMatch(clusterType);
@@ -259,7 +260,9 @@ public class RidesOptimizer {
         for (DriverInfoWrapper driver : driversToOptimize)
             for (int i = 0; i < driver.getFreeSpots(); i++)
                 driverIndicies.add(driversToOptimize.indexOf(driver));
+
         double[][] costs = new double[driverIndicies.size()][indexedAlephs.size()];
+
         for (int r = 0; r < driverIndicies.size(); r++) {
             DriverInfoWrapper driver = driversToOptimize.get(driverIndicies.get(r));
             for (int c = 0; c < indexedAlephs.size(); c++) {
@@ -267,13 +270,54 @@ public class RidesOptimizer {
                 costs[r][c] = distBetweenHouses(driver, aleph);
             }
         }
+
         int[] assignments = (new HungarianAlgorithm(costs)).execute();
+
         for (int i = 0; i < assignments.length; i++) {
             if (assignments[i] == -1) continue;
             ContactInfoWrapper aleph = indexedAlephs.get(assignments[i]);
-            DriverInfoWrapper driver = driversToOptimize.get(driverIndicies.get(assignments[i]));
+            DriverInfoWrapper driver = driversToOptimize.get(driverIndicies.get(i));
             driver.addAlephToCar(aleph);
             alephsToOptimize.remove(aleph);
+        }
+    }
+
+    private void naiveHungarian(Class<? extends AlephCluster> clusterType) {
+        List<Integer> driverIndicies = new ArrayList<Integer>();
+        for (DriverInfoWrapper driver : driversToOptimize) {
+            for (int i = 0; i < driver.getFreeSpots(); i++) {
+                driverIndicies.add(driversToOptimize.indexOf(driver));
+            }
+        }
+
+        List<AlephCluster> clusters = AlephCluster.clusterAlephs(clusterType, alephsToOptimize);
+        List<Integer> clusterIndecies = new ArrayList<Integer>();
+        for (AlephCluster cluster : clusters) {
+            for (int i = 0; i < cluster.getSize(); i++) {
+                clusterIndecies.add(clusters.indexOf(cluster));
+            }
+        }
+
+        double[][] cost = new double[driverIndicies.size()][clusterIndecies.size()];
+
+        for (int r = 0; r < driverIndicies.size(); r++) {
+            DriverInfoWrapper driver = driversToOptimize.get(driverIndicies.get(r));
+            for (int c = 0; c < clusterIndecies.size(); c++) {
+                AlephCluster cluster = clusters.get(clusterIndecies.get(c));
+                cost[r][c] = distBetweenHouses(driver, cluster.getCenter());
+            }
+        }
+
+        int[] assignments = new HungarianAlgorithm(cost).execute();
+
+        for (int i = 0; i < assignments.length; i++) {
+            if (assignments[i] == -1) continue;
+            DriverInfoWrapper driver = driversToOptimize.get(driverIndicies.get(i));
+            AlephCluster assignedCluster = clusters.get(clusterIndecies.get(assignments[i]));
+            ContactInfoWrapper toAdd = assignedCluster.getAlephsInCluster()[0];
+            driver.addAlephToCar(toAdd);
+            assignedCluster.removeAlephFromCluster(toAdd);
+            alephsToOptimize.remove(toAdd);
         }
     }
 
