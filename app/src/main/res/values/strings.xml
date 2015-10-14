@@ -232,5 +232,7 @@ So I raise my hand up and teach prospectives the handshake of AZA.\n\
     <string name="title_activity_display_rides">Rides List</string>
     <string name="title_activity_rides_aleph_manip">AlephDriverManipActivity</string>
     <string name="title_activity_add_preset_driver">Select Driver...</string>
+    <string name="title_activity_blue_book_display">BlueBookDisplayActivity</string>
+    <string name="title_section_bluebook">Blue Book</string>
 
 </resources>
