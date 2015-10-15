@@ -8,16 +8,16 @@ import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragSty
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesDriverManipActivity;
 
-public class RemoveAlephFromDriverFragment extends InfoWrapperCheckBoxesFragment {
+public class RemovePassengerFromDriverFragment extends InfoWrapperCheckBoxesFragment {
 
     public static final String EXTRA_DRIVERID = RidesDriverManipActivity.EXTRA_DRIVERID;
     private int driverId;
 
-    public RemoveAlephFromDriverFragment() {
+    public RemovePassengerFromDriverFragment() {
     }
 
-    public static RemoveAlephFromDriverFragment newInstance(int driverId) {
-        RemoveAlephFromDriverFragment fragment = new RemoveAlephFromDriverFragment();
+    public static RemovePassengerFromDriverFragment newInstance(int driverId) {
+        RemovePassengerFromDriverFragment fragment = new RemovePassengerFromDriverFragment();
         Bundle args = new Bundle();
         args.putInt(EXTRA_DRIVERID, driverId);
         fragment.setArguments(args);
@@ -38,7 +38,7 @@ public class RemoveAlephFromDriverFragment extends InfoWrapperCheckBoxesFragment
     @Override
     public InfoWrapper[] generateInfo() {
         RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
-        return handler.getAlephsInCar(driverId);
+        return handler.getPassengersInCar(driverId);
     }
 
     private class SubmitFromList extends AsyncTask<InfoWrapper, Void, Void> {
@@ -46,8 +46,8 @@ public class RemoveAlephFromDriverFragment extends InfoWrapperCheckBoxesFragment
         @Override
         protected Void doInBackground(InfoWrapper... params) {
             RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
-            for (InfoWrapper aleph : params) {
-                handler.removeAlephFromCar(aleph.getId());
+            for (InfoWrapper passenger : params) {
+                handler.removePassengerFromCar(passenger.getId());
             }
             return null;
         }

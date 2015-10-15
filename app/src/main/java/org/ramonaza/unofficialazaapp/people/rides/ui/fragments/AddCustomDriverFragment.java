@@ -166,7 +166,7 @@ public class AddCustomDriverFragment extends Fragment {
                 } catch (ContactDatabaseHandler.ContactCSVReadError contactCSVReadError) {
                     contactCSVReadError.printStackTrace();
                 }
-                handler.addAlephsToCar(mDriver.getId(), new ContactInfoWrapper[]{presContact});
+                handler.addPassengersToCar(mDriver.getId(), new ContactInfoWrapper[]{presContact});
             }
             getActivity().finish();
             return null;

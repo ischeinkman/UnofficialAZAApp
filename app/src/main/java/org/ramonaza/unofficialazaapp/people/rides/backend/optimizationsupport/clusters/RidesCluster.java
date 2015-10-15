@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A parent class for aleph clusters.
- * These clusters store and represent alephs close enough locationally
+ * A parent class for rides clusters.
+ * These clusters store and represent people close enough locationally
  * to be treated as a single unit for rides purposes.
  * Created by ilan on 10/2/15.
  */
-public abstract class AlephCluster {
+public abstract class RidesCluster {
 
     protected Set<ContactInfoWrapper> contactsInCluster;
 
@@ -24,7 +24,7 @@ public abstract class AlephCluster {
      * Creates a cluster based on an initial contact
      * @param firstContact the first contact in the cluster
      */
-    public AlephCluster(ContactInfoWrapper firstContact) {
+    public RidesCluster(ContactInfoWrapper firstContact) {
         contactsInCluster = new HashSet<ContactInfoWrapper>();
         contactsInCluster.add(firstContact);
         recalculate();
@@ -33,25 +33,25 @@ public abstract class AlephCluster {
     /**
      * @param clusterType the type of cluster to use
      * @param toCluster   the contacts to cluster
-     * @return a list of clusters with alephs
+     * @return a list of clusters with people
      */
-    public static List<AlephCluster> clusterAlephs(Class<? extends AlephCluster> clusterType, Collection<ContactInfoWrapper> toCluster) {
-        List<AlephCluster> clusters = new ArrayList<AlephCluster>();
+    public static List<RidesCluster> clusterPassengers(Class<? extends RidesCluster> clusterType, Collection<ContactInfoWrapper> toCluster) {
+        List<RidesCluster> clusters = new ArrayList<RidesCluster>();
         Set<ContactInfoWrapper> toClusterSet=new HashSet<ContactInfoWrapper>(toCluster);
         Iterator<ContactInfoWrapper> contactIterator=toClusterSet.iterator();
         while(contactIterator.hasNext()) {
             ContactInfoWrapper contact=contactIterator.next();
             boolean inCluster = false;
-            for (AlephCluster cluster : clusters) {
-                if (cluster.addAlephToCluster(contact)) {
+            for (RidesCluster cluster : clusters) {
+                if (cluster.addPassengerToCluster(contact)) {
                     inCluster = true;
                     break;
                 }
             }
             if (!inCluster) {
                 try {
-                    Constructor<? extends AlephCluster> constructor = clusterType.getConstructor(ContactInfoWrapper.class);
-                    AlephCluster newCluster = constructor.newInstance(contact);
+                    Constructor<? extends RidesCluster> constructor = clusterType.getConstructor(ContactInfoWrapper.class);
+                    RidesCluster newCluster = constructor.newInstance(contact);
                     clusters.add(newCluster);
                 } catch (Exception e) {
                     return null;
@@ -63,34 +63,34 @@ public abstract class AlephCluster {
     }
 
     /**
-     * Checks whether an aleph lies within this cluster's range.
-     * @param toCheck the aleph to check
-     * @return if the aleph lies within the cluster
+     * Checks whether someone lies within this cluster's range.
+     * @param toCheck the person to check
+     * @return if the person lies within the cluster
      */
-    public abstract boolean alephLiesInCluster(ContactInfoWrapper toCheck);
+    public abstract boolean passengerLiesInCluster(ContactInfoWrapper toCheck);
 
     /**
-     * Adds an aleph to the cluster.
-     * @param toCheck the aleph to add
+     * Adds a passenger to the cluster.
+     * @param toCheck the passenger to add
      * @return whether the addition was successful
      */
-    public boolean addAlephToCluster(ContactInfoWrapper toCheck) {
-        if (!alephLiesInCluster(toCheck)) return false;
+    public boolean addPassengerToCluster(ContactInfoWrapper toCheck) {
+        if (!passengerLiesInCluster(toCheck)) return false;
         boolean rval = contactsInCluster.add(toCheck);
         recalculate();
         return rval;
     }
 
-    public boolean removeAlephFromCluster(ContactInfoWrapper toCheck){
+    public boolean removePassengerFromCluster(ContactInfoWrapper toCheck) {
         boolean isSuccess = contactsInCluster.remove(toCheck);
         if(isSuccess) recalculate();
         return isSuccess;
     }
 
     /**
-     * Runs every time an aleph is added.
+     * Runs every time an person is added.
      * If a radius or center needs to be
-     * recalculated whenever an aleph is
+     * recalculated whenever a person is
      * added, it is done here.
      */
     public abstract void recalculate();
@@ -104,10 +104,10 @@ public abstract class AlephCluster {
     }
 
     /**
-     * Gets the alephs in this cluster.
-     * @return the alephs in this cluster
+     * Gets the people in this cluster.
+     * @return the people in this cluster
      */
-    public ContactInfoWrapper[] getAlephsInCluster() {
+    public ContactInfoWrapper[] getPassengersInCluster() {
         return contactsInCluster.toArray(new ContactInfoWrapper[contactsInCluster.size()]);
     }
 

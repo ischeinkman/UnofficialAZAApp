@@ -11,7 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import org.ramonaza.unofficialazaapp.R;
-import org.ramonaza.unofficialazaapp.bluebook.fragments.BlueBookPagesFragment;
+import org.ramonaza.unofficialazaapp.colorbook.fragments.ColorBookPagesFragment;
 import org.ramonaza.unofficialazaapp.events.ui.fragments.EventListFragment;
 import org.ramonaza.unofficialazaapp.frontpage.ui.fragments.NavigationDrawerFragment;
 import org.ramonaza.unofficialazaapp.helpers.ui.activities.BaseActivity;
@@ -70,7 +70,7 @@ public class FrontalActivity extends BaseActivity
                 getFragmentManager().beginTransaction().replace(R.id.container, SongListFragment.newInstance(1)).commit();
                 break;
             case BLUEBOOK_PAGE_INDEX:
-                getFragmentManager().beginTransaction().replace(R.id.container, BlueBookPagesFragment.newInstance()).commit();
+                getFragmentManager().beginTransaction().replace(R.id.container, ColorBookPagesFragment.newInstance()).commit();
                 break;
             case CONTACTS_PAGE_INDEX:
                 getFragmentManager().beginTransaction().replace(R.id.container, ContactListFragment.newInstance(2)).commit();
@@ -92,7 +92,7 @@ public class FrontalActivity extends BaseActivity
                 getFragmentManager().beginTransaction().replace(R.id.container, SongListFragment.newInstance(1)).commit();
                 break;
             case BLUEBOOK_PAGE_INDEX:
-                getFragmentManager().beginTransaction().replace(R.id.container, BlueBookPagesFragment.newInstance()).commit();
+                getFragmentManager().beginTransaction().replace(R.id.container, ColorBookPagesFragment.newInstance()).commit();
                 break;
             case CONTACTS_PAGE_INDEX:
                 getFragmentManager().beginTransaction().replace(R.id.container, ContactListFragment.newInstance(2)).commit();
@@ -132,7 +132,7 @@ public class FrontalActivity extends BaseActivity
             fragSwitch = SONGS_PAGE_INDEX;
         } else if (position == BLUEBOOK_PAGE_INDEX) {
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, BlueBookPagesFragment.newInstance())
+                    .replace(R.id.container, ColorBookPagesFragment.newInstance())
                     .commit();
             fragSwitch = BLUEBOOK_PAGE_INDEX;
         } else if (position == CONTACTS_PAGE_INDEX) {

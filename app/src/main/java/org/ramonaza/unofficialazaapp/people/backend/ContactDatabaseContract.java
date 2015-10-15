@@ -60,11 +60,11 @@ public final class ContactDatabaseContract {
 
     public static abstract class RidesListTable implements BaseColumns {
         public static final String TABLE_NAME = "rides";
-        public static final String COLUMN_ALEPH = "aleph_id";
+        public static final String COLUMN_PASSENGER = "aleph_id";
         public static final String COLUMN_CAR = "driver_id";
         public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" +
                 RidesListTable._ID + " INTEGER PRIMARY KEY, " +
-                COLUMN_ALEPH + " " + VTYPE_INT + "," +
+                COLUMN_PASSENGER + " " + VTYPE_INT + "," +
                 COLUMN_CAR + " " + VTYPE_TEXT + ")";
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }

@@ -17,7 +17,7 @@ import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHelper;
 import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
-import org.ramonaza.unofficialazaapp.people.ui.activities.AddCustomAlephActivity;
+import org.ramonaza.unofficialazaapp.people.ui.activities.AddCustomContactActivity;
 import org.ramonaza.unofficialazaapp.people.ui.activities.ContactDataActivity;
 
 /**
@@ -55,9 +55,9 @@ public class ContactListFragment extends InfoWrapperTextListFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_add_custom_aleph:
-                Intent intent = new Intent(getActivity(), AddCustomAlephActivity.class);
-                intent.putExtra(AddCustomAlephActivity.EXTRA_PARENT_ACTIVITY, getActivity().getClass());
+            case R.id.action_add_custom_contact:
+                Intent intent = new Intent(getActivity(), AddCustomContactActivity.class);
+                intent.putExtra(AddCustomContactActivity.EXTRA_PARENT_ACTIVITY, getActivity().getClass());
                 startActivity(intent);
         }
         return super.onOptionsItemSelected(item);

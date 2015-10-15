@@ -1,4 +1,4 @@
-package org.ramonaza.unofficialazaapp.bluebook.other;
+package org.ramonaza.unofficialazaapp.colorbook.other;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -18,14 +18,14 @@ import org.ramonaza.unofficialazaapp.R;
  */
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class BlueBookViewAdapter extends BaseAdapter {
+public class ColorBookViewAdapter extends BaseAdapter {
 
     PdfRenderer mRenderer;
     Context context;
     Bitmap[] allImages;
     int[] screenDims;
 
-    public BlueBookViewAdapter(Context context, int resource, PdfRenderer renderer, int[] screenDims) {
+    public ColorBookViewAdapter(Context context, int resource, PdfRenderer renderer, int[] screenDims) {
         mRenderer = renderer;
         allImages = new Bitmap[renderer.getPageCount()];
         this.context = context;

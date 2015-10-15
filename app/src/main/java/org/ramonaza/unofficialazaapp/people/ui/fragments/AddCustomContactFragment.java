@@ -25,16 +25,16 @@ import java.util.Set;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link AddCustomAlephFragment#newInstance} factory method to
+ * Use the {@link AddCustomContactFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AddCustomAlephFragment extends Fragment {
+public class AddCustomContactFragment extends Fragment {
 
-    //The email to send new aleph information to
+    //The email to send new contact information to
     private static final String[] UPDATE_EMAIL = {"ramonazadev@gmail.com"};
 
 
-    public AddCustomAlephFragment() {
+    public AddCustomContactFragment() {
         // Required empty public constructor
     }
 
@@ -42,10 +42,10 @@ public class AddCustomAlephFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment AddCustomAlephFragment.
+     * @return A new instance of fragment AddCustomContactFragment.
      */
-    public static AddCustomAlephFragment newInstance() {
-        AddCustomAlephFragment fragment = new AddCustomAlephFragment();
+    public static AddCustomContactFragment newInstance() {
+        AddCustomContactFragment fragment = new AddCustomContactFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -60,7 +60,7 @@ public class AddCustomAlephFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_add_custom_aleph, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_add_custom_contact, container, false);
         Button submitButton = (Button) rootView.findViewById(R.id.SubmitButton);
         submitButton.setOnClickListener(new SubmitListener(getActivity(), rootView));
         return rootView;
@@ -93,13 +93,13 @@ public class AddCustomAlephFragment extends Fragment {
         public void onClick(View v) {
             ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(context);
 
-            EditText nameField = (EditText) myView.findViewById(R.id.AddAlephName);
-            EditText addressField = (EditText) myView.findViewById(R.id.AddAlephAddress);
-            EditText phoneField = (EditText) myView.findViewById(R.id.AddAlephPhone);
-            EditText schoolField = (EditText) myView.findViewById(R.id.AddAlephSchool);
-            EditText emailField = (EditText) myView.findViewById(R.id.AddAlephEmail);
-            EditText gradeField = (EditText) myView.findViewById(R.id.AddAlephGrade);
-            CheckBox globalUpdate = (CheckBox) myView.findViewById(R.id.AddAlephReqUpdate);
+            EditText nameField = (EditText) myView.findViewById(R.id.NewContactName);
+            EditText addressField = (EditText) myView.findViewById(R.id.NewContactAddress);
+            EditText phoneField = (EditText) myView.findViewById(R.id.NewContactPhone);
+            EditText schoolField = (EditText) myView.findViewById(R.id.NewContactSchool);
+            EditText emailField = (EditText) myView.findViewById(R.id.NewContactEmail);
+            EditText gradeField = (EditText) myView.findViewById(R.id.NewContactGrade);
+            CheckBox globalUpdate = (CheckBox) myView.findViewById(R.id.NewContactReqUpdate);
 
             String nameVal = nameField.getText().toString();
             String addressVal = addressField.getText().toString();

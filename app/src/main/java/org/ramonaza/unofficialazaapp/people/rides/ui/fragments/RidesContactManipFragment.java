@@ -17,22 +17,22 @@ import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHelper;
 import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
 import org.ramonaza.unofficialazaapp.people.rides.backend.DriverInfoWrapper;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
-import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesAlephManipActivity;
+import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesContactManipActivity;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link RidesAlephManipFragment#newInstance} factory method to
+ * Use the {@link RidesContactManipFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RidesAlephManipFragment extends Fragment {
+public class RidesContactManipFragment extends Fragment {
 
-    public static final String EXTRA_ALEPHID = RidesAlephManipActivity.EXTRA_ALEPHID;
-    private int alephID;
-    private ContactInfoWrapper mAleph;
+    public static final String EXTRA_CONTACTID = RidesContactManipActivity.EXTRA_CONTACTID;
+    private int contactID;
+    private ContactInfoWrapper mContact;
     private TextView dataview;
     private PopView popTask;
 
-    public RidesAlephManipFragment() {
+    public RidesContactManipFragment() {
         // Required empty public constructor
     }
 
@@ -40,13 +40,13 @@ public class RidesAlephManipFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param inID the id of the aleph
-     * @return A new instance of fragment RidesAlephManipFragment.
+     * @param inID the id of the contact
+     * @return A new instance of fragment RidesContactManipFragment.
      */
-    public static RidesAlephManipFragment newInstance(int inID) {
-        RidesAlephManipFragment fragment = new RidesAlephManipFragment();
+    public static RidesContactManipFragment newInstance(int inID) {
+        RidesContactManipFragment fragment = new RidesContactManipFragment();
         Bundle args = new Bundle();
-        args.putInt(EXTRA_ALEPHID, inID);
+        args.putInt(EXTRA_CONTACTID, inID);
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,14 +55,14 @@ public class RidesAlephManipFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
-        this.alephID = args.getInt(EXTRA_ALEPHID, 0);
+        this.contactID = args.getInt(EXTRA_CONTACTID, 0);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_rides_aleph_manip, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_rides_contact_manip, container, false);
         this.dataview = (TextView) rootView.findViewById(R.id.ContactInfoView);
         refreshData();
         return rootView;
@@ -71,7 +71,7 @@ public class RidesAlephManipFragment extends Fragment {
     private void refreshData() {
         if (popTask != null) popTask.cancel(true);
         popTask = new PopView(getActivity());
-        popTask.execute(alephID);
+        popTask.execute(contactID);
     }
 
 
@@ -89,11 +89,11 @@ public class RidesAlephManipFragment extends Fragment {
             SQLiteDatabase db = new ContactDatabaseHelper(context).getWritableDatabase();
             RidesDatabaseHandler rhandler = new RidesDatabaseHandler(db);
             ContactDatabaseHandler chandler = new ContactDatabaseHandler(db);
-            mAleph = chandler.getContact(params[0]);
+            mContact = chandler.getContact(params[0]);
             String[] whereclause = new String[]{
                     String.format("%s in (SELECT %s FROM %s WHERE %s = %s)", ContactDatabaseContract.DriverListTable._ID,
                             ContactDatabaseContract.RidesListTable.COLUMN_CAR, ContactDatabaseContract.RidesListTable.TABLE_NAME,
-                            ContactDatabaseContract.RidesListTable.COLUMN_ALEPH, mAleph.getId())
+                            ContactDatabaseContract.RidesListTable.COLUMN_PASSENGER, mContact.getId())
             };
             drivers = rhandler.getDrivers(whereclause, null);
             return null;
@@ -102,16 +102,16 @@ public class RidesAlephManipFragment extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            String viewData = "Name: " + mAleph.getName() + "\n\n" +
-                    "Address: " + mAleph.getAddress() + "\n\n" +
-                    "School: " + mAleph.getSchool() + "\n\n";
+            String viewData = "Name: " + mContact.getName() + "\n\n" +
+                    "Address: " + mContact.getAddress() + "\n\n" +
+                    "School: " + mContact.getSchool() + "\n\n";
             for (DriverInfoWrapper driver : drivers) {
                 viewData += "Currently in car: " + driver.getName() + "\n";
             }
             if (drivers.length == 0) viewData += "Not currently in car.";
             dataview.setTextSize(20);
             dataview.setText(viewData);
-            getActivity().getActionBar().setTitle(mAleph.getName());
+            getActivity().getActionBar().setTitle(mContact.getName());
             popTask = null;
         }
     }

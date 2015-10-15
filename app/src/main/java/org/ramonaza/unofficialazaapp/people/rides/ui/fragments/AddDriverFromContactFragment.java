@@ -14,10 +14,10 @@ import org.ramonaza.unofficialazaapp.people.rides.ui.activities.AddCustomDriverA
 /**
  * Created by ilanscheinkman on 8/25/15.
  */
-public class AddContactDriverFragment extends InfoWrapperTextListFragment {
+public class AddDriverFromContactFragment extends InfoWrapperTextListFragment {
 
-    public static AddContactDriverFragment newInstance() {
-        AddContactDriverFragment fragment = new AddContactDriverFragment();
+    public static AddDriverFromContactFragment newInstance() {
+        AddDriverFromContactFragment fragment = new AddDriverFromContactFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -25,9 +25,9 @@ public class AddContactDriverFragment extends InfoWrapperTextListFragment {
 
     @Override
     public void onButtonClick(InfoWrapper mWrapper) {
-        ContactInfoWrapper aleph = (ContactInfoWrapper) mWrapper;
+        ContactInfoWrapper contactBase = (ContactInfoWrapper) mWrapper;
         Intent intent = new Intent(getActivity(), AddCustomDriverActivity.class);
-        intent.putExtra(AddCustomDriverActivity.PRESET_CONTACT_ID, aleph.getId());
+        intent.putExtra(AddCustomDriverActivity.PRESET_CONTACT_ID, contactBase.getId());
         startActivity(intent);
         getActivity().finish();
     }

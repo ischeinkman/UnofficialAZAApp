@@ -62,8 +62,8 @@ public class ContactDatabaseHelper extends SQLiteOpenHelper {
 
 
     public class ContactCSVReadError extends Exception {
-        public ContactCSVReadError(String errorMessage, ContactInfoWrapper erroredAleph) {
-            super(String.format("%s ON %s", errorMessage, erroredAleph));
+        public ContactCSVReadError(String errorMessage, ContactInfoWrapper erroredContact) {
+            super(String.format("%s ON %s", errorMessage, erroredContact));
 
         }
     }

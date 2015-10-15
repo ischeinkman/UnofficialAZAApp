@@ -19,10 +19,10 @@ public class DriverInfoWrapper implements InfoWrapper {
     private double latitude;
     private double longitude;
     private int id;
-    private Set<ContactInfoWrapper> alephsInCar;
+    private Set<ContactInfoWrapper> passengersInCar;
 
     public DriverInfoWrapper() {
-        this.alephsInCar = new HashSet<ContactInfoWrapper>(spots + 1);
+        this.passengersInCar = new HashSet<ContactInfoWrapper>(spots + 1);
     }
 
     public double getLatitude() {
@@ -50,7 +50,7 @@ public class DriverInfoWrapper implements InfoWrapper {
     }
 
     public int getFreeSpots() {
-        return spots - alephsInCar.size();
+        return spots - passengersInCar.size();
     }
 
     public int getSpots() {
@@ -85,16 +85,16 @@ public class DriverInfoWrapper implements InfoWrapper {
         this.id = id;
     }
 
-    public void addAlephToCar(ContactInfoWrapper aleph) {
-        alephsInCar.add(aleph);
+    public void addPassengerToCar(ContactInfoWrapper passenger) {
+        passengersInCar.add(passenger);
     }
 
-    public void removeAlephFromCar(ContactInfoWrapper aleph) {
-        alephsInCar.remove(aleph);
+    public void removePassengerFromCar(ContactInfoWrapper passenger) {
+        passengersInCar.remove(passenger);
     }
 
-    public List<ContactInfoWrapper> getAlephsInCar() {
-        return new ArrayList<ContactInfoWrapper>(alephsInCar);
+    public List<ContactInfoWrapper> getPassengersInCar() {
+        return new ArrayList<ContactInfoWrapper>(passengersInCar);
     }
 
 

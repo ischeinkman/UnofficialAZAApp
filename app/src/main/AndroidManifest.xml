@@ -55,16 +55,16 @@
                 android:value="org.ramonaza.unofficialazaapp.frontpage.ui.activities.FrontalActivity" />
         </activity>
         <activity
-            android:name=".people.ui.activities.AddCustomAlephActivity"
-            android:label="@string/title_activity_add_custom_aleph"
+            android:name=".people.ui.activities.AddCustomContactActivity"
+            android:label="@string/title_activity_add_custom_contact"
             android:parentActivityName=".people.rides.ui.activities.RidesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesActivity" />
         </activity>
         <activity
-            android:name=".people.rides.ui.activities.PresentListedAlephActivity"
-            android:label="@string/title_activity_present_listed_aleph"
+            android:name=".people.rides.ui.activities.PresentListedContactActivity"
+            android:label="@string/title_activity_present_listed_contact"
             android:launchMode="singleTop"
             android:parentActivityName=".people.rides.ui.activities.RidesActivity">
             <meta-data
@@ -89,16 +89,16 @@
                 android:value="org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesActivity" />
         </activity>
         <activity
-            android:name=".people.rides.ui.activities.AddAlephToDriverActivity"
-            android:label="@string/title_activity_add_aleph_to_driver"
+            android:name=".people.rides.ui.activities.AddPassengerToDriverActivity"
+            android:label="@string/title_activity_add_passenger_to_driver"
             android:parentActivityName=".people.rides.ui.activities.RidesDriverManipActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesDriverManipActivity" />
         </activity>
         <activity
-            android:name=".people.rides.ui.activities.RemoveAlephFromDriverActivity"
-            android:label="@string/title_activity_remove_aleph_from_car"
+            android:name=".people.rides.ui.activities.RemovePassengerFromDriverActivity"
+            android:label="@string/title_activity_remove_passenger_from_car"
             android:parentActivityName=".people.rides.ui.activities.RidesDriverManipActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -113,8 +113,8 @@
                 android:value="org.ramonaza.unofficialazaapp.people.rides.ui.activities.ConfigureRidesDisplayActivity" />
         </activity>
         <activity
-            android:name=".people.rides.ui.activities.RidesAlephManipActivity"
-            android:label="@string/title_activity_rides_aleph_manip"
+            android:name=".people.rides.ui.activities.RidesContactManipActivity"
+            android:label="@string/title_activity_rides_contact_manip"
             android:parentActivityName=".people.rides.ui.activities.RidesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -136,9 +136,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesActivity" />
         </activity>
-        <activity
-            android:name=".bluebook.activities.BlueBookDisplayActivity"
-            android:label="@string/title_activity_blue_book_display"></activity>
     </application>
 
 </manifest>

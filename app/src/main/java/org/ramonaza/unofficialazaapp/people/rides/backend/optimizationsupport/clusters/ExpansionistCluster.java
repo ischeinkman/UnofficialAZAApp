@@ -8,7 +8,7 @@ import org.ramonaza.unofficialazaapp.people.rides.backend.RidesOptimizer;
  * of the initial contact.
  * Created by ilan on 10/2/15.
  */
-public class ExpansionistCluster extends AlephCluster {
+public class ExpansionistCluster extends RidesCluster {
 
     public static final double RADIUS_ADDITION = 0.00619;
     private double[] center;
@@ -21,7 +21,7 @@ public class ExpansionistCluster extends AlephCluster {
 
 
     @Override
-    public boolean alephLiesInCluster(ContactInfoWrapper toCheck) {
+    public boolean passengerLiesInCluster(ContactInfoWrapper toCheck) {
         return (RidesOptimizer.distBetweenHouses(toCheck, center) <= innerRadius + RADIUS_ADDITION);
     }
 

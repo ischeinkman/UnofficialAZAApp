@@ -13,8 +13,8 @@ import android.view.MenuItem;
 
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.helpers.ui.activities.BaseActivity;
-import org.ramonaza.unofficialazaapp.people.rides.ui.fragments.AlephsFragment;
 import org.ramonaza.unofficialazaapp.people.rides.ui.fragments.DriversFragment;
+import org.ramonaza.unofficialazaapp.people.rides.ui.fragments.PassengersFragment;
 
 import java.util.Locale;
 
@@ -131,7 +131,7 @@ public class RidesActivity extends BaseActivity implements ActionBar.TabListener
             //return PlaceholderFragment.newInstance(position + 1);
             switch (position) {
                 case 0:
-                    return AlephsFragment.newInstance();
+                    return PassengersFragment.newInstance();
                 case 1:
                     return DriversFragment.newInstance();
             }

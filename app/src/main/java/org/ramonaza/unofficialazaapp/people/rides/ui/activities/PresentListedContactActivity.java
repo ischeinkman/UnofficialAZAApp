@@ -6,9 +6,9 @@ import android.view.MenuItem;
 
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.helpers.ui.activities.BaseActivity;
-import org.ramonaza.unofficialazaapp.people.rides.ui.fragments.PresentAlephFromListFragment;
+import org.ramonaza.unofficialazaapp.people.rides.ui.fragments.PresentContactFromListFragment;
 
-public class PresentListedAlephActivity extends BaseActivity {
+public class PresentListedContactActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,10 +16,10 @@ public class PresentListedAlephActivity extends BaseActivity {
         setContentView(R.layout.activity_single_fragment);
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle("Add Alephs...");
+        actionBar.setTitle("Add Contacts...");
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, PresentAlephFromListFragment.newInstance())
+                    .add(R.id.container, PresentContactFromListFragment.newInstance())
                     .commit();
         }
     }

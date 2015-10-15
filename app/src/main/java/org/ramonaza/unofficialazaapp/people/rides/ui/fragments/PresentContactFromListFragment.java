@@ -15,19 +15,19 @@ import java.util.Arrays;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link PresentAlephFromListFragment#newInstance} factory method to
+ * Use the {@link PresentContactFromListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PresentAlephFromListFragment extends InfoWrapperCheckBoxesFragment {
+public class PresentContactFromListFragment extends InfoWrapperCheckBoxesFragment {
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment PresentAlephFromListFragment.
+     * @return A new instance of fragment PresentContactFromListFragment.
      */
-    public static PresentAlephFromListFragment newInstance() {
-        PresentAlephFromListFragment fragment = new PresentAlephFromListFragment();
+    public static PresentContactFromListFragment newInstance() {
+        PresentContactFromListFragment fragment = new PresentContactFromListFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -51,8 +51,8 @@ public class PresentAlephFromListFragment extends InfoWrapperCheckBoxesFragment 
         @Override
         protected Void doInBackground(InfoWrapper... params) {
             ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(getActivity());
-            ContactInfoWrapper[] alephs = Arrays.copyOf(params, params.length, ContactInfoWrapper[].class);
-            handler.updateField(ContactDatabaseContract.ContactListTable.COLUMN_PRESENT, "1", alephs);
+            ContactInfoWrapper[] presentContacts = Arrays.copyOf(params, params.length, ContactInfoWrapper[].class);
+            handler.updateField(ContactDatabaseContract.ContactListTable.COLUMN_PRESENT, "1", presentContacts);
             return null;
         }
 

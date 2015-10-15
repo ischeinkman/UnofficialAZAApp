@@ -17,27 +17,27 @@ import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHelper;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
-import org.ramonaza.unofficialazaapp.people.rides.ui.activities.PresentListedAlephActivity;
-import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesAlephManipActivity;
-import org.ramonaza.unofficialazaapp.people.ui.activities.AddCustomAlephActivity;
+import org.ramonaza.unofficialazaapp.people.rides.ui.activities.PresentListedContactActivity;
+import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesContactManipActivity;
+import org.ramonaza.unofficialazaapp.people.ui.activities.AddCustomContactActivity;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link AlephsFragment#newInstance} factory method to
+ * Use the {@link PassengersFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AlephsFragment extends InfoWrapperTextWithButtonFragment {
+public class PassengersFragment extends InfoWrapperTextWithButtonFragment {
 
     private static final String EXTRA_PARENT_ACTIVITY = "parent activity";
 
     private SQLiteDatabase db;
 
-    public AlephsFragment() {
+    public PassengersFragment() {
 
     }
 
-    public static AlephsFragment newInstance() {
-        AlephsFragment fragment = new AlephsFragment();
+    public static PassengersFragment newInstance() {
+        PassengersFragment fragment = new PassengersFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -58,23 +58,23 @@ public class AlephsFragment extends InfoWrapperTextWithButtonFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mLayoutId = R.layout.fragment_rides_alephs;
+        mLayoutId = R.layout.fragment_rides_passengers;
         View rootView = super.onCreateView(inflater, container, savedInstanceState); //Retrieve the parent's view to manipulate
-        Button listAdd = (Button) rootView.findViewById(R.id.AddPresetAlephButton);
+        Button listAdd = (Button) rootView.findViewById(R.id.AddPresetContactButton);
         listAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent presListIntent = new Intent(getActivity(), PresentListedAlephActivity.class);
+                Intent presListIntent = new Intent(getActivity(), PresentListedContactActivity.class);
                 startActivity(presListIntent);
             }
         });
-        Button customAdd = (Button) rootView.findViewById(R.id.AddCustomAlephButton);
+        Button customAdd = (Button) rootView.findViewById(R.id.AddCustomContactButton);
         customAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent customAlephIntent = new Intent(getActivity(), AddCustomAlephActivity.class);
-                customAlephIntent.putExtra(EXTRA_PARENT_ACTIVITY, getActivity().getClass());
-                startActivity(customAlephIntent);
+                Intent customContactIntent = new Intent(getActivity(), AddCustomContactActivity.class);
+                customContactIntent.putExtra(EXTRA_PARENT_ACTIVITY, getActivity().getClass());
+                startActivity(customContactIntent);
             }
         });
         return rootView;
@@ -83,14 +83,14 @@ public class AlephsFragment extends InfoWrapperTextWithButtonFragment {
     @Override
     public void onButtonClick(InfoWrapper mWrapper) {
         RidesDatabaseHandler handler = new RidesDatabaseHandler(db);
-        handler.setAlephAbsent(mWrapper.getId());
+        handler.setContactAbsent(mWrapper.getId());
         refreshData();
     }
 
     @Override
     public void onTextClick(InfoWrapper mWrapper) {
-        Intent intent = new Intent(getActivity(), RidesAlephManipActivity.class);
-        intent.putExtra(RidesAlephManipActivity.EXTRA_ALEPHID, mWrapper.getId());
+        Intent intent = new Intent(getActivity(), RidesContactManipActivity.class);
+        intent.putExtra(RidesContactManipActivity.EXTRA_CONTACTID, mWrapper.getId());
         startActivity(intent);
     }
 

@@ -37,7 +37,7 @@ public class ContactCSVHandler {
      * @return the contacts from the CSV file in an array
      */
     public ContactInfoWrapper[] getCtactInfoListFromCSV() {
-        List<String[]> cInfo = readAlephInfoCsv();
+        List<String[]> cInfo = readContactInfoCsv();
         ContactInfoWrapper[] rval = new ContactInfoWrapper[cInfo.size()];
         for (int i = 0; i < cInfo.size(); i++) {
             rval[i] = createContactInfoWrapperFromCSVargs(cInfo.get(i));
@@ -56,9 +56,9 @@ public class ContactCSVHandler {
     public boolean writesContactsToCSV(ContactInfoWrapper[] toSave, boolean append) {
         if (file == null) return false;
         String dataToWrite = "";
-        for (ContactInfoWrapper aleph : toSave) {
-            dataToWrite += aleph.getName() + "," + aleph.getSchool() + "," + aleph.getGradYear() + ",\"" + aleph.getAddress() + "\","
-                    + aleph.getLatitude() + "," + aleph.getLongitude() + "," + aleph.getEmail() + "," + aleph.getPhoneNumber() + "\n";
+        for (ContactInfoWrapper contact : toSave) {
+            dataToWrite += contact.getName() + "," + contact.getSchool() + "," + contact.getGradYear() + ",\"" + contact.getAddress() + "\","
+                    + contact.getLatitude() + "," + contact.getLongitude() + "," + contact.getEmail() + "," + contact.getPhoneNumber() + "\n";
         }
         try {
             FileOutputStream outputStream = new FileOutputStream(file, append);
@@ -74,20 +74,20 @@ public class ContactCSVHandler {
     }
 
 
-    private List<String[]> readAlephInfoCsv() {
-        List<String[]> alephCSVline = new ArrayList<String[]>();
+    private List<String[]> readContactInfoCsv() {
+        List<String[]> contactCSVline = new ArrayList<String[]>();
         try {
             InputStreamReader csvStreamReader = new InputStreamReader(csvInputStream);
             CSVReader csvReader = new CSVReader(csvStreamReader);
             String[] line;
 
             while ((line = csvReader.readNext()) != null) {
-                alephCSVline.add(line);
+                contactCSVline.add(line);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return alephCSVline;
+        return contactCSVline;
     }
 
 

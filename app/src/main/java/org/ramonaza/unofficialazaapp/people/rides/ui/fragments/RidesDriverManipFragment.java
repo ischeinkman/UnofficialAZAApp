@@ -20,7 +20,7 @@ import org.ramonaza.unofficialazaapp.helpers.ui.other.InfoWrapperTextWithButtonA
 import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
 import org.ramonaza.unofficialazaapp.people.rides.backend.DriverInfoWrapper;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
-import org.ramonaza.unofficialazaapp.people.rides.ui.activities.AddAlephToDriverActivity;
+import org.ramonaza.unofficialazaapp.people.rides.ui.activities.AddPassengerToDriverActivity;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesDriverManipActivity;
 
 /**
@@ -78,17 +78,17 @@ public class RidesDriverManipFragment extends Fragment {
 
             @Override
             public void onText(InfoWrapper info) {
-                ContactInfoWrapper aleph = (ContactInfoWrapper) info;
-                Toast toast = Toast.makeText(getActivity(), aleph.getAddress(), Toast.LENGTH_SHORT);
+                ContactInfoWrapper currentPassenger = (ContactInfoWrapper) info;
+                Toast toast = Toast.makeText(getActivity(), currentPassenger.getAddress(), Toast.LENGTH_SHORT);
                 toast.show();
             }
         };
         passengersView.setAdapter(mAdapter);
-        (rootView.findViewById(R.id.AddAlephToDriverButton)).setOnClickListener(new View.OnClickListener() {
+        (rootView.findViewById(R.id.AddPassengerToDriverButton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentAdd = new Intent(getActivity(), AddAlephToDriverActivity.class);
-                intentAdd.putExtra(AddAlephToDriverActivity.EXTRA_DRIVERID, mDriver.getId());
+                Intent intentAdd = new Intent(getActivity(), AddPassengerToDriverActivity.class);
+                intentAdd.putExtra(AddPassengerToDriverActivity.EXTRA_DRIVERID, mDriver.getId());
                 startActivity(intentAdd);
             }
         });
@@ -132,7 +132,7 @@ public class RidesDriverManipFragment extends Fragment {
         @Override
         protected ContactInfoWrapper[] doInBackground(Void... params) {
             RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
-            return handler.getAlephsInCar(driverId);
+            return handler.getPassengersInCar(driverId);
         }
 
         @Override
@@ -157,8 +157,8 @@ public class RidesDriverManipFragment extends Fragment {
         @Override
         protected Void doInBackground(InfoWrapper... params) {
             RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
-            for (InfoWrapper aleph : params) {
-                handler.removeAlephFromCar(aleph.getId());
+            for (InfoWrapper toDelete : params) {
+                handler.removePassengerFromCar(toDelete.getId());
             }
             return null;
         }

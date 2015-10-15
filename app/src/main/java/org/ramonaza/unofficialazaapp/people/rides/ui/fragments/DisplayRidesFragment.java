@@ -19,10 +19,10 @@ import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
 import org.ramonaza.unofficialazaapp.people.rides.backend.DriverInfoWrapper;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesOptimizer;
-import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.AlephCluster;
 import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.ExpansionistCluster;
 import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.HungryCluster;
 import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.LazyCluster;
+import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.RidesCluster;
 import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.SnakeCluster;
 
 /**
@@ -69,8 +69,8 @@ public class DisplayRidesFragment extends Fragment {
         int overStuff = 0;
         for (DriverInfoWrapper driver : drivers) {
             ridesList += String.format("<h1><b><u>%s</u></b></h1>", driver.getName(), driver.getFreeSpots());
-            for (ContactInfoWrapper alephInCar : driver.getAlephsInCar()) {
-                ridesList += String.format("-%s<br/>", alephInCar.getName());
+            for (ContactInfoWrapper passenger : driver.getPassengersInCar()) {
+                ridesList += String.format("-%s<br/>", passenger.getName());
             }
             ridesList += "<b>Free Spots: " + driver.getFreeSpots();
             ridesList += "</b><br/><br/>";
@@ -79,8 +79,8 @@ public class DisplayRidesFragment extends Fragment {
         }
         if (driverless.length > 0) {
             ridesList += "<h1><b><u>Driverless</u></b></h1>";
-            for (ContactInfoWrapper driverlessAleph : driverless)
-                ridesList += String.format("-%s<br/>", driverlessAleph.getName());
+            for (ContactInfoWrapper driverlessPassenger : driverless)
+                ridesList += String.format("-%s<br/>", driverlessPassenger.getName());
         }
         ridesList += String.format("<br/><h3><b><u>Stats:</u></b></h3>" +
                 "Total Free Spots:       %d <br/>" +
@@ -89,7 +89,7 @@ public class DisplayRidesFragment extends Fragment {
         return ridesList;
     }
 
-    private static Class<? extends AlephCluster> getClusterByIndex(int index) {
+    private static Class<? extends RidesCluster> getClusterByIndex(int index) {
         switch (index) {
             case 0:
                 return null;
@@ -132,10 +132,9 @@ public class DisplayRidesFragment extends Fragment {
 
     private class CreateRidesText extends AsyncTask<Void, Void, String> {
 
-        private RidesDatabaseHandler rhandler;
-
         DriverInfoWrapper[] rides;
         ContactInfoWrapper[] driverless;
+        private RidesDatabaseHandler rhandler;
 
         @Override
         protected String doInBackground(Void... params) {
@@ -168,7 +167,7 @@ public class DisplayRidesFragment extends Fragment {
             whereclause = new String[]{
                     String.format("%s = %d", ContactDatabaseContract.ContactListTable.COLUMN_PRESENT, 1),
                     String.format("not %s in (SELECT %s FROM %s)", ContactDatabaseContract.ContactListTable._ID,
-                            ContactDatabaseContract.RidesListTable.COLUMN_ALEPH, ContactDatabaseContract.RidesListTable.TABLE_NAME)
+                            ContactDatabaseContract.RidesListTable.COLUMN_PASSENGER, ContactDatabaseContract.RidesListTable.TABLE_NAME)
             };
             driverless = chandler.getContacts(whereclause, null);
         }

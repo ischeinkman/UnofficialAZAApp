@@ -8,9 +8,9 @@ import android.view.MenuItem;
 
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.helpers.ui.activities.BaseActivity;
-import org.ramonaza.unofficialazaapp.people.ui.fragments.AddCustomAlephFragment;
+import org.ramonaza.unofficialazaapp.people.ui.fragments.AddCustomContactFragment;
 
-public class AddCustomAlephActivity extends BaseActivity {
+public class AddCustomContactActivity extends BaseActivity {
 
 
     public static final String EXTRA_PARENT_ACTIVITY = "parent activity";
@@ -21,12 +21,12 @@ public class AddCustomAlephActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_fragment);
         ActionBar actionBar = getActionBar();
-        actionBar.setTitle("Add Aleph...");
+        actionBar.setTitle("Add Contact...");
         Intent callingIntent = getIntent();
         parentActivity = (Class<? extends Activity>) callingIntent.getSerializableExtra(EXTRA_PARENT_ACTIVITY);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, AddCustomAlephFragment.newInstance())
+                    .add(R.id.container, AddCustomContactFragment.newInstance())
                     .commit();
         }
     }

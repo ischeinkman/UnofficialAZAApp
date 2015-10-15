@@ -1,4 +1,4 @@
-package org.ramonaza.unofficialazaapp.bluebook.fragments;
+package org.ramonaza.unofficialazaapp.colorbook.fragments;
 
 import android.annotation.TargetApi;
 import android.app.ListFragment;
@@ -11,7 +11,7 @@ import android.os.ParcelFileDescriptor;
 import android.widget.Toast;
 
 import org.ramonaza.unofficialazaapp.R;
-import org.ramonaza.unofficialazaapp.bluebook.other.BlueBookViewAdapter;
+import org.ramonaza.unofficialazaapp.colorbook.other.ColorBookViewAdapter;
 
 import java.io.IOException;
 
@@ -21,7 +21,7 @@ import java.io.IOException;
  * <p/>
  * interface.
  */
-public class BlueBookPagesFragment extends ListFragment {
+public class ColorBookPagesFragment extends ListFragment {
 
     PdfRenderer mPdfRenderer;
     private ParcelFileDescriptor mFileDescriptor;
@@ -30,11 +30,11 @@ public class BlueBookPagesFragment extends ListFragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public BlueBookPagesFragment() {
+    public ColorBookPagesFragment() {
     }
 
-    public static BlueBookPagesFragment newInstance() {
-        BlueBookPagesFragment fragment = new BlueBookPagesFragment();
+    public static ColorBookPagesFragment newInstance() {
+        ColorBookPagesFragment fragment = new ColorBookPagesFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -47,7 +47,7 @@ public class BlueBookPagesFragment extends ListFragment {
         getActivity().getWindowManager().getDefaultDisplay().getSize(size);
         try {
             openRenderer(getActivity());
-            setListAdapter(new BlueBookViewAdapter(getActivity(), R.layout.bluebook_adapter_layout, mPdfRenderer, new int[]{size.x, size.y}));
+            setListAdapter(new ColorBookViewAdapter(getActivity(), R.layout.bluebook_adapter_layout, mPdfRenderer, new int[]{size.x, size.y}));
         } catch (IOException e) {
             Toast.makeText(getActivity(), "ERROR: " + e.getMessage(), Toast.LENGTH_LONG);
         }
@@ -55,7 +55,7 @@ public class BlueBookPagesFragment extends ListFragment {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void openRenderer(Context context) throws IOException {
-        mFileDescriptor = context.getAssets().openFd("BlueBook.pdf").getParcelFileDescriptor();
+        mFileDescriptor = context.getAssets().openFd("ColorBook.pdf").getParcelFileDescriptor();
         mPdfRenderer = new PdfRenderer(mFileDescriptor);
     }
 }

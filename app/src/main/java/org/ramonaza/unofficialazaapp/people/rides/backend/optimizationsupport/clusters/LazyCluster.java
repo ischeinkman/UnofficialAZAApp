@@ -8,7 +8,7 @@ import org.ramonaza.unofficialazaapp.people.rides.backend.RidesOptimizer;
  * {@link LazyCluster#RADIUS} and adding anything in that circle.
  * Created by ilan on 10/2/15.
  */
-public class LazyCluster extends AlephCluster {
+public class LazyCluster extends RidesCluster {
 
     private static final double RADIUS = 0.00619;
     private double[] center;
@@ -19,7 +19,7 @@ public class LazyCluster extends AlephCluster {
     }
 
     @Override
-    public boolean alephLiesInCluster(ContactInfoWrapper toCheck) {
+    public boolean passengerLiesInCluster(ContactInfoWrapper toCheck) {
         return (RidesOptimizer.distBetweenHouses(toCheck, center) <= RADIUS);
     }
 

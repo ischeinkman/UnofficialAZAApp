@@ -19,7 +19,7 @@ import org.ramonaza.unofficialazaapp.people.ui.fragments.GeneralContactFragment;
 
 public class ContactDataActivity extends BaseActivity {
 
-    public static final String EXTRA_CONTRUCTION_INFO = "org.ramonaza.unofficialazaapp.ALEPH_ID";
+    public static final String EXTRA_CONTRUCTION_INFO = "org.ramonaza.unofficialazaapp.CONTACT_ID";
     public static final String EXTRA_LAYER = "org.ramonaza.unofficialazaapp.LAYER_NAME";
     private int inputId;
 

@@ -8,7 +8,7 @@ import org.ramonaza.unofficialazaapp.people.rides.backend.RidesOptimizer;
  * and adding all those whose circles are touching.
  * Created by ilan on 10/2/15.
  */
-public class SnakeCluster extends AlephCluster {
+public class SnakeCluster extends RidesCluster {
 
     public static final double RADIUS_ADDITION = 0.00619;
 
@@ -17,7 +17,7 @@ public class SnakeCluster extends AlephCluster {
     }
 
     @Override
-    public boolean alephLiesInCluster(ContactInfoWrapper toCheck) {
+    public boolean passengerLiesInCluster(ContactInfoWrapper toCheck) {
         for (ContactInfoWrapper current : contactsInCluster) {
             if (RidesOptimizer.distBetweenHouses(toCheck, current) <= RADIUS_ADDITION) return true;
         }

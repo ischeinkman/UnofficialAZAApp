@@ -4,7 +4,7 @@ import android.app.ActionBar;
 import android.os.Bundle;
 
 import org.ramonaza.unofficialazaapp.R;
-import org.ramonaza.unofficialazaapp.people.rides.ui.fragments.AddContactDriverFragment;
+import org.ramonaza.unofficialazaapp.people.rides.ui.fragments.AddDriverFromContactFragment;
 
 /**
  * Created by ilanscheinkman on 8/25/15.
@@ -19,7 +19,7 @@ public class AddContactDriverActivity extends org.ramonaza.unofficialazaapp.help
         actionBar.setDisplayHomeAsUpEnabled(true);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, AddContactDriverFragment.newInstance())
+                    .add(R.id.container, AddDriverFromContactFragment.newInstance())
                     .commit();
         }
     }

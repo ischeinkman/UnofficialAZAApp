@@ -14,17 +14,17 @@ import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesDriverManip
 
 import java.util.Arrays;
 
-public class AddAlephToDriverFragment extends InfoWrapperCheckBoxesFragment {
+public class AddPassengerToDriverFragment extends InfoWrapperCheckBoxesFragment {
 
 
     public static final String EXTRA_DRIVERID = RidesDriverManipActivity.EXTRA_DRIVERID;
     private int driverId;
 
-    public AddAlephToDriverFragment() {
+    public AddPassengerToDriverFragment() {
     }
 
-    public static AddAlephToDriverFragment newInstance(int driverId) {
-        AddAlephToDriverFragment fragment = new AddAlephToDriverFragment();
+    public static AddPassengerToDriverFragment newInstance(int driverId) {
+        AddPassengerToDriverFragment fragment = new AddPassengerToDriverFragment();
         Bundle args = new Bundle();
         args.putInt(EXTRA_DRIVERID, driverId);
         fragment.setArguments(args);
@@ -47,7 +47,7 @@ public class AddAlephToDriverFragment extends InfoWrapperCheckBoxesFragment {
         ContactDatabaseHandler dbhandler = ChapterPackHandlerSupport.getContactHandler(getActivity());
         return dbhandler.getContacts(new String[]{
                 ContactDatabaseContract.ContactListTable.COLUMN_PRESENT + "=1",
-                ContactDatabaseContract.ContactListTable._ID + " NOT IN (" + "SELECT " + ContactDatabaseContract.RidesListTable.COLUMN_ALEPH + " FROM " + ContactDatabaseContract.RidesListTable.TABLE_NAME + ")"
+                ContactDatabaseContract.ContactListTable._ID + " NOT IN (" + "SELECT " + ContactDatabaseContract.RidesListTable.COLUMN_PASSENGER + " FROM " + ContactDatabaseContract.RidesListTable.TABLE_NAME + ")"
         }, ContactDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
     }
 
@@ -56,8 +56,8 @@ public class AddAlephToDriverFragment extends InfoWrapperCheckBoxesFragment {
         @Override
         protected Void doInBackground(InfoWrapper... params) {
             RidesDatabaseHandler rideshandler = new RidesDatabaseHandler(getActivity());
-            ContactInfoWrapper[] alephs = Arrays.copyOf(params, params.length, ContactInfoWrapper[].class);
-            rideshandler.addAlephsToCar(driverId, alephs);
+            ContactInfoWrapper[] newPassengers = Arrays.copyOf(params, params.length, ContactInfoWrapper[].class);
+            rideshandler.addPassengersToCar(driverId, newPassengers);
             return null;
         }
 
