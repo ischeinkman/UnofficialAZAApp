@@ -2,8 +2,16 @@
 <resources>
     <string-array name="algorithmValues">
         <item>None</item>
-        <item>LATLONG - Alephs First</item>
-        <item>LATLONG - Drivers First</item>
-        <!--<item>Naive Hungarian</item>-->
+        <item>Serial Arson</item>
+        <item>Flamboyant Elephant</item>
+        <item>Naive Hungarian</item>
+        <item>Cluster Matching</item>
+    </string-array>
+    <string-array name="clusterValues">
+        <item>None</item>
+        <item>Snake</item>
+        <item>Expansionist</item>
+        <item>Lazy</item>
+        <item>Hungry</item>
     </string-array>
 </resources>

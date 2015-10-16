@@ -133,6 +133,7 @@ public class NavigationDrawerFragment extends Fragment {
             drawerlist = new String[]{
                     getString(R.string.title_section1), //Strings n main/res/values/strings.xml
                     getString(R.string.title_section2),
+                    //getString(R.string.title_section_bluebook),
                     getString(R.string.title_section4),
 
             };
@@ -140,6 +141,7 @@ public class NavigationDrawerFragment extends Fragment {
             drawerlist = new String[]{
                     getString(R.string.title_section1), //Strings n main/res/values/strings.xml
                     getString(R.string.title_section2),
+                    //getString(R.string.title_section_bluebook),
                     getString(R.string.title_section4),
                     getString(R.string.title_section5)
             };

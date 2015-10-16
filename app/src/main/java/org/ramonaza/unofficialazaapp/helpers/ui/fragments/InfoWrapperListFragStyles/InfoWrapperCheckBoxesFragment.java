@@ -7,9 +7,9 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
 import org.ramonaza.unofficialazaapp.R;
-import org.ramonaza.unofficialazaapp.helpers.backend.InfoWrapper;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragment;
 import org.ramonaza.unofficialazaapp.helpers.ui.other.InfoWrapperCheckboxListAdapter;
+import org.ramonazaapi.interfaces.InfoWrapper;
 
 /**
  * Parent class for fragments with a checkbox list and a submit button.

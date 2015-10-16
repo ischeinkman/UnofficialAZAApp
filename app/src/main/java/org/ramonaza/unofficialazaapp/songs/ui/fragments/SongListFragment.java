@@ -5,10 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import org.ramonaza.unofficialazaapp.frontpage.ui.activities.FrontalActivity;
-import org.ramonaza.unofficialazaapp.helpers.backend.InfoWrapper;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextListFragment;
 import org.ramonaza.unofficialazaapp.songs.backend.SongInfoWrapperGenerator;
 import org.ramonaza.unofficialazaapp.songs.ui.activities.SongDataActivity;
+import org.ramonazaapi.interfaces.InfoWrapper;
 
 /**
  * The fragment containing the list of songs.

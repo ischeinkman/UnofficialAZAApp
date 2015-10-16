@@ -2,6 +2,9 @@ package org.ramonaza.unofficialazaapp.songs.backend;
 
 import android.content.Context;
 
+import org.ramonazaapi.songs.SongInfoWrapper;
+
+
 /**
  * Created by ilanscheinkman on 4/28/15.
  */

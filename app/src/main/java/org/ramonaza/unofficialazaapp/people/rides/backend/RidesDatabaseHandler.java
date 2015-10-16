@@ -9,7 +9,8 @@ import android.support.annotation.Nullable;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHelper;
-import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
+import org.ramonazaapi.contacts.ContactInfoWrapper;
+import org.ramonazaapi.rides.DriverInfoWrapper;
 
 /**
  * Created by ilanscheinkman on 7/16/15.
@@ -62,8 +63,8 @@ public class RidesDatabaseHandler {
             i++;
         } while (queryResults.moveToNext());
         for (DriverInfoWrapper driver : drivers) {
-            ContactInfoWrapper[] allInCar = getAlephsInCar(driver.getId());
-            for (ContactInfoWrapper inCar : allInCar) driver.addAlephToCar(inCar);
+            ContactInfoWrapper[] allInCar = getPassengersInCar(driver.getId());
+            for (ContactInfoWrapper inCar : allInCar) driver.addPassengerToCar(inCar);
         }
         queryResults.close();
         return drivers;
@@ -88,8 +89,8 @@ public class RidesDatabaseHandler {
         driver.setLatitude(queryResults.getString(queryResults.getColumnIndexOrThrow(ContactDatabaseContract.DriverListTable.COLUMN_LATITUDE)));
         driver.setLongitude(queryResults.getString(queryResults.getColumnIndexOrThrow(ContactDatabaseContract.DriverListTable.COLUMN_LONGITUDE)));
         driver.setArea(queryResults.getInt(queryResults.getColumnIndexOrThrow(ContactDatabaseContract.DriverListTable.COLUMN_AREA)));
-        ContactInfoWrapper[] carAlephs = getAlephsInCar(id);
-        for (ContactInfoWrapper alephInCar : carAlephs) driver.addAlephToCar(alephInCar);
+        ContactInfoWrapper[] carPassengers = getPassengersInCar(id);
+        for (ContactInfoWrapper passengers : carPassengers) driver.addPassengerToCar(passengers);
         return driver;
     }
 
@@ -151,77 +152,77 @@ public class RidesDatabaseHandler {
      * Updates the rides table.
      *
      * @param drivers    the current cars
-     * @param driverless the alephs not in cars
+     * @param driverless the people not in cars
      */
     public void updateRides(DriverInfoWrapper[] drivers, ContactInfoWrapper[] driverless) {
         String driverlessIDs;
         if (driverless.length != 0) {
             driverlessIDs = "(";
-            for (ContactInfoWrapper aleph : driverless) {
-                driverlessIDs += aleph.getId() + ",";
+            for (ContactInfoWrapper driverlessPassenger : driverless) {
+                driverlessIDs += driverlessPassenger.getId() + ",";
             }
             driverlessIDs = driverlessIDs.substring(0, driverlessIDs.length() - 1);
             driverlessIDs += ")";
             db.execSQL("DELETE FROM " + ContactDatabaseContract.RidesListTable.TABLE_NAME +
-                    " WHERE " + ContactDatabaseContract.RidesListTable.COLUMN_ALEPH +
+                    " WHERE " + ContactDatabaseContract.RidesListTable.COLUMN_PASSENGER +
                     " IN " + driverlessIDs);
         }
         for (DriverInfoWrapper driver : drivers) {
-            addAlephsToCar(driver.getId(), driver.getAlephsInCar().toArray(new ContactInfoWrapper[driver.getAlephsInCar().size()
+            addPassengersToCar(driver.getId(), driver.getPassengersInCar().toArray(new ContactInfoWrapper[driver.getPassengersInCar().size()
                     ]));
         }
     }
 
     /**
-     * Adds alephs to a given car.
+     * Adds passengers to a given car.
      *
      * @param driverid the ID of the car
-     * @param inCar    the alephs to add to the car
+     * @param inCar    the passengers to add to the car
      */
-    public void addAlephsToCar(int driverid, ContactInfoWrapper[] inCar) {
-        for (ContactInfoWrapper aleph : inCar) {
+    public void addPassengersToCar(int driverid, ContactInfoWrapper[] inCar) {
+        for (ContactInfoWrapper passenger : inCar) {
             Cursor checkPreexist = db.rawQuery("SELECT * FROM " + ContactDatabaseContract.RidesListTable.TABLE_NAME +
                     " WHERE " + ContactDatabaseContract.RidesListTable.COLUMN_CAR + " = " + driverid +
-                    " AND " + ContactDatabaseContract.RidesListTable.COLUMN_ALEPH + " = " + aleph.getId(), null);
+                    " AND " + ContactDatabaseContract.RidesListTable.COLUMN_PASSENGER + " = " + passenger.getId(), null);
             if (checkPreexist.getCount() > 0) continue;
             ContentValues contentValues = new ContentValues();
-            contentValues.put(ContactDatabaseContract.RidesListTable.COLUMN_ALEPH, aleph.getId());
+            contentValues.put(ContactDatabaseContract.RidesListTable.COLUMN_PASSENGER, passenger.getId());
             contentValues.put(ContactDatabaseContract.RidesListTable.COLUMN_CAR, driverid);
             db.insert(ContactDatabaseContract.RidesListTable.TABLE_NAME, null, contentValues);
         }
     }
 
     /**
-     * Sets an aleph's attendance status to absent.
+     * Sets an passengerID's attendance status to absent.
      *
-     * @param aleph the ID of the aleph not currently here
+     * @param passengerID the ID of the passengerID not currently here
      */
-    public void setAlephAbsent(int aleph) {
+    public void setContactAbsent(int passengerID) {
         String updateQuery = String.format("UPDATE %s SET %s=%s WHERE %s=%d",
                 ContactDatabaseContract.ContactListTable.TABLE_NAME,
                 ContactDatabaseContract.ContactListTable.COLUMN_PRESENT,
                 "0",
                 ContactDatabaseContract.ContactListTable._ID,
-                aleph
+                passengerID
         ); //Build query b/c android didn't like any other way
         db.execSQL(updateQuery);
         String deleteQuery = String.format("DELETE FROM %s WHERE %s=%s",
                 ContactDatabaseContract.RidesListTable.TABLE_NAME,
-                ContactDatabaseContract.RidesListTable.COLUMN_ALEPH,
-                "" + aleph);
+                ContactDatabaseContract.RidesListTable.COLUMN_PASSENGER,
+                "" + passengerID);
         db.execSQL(deleteQuery);
 
     }
 
     /**
-     * Gets the alephs in the car of a driver.
+     * Gets the passengers in the car of a driver.
      *
      * @param driverId the ID of the driver
-     * @return the alephs in the driver's car
+     * @return the passengers in the driver's car
      */
-    public ContactInfoWrapper[] getAlephsInCar(int driverId) {
+    public ContactInfoWrapper[] getPassengersInCar(int driverId) {
         String query = "SELECT * FROM " + ContactDatabaseContract.RidesListTable.TABLE_NAME + " JOIN " + ContactDatabaseContract.ContactListTable.TABLE_NAME +
-                " ON " + ContactDatabaseContract.RidesListTable.TABLE_NAME + "." + ContactDatabaseContract.RidesListTable.COLUMN_ALEPH + "=" + ContactDatabaseContract.ContactListTable.TABLE_NAME + "." + ContactDatabaseContract.ContactListTable._ID +
+                " ON " + ContactDatabaseContract.RidesListTable.TABLE_NAME + "." + ContactDatabaseContract.RidesListTable.COLUMN_PASSENGER + "=" + ContactDatabaseContract.ContactListTable.TABLE_NAME + "." + ContactDatabaseContract.ContactListTable._ID +
                 " WHERE " + ContactDatabaseContract.RidesListTable.TABLE_NAME + "." + ContactDatabaseContract.RidesListTable.COLUMN_CAR + "=" + driverId +
                 " ORDER BY " + ContactDatabaseContract.ContactListTable.TABLE_NAME + "." + ContactDatabaseContract.ContactListTable.COLUMN_NAME + " ASC";
         Cursor cursor = db.rawQuery(query, null);
@@ -229,15 +230,15 @@ public class RidesDatabaseHandler {
     }
 
     /**
-     * Removes an aleph from all cars that it is currently in.
+     * Removes a passenger from all cars that it is currently in.
      *
-     * @param alephToRemove the ID of the aleph to now render driverless
+     * @param passengerID the ID of the passenger to now render driverless
      */
-    public void removeAlephFromCar(int alephToRemove) {
+    public void removePassengerFromCar(int passengerID) {
         String query = String.format("DELETE FROM %s WHERE %s=%d",
                 ContactDatabaseContract.RidesListTable.TABLE_NAME,
-                ContactDatabaseContract.RidesListTable.COLUMN_ALEPH,
-                alephToRemove);
+                ContactDatabaseContract.RidesListTable.COLUMN_PASSENGER,
+                passengerID);
         db.execSQL(query);
     }
 

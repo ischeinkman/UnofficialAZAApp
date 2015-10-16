@@ -14,12 +14,12 @@ import org.ramonaza.unofficialazaapp.frontpage.ui.activities.FrontalActivity;
 import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.unofficialazaapp.helpers.ui.activities.BaseActivity;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
-import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
 import org.ramonaza.unofficialazaapp.people.ui.fragments.GeneralContactFragment;
+import org.ramonazaapi.contacts.ContactInfoWrapper;
 
 public class ContactDataActivity extends BaseActivity {
 
-    public static final String EXTRA_CONTRUCTION_INFO = "org.ramonaza.unofficialazaapp.ALEPH_ID";
+    public static final String EXTRA_CONTRUCTION_INFO = "org.ramonaza.unofficialazaapp.CONTACT_ID";
     public static final String EXTRA_LAYER = "org.ramonaza.unofficialazaapp.LAYER_NAME";
     private int inputId;
 

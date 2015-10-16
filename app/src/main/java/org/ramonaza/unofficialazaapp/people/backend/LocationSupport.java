@@ -5,6 +5,7 @@ import android.location.Address;
 import android.location.Geocoder;
 
 import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
+import org.ramonazaapi.contacts.ContactInfoWrapper;
 
 /**
  * Created by ilanscheinkman on 9/1/15.
@@ -41,13 +42,13 @@ public class LocationSupport {
     public static void recalculateLatLong(Context context) {
         ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(context);
         ContactInfoWrapper[] toCalc = handler.getContacts(null, null);
-        for (ContactInfoWrapper aleph : toCalc) {
-            double[] coords = getCoordsFromAddress(aleph.getAddress(), context);
+        for (ContactInfoWrapper contact : toCalc) {
+            double[] coords = getCoordsFromAddress(contact.getAddress(), context);
             if (coords == null) continue;
-            aleph.setLatitude(coords[0]);
-            aleph.setLongitude(coords[1]);
+            contact.setLatitude(coords[0]);
+            contact.setLongitude(coords[1]);
             try {
-                handler.updateContact(aleph);
+                handler.updateContact(contact);
             } catch (ContactDatabaseHandler.ContactCSVReadError contactCSVReadError) {
                 contactCSVReadError.printStackTrace();
             }

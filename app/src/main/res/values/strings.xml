@@ -7,7 +7,7 @@
     <string name="title_section3">Rides</string>
     <string name="title_section4">Contact List</string>
     <string name="title_section5">Rides</string>
-    <string name="rides_title_section1">Alephs</string>
+    <string name="rides_title_section1">Passengers</string>
     <string name="rides_title_section2">Drivers</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -21,205 +21,19 @@
     <string name="title_activity_event_page">EventPageActivity</string>
     <string name="CallButton">Call</string>
     <string name="TextButton">Text</string>
-    <string name="AddAlephsButton">Add Aleph\n From List…</string>
-    <string name="AddCustomAlephButton">Add Custom\n Aleph…</string>
+    <string name="AddPassengersButton">Add Passenger\n From List…</string>
+    <string name="AddCustomPassengerButton">Add Custom\n Passenger…</string>
     <string name="AddDriverButton">Add Driver\n From Contact…</string>
     <string name="AddCustomDriverButton">Add Custom\n Driver…</string>
     <string name="title_activity_rides">RidesActivity</string>
     <string name="empty_info_wrapper_list">--NO DATA CURRENTLY FOUND--</string>
-    <string name="upyoumentext">Up, you men, and sing to AZA!\n\
-Time will pass, and we\'ll be on our way.\n\
-As the years go by there will be\n\
-Happiest of memories\, rah rah rah!\n\
-Stand and then we\'ll sing this song again.\n\
-All you loyal men\nSing the praises of our order.\n\
-Sing up you men of AZA\, up you men of AZA!\n\
-\n\
-Brothers we\'ll be as we share our cares each day,\n\
-Happy and free though the years go on their way.\n\
-Starting anew face to face with destiny,\n\
-Hearts beating true for the friends and loves to be.\n\
-\n\
-So up, you men, and sing to AZA!\n\
-Time will pass, and we\'ll be on our way.\n\
-As the years go by there will be\n\
-Happiest of memories\, rah rah rah!\n\
-Stand and then we\'ll sing this song again.\n\
-All you loyal men\nSing the praises of our order.\n\
-Sing up you men of AZA\, up you men of AZA!\n\</string>
-    <string name="fortomorowandtodaytext">For tomorrow and today,\n\
-        We believe in AZA!\n\
-        With voices loud we say we\'re proud of the A-Z-Aleph Tzadik Aleph.\n\
-        We all know that Jewish life had its share of trouble and strife\,\n\
-        But we\'ll never cease to work for peace in the AZ Aleph Tzadik Aleph.\n\
-        \n\
-        Brotherly love and charity\,\n\
-        we cherish and promote harmony and democracy.\n\
-        Jewish life will never stray\,\n\
-        Bne\'i Brith is on its way\,\n\
-        And it all began with Sam Bieber\'s plan for the AZ Aleph Tzadik Aleph.  </string>
-    <string name="worldofazatext">In the time (In the time!)\n\
-Of AZA (of AZA!)\n\
-There lived a Jewish boy named Mordechai. (Barzilay!)\n\
-He was young (He was young!)\n\
-And insecure, (insecure!)\n\
-He spent his Saturdays (Saturdays!) \n\
-Killing flies. (Killin flies!)\n\
-\n\
-But there was (But there was!)\n\
-This guy at school (This guy at school!)\n\
-Who treated Mordechai (Barzilay!)\n\
-With sympathy, (sympathy!)\n\
-And he told (And he told!)\n\
-Him of a place (of a place!)\n\
-He could be anything (anything!)\n\
-He wished to be. (wished to be!)\n\
-\n\
-We all live in the world of AZA, (A!)\n\
-The world of AZA, (Z!)\n\
-The world of AZA, (A!)\n\
-We all live in the world of AZA, (A!)\n\
-The world of AZA, (Z!)\n\
-The world of AZA, (A!)\n\
-\n\
-At his first (At his first!)\n\
-Event that night (Event that night!)\n\
-He saw fraternity!\n\
-He saw the light!\n\
-He mailed in his check the next day.\n\
-Ba-da-da-dop-ba-dop-ba-dop-ba-da-da-dop-ba-dop-ba-dop\n\
-\n\
-We all live in the world of AZA, (A!)\n\
-The world of AZA, (Z!)\n\
-The world of AZA, (A!)\n\
-We all live in the world of AZA, (A!)\n\
-The world of AZA, (Z!)\n\
-The world of AZA, (A!)\n\
-\n\
-Mordechai is now a man, (is now a man!)\n\
-And his life (And his life!)\n\
-No longer bland. (No longer bland!)\n\
-And he lives his every day (his every day!)\n\
-With the power (With the power!)\n\
-Of AZA! (Of AZA!)\n\
-\n\
-We all live in the world of AZA, (A!)\n\
-The world of AZA, (Z!)\n\
-The world of AZA, (A!)\n\
-We all live in the world of AZA, (A!)\n\
-The world of AZA, (Z!)\n\
-The world of AZA, (A!)\n\</string>
-    <string name="azaallthewaytext">Aleph brothers of the order!\n\
-We\'re all jewish boys, some young and some older.\n\
-Life is great here, greater than NIFTY!\n\
-We support each other, we\'re a fraternity.\n\
-\n\
-AZA all the way\n\
-For tomorrow and today\n\
-For the chapter, and what we\'re after\n\
-AZA all the way\n\
-\n\
-All my memories gather round her.\n\
-She\'s a BBG and the one I\'m after.\n\
-Maybe next year we\'ll hook up at JLC.\n\
-So what if you\'ve seen her tits, she\'s the one for me.\n\
-\n\
-AZA all the way\n\
-For tomorrow and today\n\
-For the chapter, and what we\'re after\n\
-AZA all the way\n\
-\n\
-I hear the prayers in the evening at havdallah;\n\
-Traditions remind me that I\'m in AZA.\n\
-And as we sing Air Force Ranger our bonds grow stronger each and every single day, and we say\n\
-\n\
-(Slowly)\n\
-AZA all the way\n\
-For tomorrow and today\-\-\n\
-One, two, three, four\-\-\n\
-(Fast again)\n\
-For the chapter, and what we\'re after\n\
-AZA all the way\n\</string>
-    <string name="proudtobeanalephtext">If tomorrow I\'d be facing death, and saying goodbye to life\n\
-I\'d be looking at the Israelis in the South bay,\n\
-And the East bay growing hyphe (like hyphy).\n\
-I\'d be looking back at my time in AZA\n\
-And the seven cardinal principles that I live by everyday!\n\
-\n\
-So I\'m proud to be an Aleph, where I have fraternity.\n\
-And I won\'t forget the memories and the sexy BBGs.\n\
-So I proudly stand up with my fellow Jews during havdallah on saturdays.\n\
-\'Cuz I love my brother alephs and I love AZA!\n\
-\n\
-From MoAd to Saratoga, to Sunnyvale\'s JSZ\n\
-From Peninsula AZA, to Machar and DBG\n\
-From San Fran down to Ramon, and SiWi to LHA (and Chai)\n\
-We\'re all connected by Cal-Train and Bart and by being from the Bay.\n\
-\n\
-So I\'m proud to be an Aleph, where I have fraternity.\n\
-And I won\'t forget the memories and the sexy BBGs.\n\
-So I proudly stand up with my fellow Jews during havdallah on saturdays.\n\
-\'Cuz I love my brother alephs and I love AZA!\n\
-\n\
-So I\'m proud to be in AZA, where everyone accepts me.\n\
-And I won\'t forget the cool events and the sexy BBGs.\n\
-So I raise my hand up and teach prospectives the handshake of AZA.\n\
-\'Cuz I love my brother alephs, and I love AZA</string>
-    <string name="gentlementext">        (Leader:)Gentlemen, put your hands together!\n\
-        (Rest:)Clap!\n\
-        (Leader:)I said gentlemen, put your hands together!\n\
-        (Rest:)Clap!\n\
-        \n\
-        (This next part is repeated at least twice, though sometimes more)\n\
-        (Leader:) Ready, go!\n\
-        (Rest:) Stomp, stomp, clap!\n\
-        \n\
-        (Leader:)Gentlemen, who are we?\n\
-        (Rest, repeatedly:) We are AZA!\n\</string>
-    <string name="elhamaayantext">        (Each line is repeated by the group after the leader)\n\
-        El HaMaayan!\n\
-        Ba gdi, ba gdi katan.\n\
-        El HaMaayan,\n\
-        Ba gdi (hold)\n\
-        (The group not chanting counts to 7 at the hold in "Ba gdi", then say "Katan")\n\
-        \n\
-        (The song now has 3 different pathes to take. This page will present the most common order, though that may be subject to change. In addition, the "India" paragraph is sometimes omitted.)\n\
-        \n\
-        Once there was a wizard\n\
-        Who went to Africa\n\
-        To study the Megillah\n\
-        Megillah\n\
-        Megillah-Gorilla\n\
-        Megillah-Gorilla-Gorilla-Megillah\n\
-        Megillah-Gorilla-Gorrila-Megillah-Megillah-Gorilla-Gorilla-Megillah\n\
-        \n\
-        Once there was a wizard\n\
-        Who went to China\n\
-        To study the Torah\n\
-        Torah\n\
-        Torah-Horah\n\
-        Torah-Horah-Horah-Torah\n\
-        Torah-Horah-Horah-Torah-Torah-Horah-Horah-Torah\n\
-        \n\
-        Once there was an aleph\n\
-        Who went to India\n\
-        To study the Mishna\n\
-        Mishna\n\
-        Mishna-Krishna\n\
-        Mishna-Krishna-Krishna-Mishna\n\
-        Mishna-Krishna-Krishna-Mishna-Mishna-Krishna-Krishna-Mishna\n\</string>
-    <string name="nevertoomanytext">        (Each line is repeated by the group after the leader)\n\
-        Never too many!\n\
-        Never too strong!\n\
-        Always AZA! (Clap)\n\</string>
-    <string name="title_activity_add_custom_aleph">AddCustomAlephActivity</string>
+    <string name="title_activity_add_custom_contact">AddCustomContactActivity</string>
     <string name="DefaultNameValue">Email</string>
-    <string name="title_activity_present_listed_aleph">PresentListedAlephActivity</string>
+    <string name="title_activity_present_listed_contact">PresentListedContactActivity</string>
     <string name="action_submit">Submit</string>
     <string name="title_activity_add_custom_driver">Add Driver…</string>
     <string name="error_blank_responce">Please fill in all values to continue.</string>
-    <string name="AddCustomAlephMenuButton">Add Aleph</string>
-    <string name="pref_title_dev">Debug Mode</string>
+    <string name="AddCustomContactMenuButton">Add Contact</string>
     <string name="title_activity_rides_driver_manip">RidesDriverManipActivity</string>
     <string name="Name">Name:</string>
     <string name="Grade">Grade:</string>
@@ -227,11 +41,13 @@ So I raise my hand up and teach prospectives the handshake of AZA.\n\
     <string name="Phone">Phone:</string>
     <string name="Email">E-mail:</string>
     <string name="School">School:</string>
-    <string name="title_activity_add_aleph_to_driver">Add Aleph To Car</string>
-    <string name="title_activity_remove_aleph_from_car">Remove Aleph From Car</string>
-    <string name="RemoveAlephMenuButton">Remove Aleph</string>
+    <string name="title_activity_add_passenger_to_driver">Add Passenger To Car</string>
+    <string name="title_activity_remove_passenger_from_car">Remove Passenger From Car</string>
+    <string name="RemoveContactMenuButton">Remove Contact</string>
     <string name="title_activity_display_rides">Rides List</string>
-    <string name="title_activity_rides_aleph_manip">AlephDriverManipActivity</string>
+    <string name="title_activity_rides_contact_manip">ContactDriverManipActivity</string>
     <string name="title_activity_add_preset_driver">Select Driver...</string>
+    <string name="title_activity_blue_book_display">BlueBookDisplayActivity</string>
+    <string name="title_section_bluebook">Blue Book</string>
 
 </resources>

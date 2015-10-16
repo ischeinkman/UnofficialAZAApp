@@ -16,8 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.ramonaza.unofficialazaapp.R;
-import org.ramonaza.unofficialazaapp.events.backend.EventInfoWrapper;
-import org.ramonaza.unofficialazaapp.events.backend.EventRSSHandler;
+import org.ramonazaapi.events.EventInfoWrapper;
+import org.ramonazaapi.events.EventRSSHandler;
 
 /**
  * Created by ilanscheinkman on 1/29/15.

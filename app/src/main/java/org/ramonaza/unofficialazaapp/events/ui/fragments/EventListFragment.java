@@ -3,12 +3,12 @@ package org.ramonaza.unofficialazaapp.events.ui.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 
-import org.ramonaza.unofficialazaapp.events.backend.EventInfoWrapper;
-import org.ramonaza.unofficialazaapp.events.backend.EventRSSHandler;
 import org.ramonaza.unofficialazaapp.events.ui.activities.EventPageActivity;
 import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
-import org.ramonaza.unofficialazaapp.helpers.backend.InfoWrapper;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextListFragment;
+import org.ramonazaapi.events.EventInfoWrapper;
+import org.ramonazaapi.events.EventRSSHandler;
+import org.ramonazaapi.interfaces.InfoWrapper;
 
 /*
  * Created by Ilan Scheinkman

@@ -8,7 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 
 import org.ramonaza.unofficialazaapp.R;
-import org.ramonaza.unofficialazaapp.helpers.backend.InfoWrapper;
+import org.ramonazaapi.interfaces.InfoWrapper;
 
 import java.util.ArrayList;
 

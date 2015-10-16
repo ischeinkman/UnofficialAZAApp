@@ -1,0 +1,50 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="org.ramonaza.unofficialazaapp.people.rides.ui.fragments.PassengersFragment">
+
+
+    <ProgressBar
+        android:id="@+id/cProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ListView
+        android:id="@+id/infowrapperadapterlist"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"></ListView>
+
+        <LinearLayout
+            android:id="@+id/listfooter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="8dp"
+            android:layout_weight="0"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/AddPresetContactButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/textbutton_with_outline"
+                android:text="@string/AddPassengersButton" />
+
+            <Button
+                android:id="@+id/AddCustomContactButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/textbutton_with_outline"
+                android:text="@string/AddCustomPassengerButton" />
+        </LinearLayout>
+
+
+</LinearLayout>

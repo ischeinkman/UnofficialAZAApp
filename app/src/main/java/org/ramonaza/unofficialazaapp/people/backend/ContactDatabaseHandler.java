@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 
+import org.ramonazaapi.contacts.ContactInfoWrapper;
+
+
 /**
  * An object for easily manipulating the Contact-Rides database.
  * Created by ilanscheinkman on 7/16/15.
@@ -43,7 +46,7 @@ public class ContactDatabaseHandler {
         if (queryResults.getCount() == 0) {
             return new ContactInfoWrapper[0];
         }
-        ContactInfoWrapper[] alephs = new ContactInfoWrapper[queryResults.getCount()];
+        ContactInfoWrapper[] contacts = new ContactInfoWrapper[queryResults.getCount()];
         int i = 0;
         queryResults.moveToFirst();
         do {
@@ -63,10 +66,10 @@ public class ContactDatabaseHandler {
             } else if (queryResults.getInt(queryResults.getColumnIndexOrThrow(ContactDatabaseContract.ContactListTable.COLUMN_PRESENT)) == 0) {
                 temp.setPresent(false);
             }
-            alephs[i] = temp;
+            contacts[i] = temp;
             i++;
         } while (queryResults.moveToNext());
-        return alephs;
+        return contacts;
     }
 
     /**
@@ -172,7 +175,7 @@ public class ContactDatabaseHandler {
                 field,
                 value,
                 ContactDatabaseContract.ContactListTable._ID);
-        for (ContactInfoWrapper aleph : toUpdate) query += aleph.getId() + ", ";
+        for (ContactInfoWrapper contact : toUpdate) query += contact.getId() + ", ";
         query = query.substring(0, query.length() - 2);
         query += ")";
         db.execSQL(query, new String[0]);
@@ -191,7 +194,7 @@ public class ContactDatabaseHandler {
                 field,
                 value,
                 ContactDatabaseContract.ContactListTable._ID);
-        for (int aleph : toUpdate) query += aleph + ", ";
+        for (int contact : toUpdate) query += contact + ", ";
         query = query.substring(0, query.length() - 2);
         query += ")";
         db.execSQL(query, new String[0]);
@@ -218,8 +221,8 @@ public class ContactDatabaseHandler {
     }
 
     public class ContactCSVReadError extends Exception {
-        public ContactCSVReadError(String errorMessage, ContactInfoWrapper erroredAleph) {
-            super(String.format("%s ON %s", errorMessage, erroredAleph));
+        public ContactCSVReadError(String errorMessage, ContactInfoWrapper erroredContact) {
+            super(String.format("%s ON %s", errorMessage, erroredContact));
 
         }
     }

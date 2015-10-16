@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import org.ramonaza.unofficialazaapp.R;
+import org.ramonaza.unofficialazaapp.colorbook.fragments.ColorBookPagesFragment;
 import org.ramonaza.unofficialazaapp.events.ui.fragments.EventListFragment;
 import org.ramonaza.unofficialazaapp.frontpage.ui.fragments.NavigationDrawerFragment;
 import org.ramonaza.unofficialazaapp.helpers.ui.activities.BaseActivity;
@@ -23,6 +24,12 @@ public class FrontalActivity extends BaseActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     public static final String EXTRA_OPENEDPAGE = "org.ramonaza.unofficialazaapp.OPENED_PAGE";
+    private static final int EVENTS_PAGE_INDEX = 0;
+    private static final int SONGS_PAGE_INDEX = 1;
+    private static final int BLUEBOOK_PAGE_INDEX = -2;
+    private static final int CONTACTS_PAGE_INDEX = 2;
+    private static final int RIDES_LINK_INDEX = 3;
+
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -58,13 +65,16 @@ public class FrontalActivity extends BaseActivity
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
         switch (fragSwitch) {
-            case 0:
+            case EVENTS_PAGE_INDEX:
                 getFragmentManager().beginTransaction().replace(R.id.container, EventListFragment.newInstance(0)).commit();
                 break;
-            case 1:
+            case SONGS_PAGE_INDEX:
                 getFragmentManager().beginTransaction().replace(R.id.container, SongListFragment.newInstance(1)).commit();
                 break;
-            case 2:
+            case BLUEBOOK_PAGE_INDEX:
+                getFragmentManager().beginTransaction().replace(R.id.container, ColorBookPagesFragment.newInstance()).commit();
+                break;
+            case CONTACTS_PAGE_INDEX:
                 getFragmentManager().beginTransaction().replace(R.id.container, ContactListFragment.newInstance(2)).commit();
                 break;
 
@@ -77,13 +87,16 @@ public class FrontalActivity extends BaseActivity
         this.fragSwitch = savedInstanceState.getInt(EXTRA_OPENEDPAGE, 0);
         mTitle = getActionBarTitle(fragSwitch);
         switch (fragSwitch) {
-            case 0:
+            case EVENTS_PAGE_INDEX:
                 getFragmentManager().beginTransaction().replace(R.id.container, EventListFragment.newInstance(0)).commit();
                 break;
-            case 1:
+            case SONGS_PAGE_INDEX:
                 getFragmentManager().beginTransaction().replace(R.id.container, SongListFragment.newInstance(1)).commit();
                 break;
-            case 2:
+            case BLUEBOOK_PAGE_INDEX:
+                getFragmentManager().beginTransaction().replace(R.id.container, ColorBookPagesFragment.newInstance()).commit();
+                break;
+            case CONTACTS_PAGE_INDEX:
                 getFragmentManager().beginTransaction().replace(R.id.container, ContactListFragment.newInstance(2)).commit();
                 break;
 
@@ -109,22 +122,27 @@ public class FrontalActivity extends BaseActivity
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getFragmentManager();
-        if (position == 0) {
+        if (position == EVENTS_PAGE_INDEX) {
             fragmentManager.beginTransaction()
                     .replace(R.id.container, EventListFragment.newInstance(position + 1))
                     .commit();
-            fragSwitch = 0;
-        } else if (position == 1) {
+            fragSwitch = EVENTS_PAGE_INDEX;
+        } else if (position == SONGS_PAGE_INDEX) {
             fragmentManager.beginTransaction()
                     .replace(R.id.container, SongListFragment.newInstance(position + 1))
                     .commit();
-            fragSwitch = 1;
-        } else if (position == 2) {
+            fragSwitch = SONGS_PAGE_INDEX;
+        } else if (position == BLUEBOOK_PAGE_INDEX) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, ColorBookPagesFragment.newInstance())
+                    .commit();
+            fragSwitch = BLUEBOOK_PAGE_INDEX;
+        } else if (position == CONTACTS_PAGE_INDEX) {
             fragmentManager.beginTransaction()
                     .replace(R.id.container, ContactListFragment.newInstance(position + 1))
                     .commit();
-            fragSwitch = 2;
-        } else if (position == 3 && sharedPrefs.getBoolean("rides", false)) {
+            fragSwitch = CONTACTS_PAGE_INDEX;
+        } else if (position == RIDES_LINK_INDEX && sharedPrefs.getBoolean("rides", false)) {
             Intent ridesIntent = new Intent(this, RidesActivity.class);
             startActivity(ridesIntent);
         }
@@ -172,11 +190,13 @@ public class FrontalActivity extends BaseActivity
 
     private CharSequence getActionBarTitle(int sectionNumber) {
         switch (sectionNumber) {
-            case 0:
+            case EVENTS_PAGE_INDEX:
                 return getString(R.string.title_section1);
-            case 1:
+            case SONGS_PAGE_INDEX:
                 return getString(R.string.title_section2);
-            case 2:
+            case BLUEBOOK_PAGE_INDEX:
+                return getString(R.string.title_section_bluebook);
+            case CONTACTS_PAGE_INDEX:
                 return getString(R.string.title_section4);
             default:
                 return getTitle();

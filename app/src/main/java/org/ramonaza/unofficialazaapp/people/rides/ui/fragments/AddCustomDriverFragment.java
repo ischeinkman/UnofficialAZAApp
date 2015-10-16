@@ -17,9 +17,9 @@ import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHelper;
-import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
-import org.ramonaza.unofficialazaapp.people.rides.backend.DriverInfoWrapper;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
+import org.ramonazaapi.contacts.ContactInfoWrapper;
+import org.ramonazaapi.rides.DriverInfoWrapper;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -166,7 +166,7 @@ public class AddCustomDriverFragment extends Fragment {
                 } catch (ContactDatabaseHandler.ContactCSVReadError contactCSVReadError) {
                     contactCSVReadError.printStackTrace();
                 }
-                handler.addAlephsToCar(mDriver.getId(), new ContactInfoWrapper[]{presContact});
+                handler.addPassengersToCar(mDriver.getId(), new ContactInfoWrapper[]{presContact});
             }
             getActivity().finish();
             return null;

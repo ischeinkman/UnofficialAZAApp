@@ -4,8 +4,9 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandler;
 import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
+import org.ramonazaapi.chapterpacks.ChapterPackHandler;
+import org.ramonazaapi.contacts.ContactInfoWrapper;
 
 /**
  * A simple database helper for accessing the contact/rides database.
@@ -56,14 +57,26 @@ public class ContactDatabaseHelper extends SQLiteOpenHelper {
 
     public void genDatabaseFromCSV(SQLiteDatabase db) throws ContactCSVReadError {
         ChapterPackHandler c = ChapterPackHandlerSupport.getChapterPackHandler(context);
-        if (c != null) c.reLoadContactList(db);
+        if (c != null && c.getCsvHandler() != null) {
+            ContactInfoWrapper[] allInCSV = c.getCsvHandler().getCtactInfoListFromCSV();
+            if (allInCSV.length <= 0) return;
+            ContactDatabaseHandler handler = new ContactDatabaseHandler(db);
+            handler.deleteContacts(null, null);
+            for (ContactInfoWrapper inCsv : allInCSV) {
+                try {
+                    handler.addContact(inCsv);
+                } catch (ContactDatabaseHandler.ContactCSVReadError contactCSVReadError) {
+                    contactCSVReadError.printStackTrace();
+                }
+            }
+        }
 
     }
 
 
     public class ContactCSVReadError extends Exception {
-        public ContactCSVReadError(String errorMessage, ContactInfoWrapper erroredAleph) {
-            super(String.format("%s ON %s", errorMessage, erroredAleph));
+        public ContactCSVReadError(String errorMessage, ContactInfoWrapper erroredContact) {
+            super(String.format("%s ON %s", errorMessage, erroredContact));
 
         }
     }
