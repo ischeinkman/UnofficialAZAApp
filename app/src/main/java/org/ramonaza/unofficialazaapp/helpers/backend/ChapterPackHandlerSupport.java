@@ -140,7 +140,7 @@ public class ChapterPackHandlerSupport {
 
         //Build the chapter packs data
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String packName = preferences.getString(ChapterPackHandler.PREF_CHAPTERPACK, "Chapter Pack - Ramon");
+        String packName = preferences.getString(ChapterPackHandler.PREF_CHAPTERPACK, "Chapter Pack :");
         String url = preferences.getString(ChapterPackHandler.PREF_EVENT_FEED, "");
         if (packName == null || url == null || packName.equals("") || url.equals("")) return false;
         ContactDatabaseHandler handler = getContactHandler(context);
