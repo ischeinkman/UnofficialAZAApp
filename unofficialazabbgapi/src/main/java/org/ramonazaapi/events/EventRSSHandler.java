@@ -1,4 +1,4 @@
-package org.ramonaza.unofficialazaapp.events.backend;
+package org.ramonazaapi.events;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;

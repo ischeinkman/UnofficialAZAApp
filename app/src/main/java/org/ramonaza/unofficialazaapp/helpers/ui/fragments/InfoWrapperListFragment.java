@@ -12,7 +12,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import org.ramonaza.unofficialazaapp.R;
-import org.ramonaza.unofficialazaapp.helpers.backend.InfoWrapper;
+import org.ramonazaapi.interfaces.InfoWrapper;
 
 /**
  * A simple {@link Fragment} subclass.

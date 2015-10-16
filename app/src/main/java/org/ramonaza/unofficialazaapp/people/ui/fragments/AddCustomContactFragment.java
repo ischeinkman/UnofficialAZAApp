@@ -16,8 +16,8 @@ import android.widget.Toast;
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
-import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
 import org.ramonaza.unofficialazaapp.people.backend.LocationSupport;
+import org.ramonazaapi.contacts.ContactInfoWrapper;
 
 import java.util.Arrays;
 import java.util.HashSet;

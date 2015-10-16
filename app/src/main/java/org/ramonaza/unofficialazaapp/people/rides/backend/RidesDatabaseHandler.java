@@ -9,7 +9,8 @@ import android.support.annotation.Nullable;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHelper;
-import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
+import org.ramonazaapi.contacts.ContactInfoWrapper;
+import org.ramonazaapi.rides.DriverInfoWrapper;
 
 /**
  * Created by ilanscheinkman on 7/16/15.

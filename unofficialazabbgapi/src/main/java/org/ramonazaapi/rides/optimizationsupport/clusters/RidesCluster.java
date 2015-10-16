@@ -1,6 +1,6 @@
-package org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters;
+package org.ramonazaapi.rides.optimizationsupport.clusters;
 
-import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
+import org.ramonazaapi.contacts.ContactInfoWrapper;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;

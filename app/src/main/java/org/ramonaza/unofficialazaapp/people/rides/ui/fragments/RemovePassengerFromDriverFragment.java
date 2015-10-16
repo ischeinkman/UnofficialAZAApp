@@ -3,10 +3,10 @@ package org.ramonaza.unofficialazaapp.people.rides.ui.fragments;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-import org.ramonaza.unofficialazaapp.helpers.backend.InfoWrapper;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperCheckBoxesFragment;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesDriverManipActivity;
+import org.ramonazaapi.interfaces.InfoWrapper;
 
 public class RemovePassengerFromDriverFragment extends InfoWrapperCheckBoxesFragment {
 

@@ -1,7 +1,7 @@
-package org.ramonaza.unofficialazaapp.people.rides.backend;
+package org.ramonazaapi.rides;
 
-import org.ramonaza.unofficialazaapp.helpers.backend.InfoWrapper;
-import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
+import org.ramonazaapi.contacts.ContactInfoWrapper;
+import org.ramonazaapi.interfaces.InfoWrapper;
 
 import java.util.ArrayList;
 import java.util.HashSet;

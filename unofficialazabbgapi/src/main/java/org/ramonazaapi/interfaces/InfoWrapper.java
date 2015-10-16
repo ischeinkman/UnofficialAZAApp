@@ -1,4 +1,4 @@
-package org.ramonaza.unofficialazaapp.helpers.backend;
+package org.ramonazaapi.interfaces;
 
 /**
  * Created by ilanscheinkman on 4/27/15.

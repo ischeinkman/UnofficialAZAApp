@@ -24,7 +24,7 @@ import android.widget.Toast;
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHelper;
-import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
+import org.ramonazaapi.contacts.ContactInfoWrapper;
 
 /**
  * Created by Ilan Scheinkman on 1/13/15.

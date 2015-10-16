@@ -5,12 +5,13 @@ import android.content.SharedPreferences;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 
-import org.ramonaza.unofficialazaapp.events.backend.EventRSSHandler;
-import org.ramonaza.unofficialazaapp.people.backend.ContactCSVHandler;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
-import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
 import org.ramonaza.unofficialazaapp.people.backend.LocationSupport;
+import org.ramonazaapi.chapterpacks.ChapterPackHandler;
+import org.ramonazaapi.contacts.ContactCSVHandler;
+import org.ramonazaapi.contacts.ContactInfoWrapper;
+import org.ramonazaapi.events.EventRSSHandler;
 
 import java.io.BufferedWriter;
 import java.io.File;

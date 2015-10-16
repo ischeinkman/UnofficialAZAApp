@@ -11,14 +11,14 @@ import android.view.MenuItem;
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.frontpage.ui.activities.FrontalActivity;
 import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
-import org.ramonaza.unofficialazaapp.helpers.backend.InfoWrapper;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextListFragment;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHelper;
-import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
 import org.ramonaza.unofficialazaapp.people.ui.activities.AddCustomContactActivity;
 import org.ramonaza.unofficialazaapp.people.ui.activities.ContactDataActivity;
+import org.ramonazaapi.contacts.ContactInfoWrapper;
+import org.ramonazaapi.interfaces.InfoWrapper;
 
 /**
  * Created by Ilan Scheinkman on 1/12/15.

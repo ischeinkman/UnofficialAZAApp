@@ -1,6 +1,6 @@
-package org.ramonaza.unofficialazaapp.songs.backend;
+package org.ramonazaapi.songs;
 
-import org.ramonaza.unofficialazaapp.helpers.backend.InfoWrapper;
+import org.ramonazaapi.interfaces.InfoWrapper;
 
 /**
  * Created by ilanscheinkman on 4/28/15.

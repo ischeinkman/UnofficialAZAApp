@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import org.ramonaza.unofficialazaapp.R;
-import org.ramonaza.unofficialazaapp.helpers.backend.InfoWrapper;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextWithButtonFragment;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
@@ -20,6 +19,7 @@ import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.PresentListedContactActivity;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesContactManipActivity;
 import org.ramonaza.unofficialazaapp.people.ui.activities.AddCustomContactActivity;
+import org.ramonazaapi.interfaces.InfoWrapper;
 
 /**
  * A simple {@link Fragment} subclass.

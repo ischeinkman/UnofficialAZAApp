@@ -5,6 +5,7 @@ import android.location.Address;
 import android.location.Geocoder;
 
 import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
+import org.ramonazaapi.contacts.ContactInfoWrapper;
 
 /**
  * Created by ilanscheinkman on 9/1/15.

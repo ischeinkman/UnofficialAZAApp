@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.ramonaza.unofficialazaapp.R;
-import org.ramonaza.unofficialazaapp.songs.backend.SongInfoWrapper;
+import org.ramonazaapi.songs.SongInfoWrapper;
 
 /**
  * General Song Text Class.

@@ -7,9 +7,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
-import org.ramonaza.unofficialazaapp.helpers.backend.InfoWrapper;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragment;
 import org.ramonaza.unofficialazaapp.helpers.ui.other.InfoWrapperTextListAdapter;
+import org.ramonazaapi.interfaces.InfoWrapper;
 
 /**
  * Parent fragment class for all InfoWrapper top level

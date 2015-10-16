@@ -1,4 +1,4 @@
-package org.ramonaza.unofficialazaapp.people.backend;
+package org.ramonazaapi.contacts;
 
 
 import com.opencsv.CSVReader;

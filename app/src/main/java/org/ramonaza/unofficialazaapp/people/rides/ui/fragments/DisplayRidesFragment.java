@@ -15,15 +15,15 @@ import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHelper;
-import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
-import org.ramonaza.unofficialazaapp.people.rides.backend.DriverInfoWrapper;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
-import org.ramonaza.unofficialazaapp.people.rides.backend.RidesOptimizer;
-import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.ExpansionistCluster;
-import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.HungryCluster;
-import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.LazyCluster;
-import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.RidesCluster;
-import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.SnakeCluster;
+import org.ramonazaapi.contacts.ContactInfoWrapper;
+import org.ramonazaapi.rides.DriverInfoWrapper;
+import org.ramonazaapi.rides.RidesOptimizer;
+import org.ramonazaapi.rides.optimizationsupport.clusters.ExpansionistCluster;
+import org.ramonazaapi.rides.optimizationsupport.clusters.HungryCluster;
+import org.ramonazaapi.rides.optimizationsupport.clusters.LazyCluster;
+import org.ramonazaapi.rides.optimizationsupport.clusters.RidesCluster;
+import org.ramonazaapi.rides.optimizationsupport.clusters.SnakeCluster;
 
 /**
  * A simple {@link Fragment} subclass.

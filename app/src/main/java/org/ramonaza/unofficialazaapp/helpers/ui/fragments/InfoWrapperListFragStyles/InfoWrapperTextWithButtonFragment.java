@@ -3,9 +3,9 @@ package org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragSt
 import android.app.Fragment;
 import android.widget.ArrayAdapter;
 
-import org.ramonaza.unofficialazaapp.helpers.backend.InfoWrapper;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragment;
 import org.ramonaza.unofficialazaapp.helpers.ui.other.InfoWrapperTextWithButtonAdapter;
+import org.ramonazaapi.interfaces.InfoWrapper;
 
 /**
  * A simple {@link Fragment} subclass.

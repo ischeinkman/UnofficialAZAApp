@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 
+import org.ramonazaapi.contacts.ContactInfoWrapper;
+
+
 /**
  * An object for easily manipulating the Contact-Rides database.
  * Created by ilanscheinkman on 7/16/15.

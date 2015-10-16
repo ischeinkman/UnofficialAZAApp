@@ -1,7 +1,7 @@
-package org.ramonaza.unofficialazaapp.events.backend;
+package org.ramonazaapi.events;
 
 
-import org.ramonaza.unofficialazaapp.helpers.backend.InfoWrapper;
+import org.ramonazaapi.interfaces.InfoWrapper;
 
 /**
  * Created by ilanscheinkman on 1/29/15.

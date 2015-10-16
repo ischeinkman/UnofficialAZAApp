@@ -15,13 +15,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.ramonaza.unofficialazaapp.R;
-import org.ramonaza.unofficialazaapp.helpers.backend.InfoWrapper;
 import org.ramonaza.unofficialazaapp.helpers.ui.other.InfoWrapperTextWithButtonAdapter;
-import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
-import org.ramonaza.unofficialazaapp.people.rides.backend.DriverInfoWrapper;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.AddPassengerToDriverActivity;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesDriverManipActivity;
+import org.ramonazaapi.contacts.ContactInfoWrapper;
+import org.ramonazaapi.interfaces.InfoWrapper;
+import org.ramonazaapi.rides.DriverInfoWrapper;
 
 /**
  * A placeholder fragment containing a simple view.

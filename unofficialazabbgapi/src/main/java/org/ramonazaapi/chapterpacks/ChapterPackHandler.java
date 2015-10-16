@@ -1,7 +1,7 @@
-package org.ramonaza.unofficialazaapp.helpers.backend;
+package org.ramonazaapi.chapterpacks;
 
-import org.ramonaza.unofficialazaapp.events.backend.EventRSSHandler;
-import org.ramonaza.unofficialazaapp.people.backend.ContactCSVHandler;
+import org.ramonazaapi.contacts.ContactCSVHandler;
+import org.ramonazaapi.events.EventRSSHandler;
 
 import java.io.File;
 import java.io.FileNotFoundException;

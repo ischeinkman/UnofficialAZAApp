@@ -1,7 +1,7 @@
-package org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters;
+package org.ramonazaapi.rides.optimizationsupport.clusters;
 
-import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
-import org.ramonaza.unofficialazaapp.people.rides.backend.RidesOptimizer;
+import org.ramonazaapi.contacts.ContactInfoWrapper;
+import org.ramonazaapi.rides.RidesOptimizer;
 
 /**
  * A cluster based on drawing a circle around the initial with radius

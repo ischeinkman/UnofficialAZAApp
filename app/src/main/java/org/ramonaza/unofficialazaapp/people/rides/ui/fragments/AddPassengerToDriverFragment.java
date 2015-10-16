@@ -4,13 +4,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
-import org.ramonaza.unofficialazaapp.helpers.backend.InfoWrapper;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperCheckBoxesFragment;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
-import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesDriverManipActivity;
+import org.ramonazaapi.contacts.ContactInfoWrapper;
+import org.ramonazaapi.interfaces.InfoWrapper;
 
 import java.util.Arrays;
 

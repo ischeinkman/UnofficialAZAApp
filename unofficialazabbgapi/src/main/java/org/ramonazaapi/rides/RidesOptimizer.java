@@ -1,8 +1,8 @@
-package org.ramonaza.unofficialazaapp.people.rides.backend;
+package org.ramonazaapi.rides;
 
-import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
-import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.HungarianAlgorithm;
-import org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport.clusters.RidesCluster;
+import org.ramonazaapi.contacts.ContactInfoWrapper;
+import org.ramonazaapi.rides.optimizationsupport.HungarianAlgorithm;
+import org.ramonazaapi.rides.optimizationsupport.clusters.RidesCluster;
 
 import java.util.ArrayList;
 import java.util.Collection;

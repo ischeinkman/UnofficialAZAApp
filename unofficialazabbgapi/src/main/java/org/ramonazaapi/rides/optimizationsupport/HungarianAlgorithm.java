@@ -1,4 +1,4 @@
-package org.ramonaza.unofficialazaapp.people.rides.backend.optimizationsupport;
+package org.ramonazaapi.rides.optimizationsupport;
 
 import java.util.Arrays;
 
