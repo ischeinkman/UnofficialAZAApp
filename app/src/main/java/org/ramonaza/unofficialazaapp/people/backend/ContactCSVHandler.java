@@ -98,6 +98,8 @@ public class ContactCSVHandler {
             rRapper.setSchool(args[1]);
             rRapper.setGradYear(args[2]);
             rRapper.setAddress(args[3]);
+            rRapper.setLongitude(0);
+            rRapper.setLatitude(0);
             rRapper.setEmail(args[4]);
             rRapper.setPhoneNumber(args[5]);
         } else {

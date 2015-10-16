@@ -153,6 +153,11 @@ public class ChapterPackHandlerSupport {
                 double[] coords = LocationSupport.getCoordsFromAddress(contact.getAddress(), context);
                 contact.setLatitude(coords[0]);
                 contact.setLongitude(coords[1]);
+                try {
+                    handler.updateContact(contact);
+                } catch (ContactDatabaseHandler.ContactCSVReadError contactCSVReadError) {
+                    contactCSVReadError.printStackTrace();
+                }
             }
         }
 
