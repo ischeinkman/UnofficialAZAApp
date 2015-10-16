@@ -30,7 +30,7 @@ public class ChapterPackHandler {
     public static final String EVENT_FILE_NAME = "EventFeed.txt";
     public static final String PREF_EVENT_FEED = "EventFeed";
 
-    public static final String CSV_NAME = "AlephNameSchYAddMailNum.csv";
+    public static final String CSV_NAME = "ContactList.csv";
     public static final String DEFAULT_CSV_NAME = "DefaultContactFileTemplate.csv";
 
     private File chapterPack;

@@ -10,6 +10,7 @@ import org.ramonaza.unofficialazaapp.people.backend.ContactCSVHandler;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.backend.ContactInfoWrapper;
+import org.ramonaza.unofficialazaapp.people.backend.LocationSupport;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -23,9 +24,8 @@ import java.util.Calendar;
  */
 public class ChapterPackHandlerSupport {
 
-    private static ChapterPackHandler currentHandler;
-
     public static final String NEW_PACK_DIRECTORY = "Generated Packs/";
+    private static ChapterPackHandler currentHandler;
 
     /**
      * Check if we currently have a Chapter Pack leaded into the app.
@@ -146,6 +146,15 @@ public class ChapterPackHandlerSupport {
         ContactDatabaseHandler handler = getContactHandler(context);
         if (handler == null) return false;
         ContactInfoWrapper[] allContacts = handler.getContacts(null, ContactDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
+
+        //Corrects any location errors
+        for (ContactInfoWrapper contact : allContacts) {
+            if (contact.getLatitude() == 0 && contact.getLongitude() == 0) {
+                double[] coords = LocationSupport.getCoordsFromAddress(contact.getAddress(), context);
+                contact.setLatitude(coords[0]);
+                contact.setLongitude(coords[1]);
+            }
+        }
 
         //Create the necessary files and streams
         Calendar cal = Calendar.getInstance();
