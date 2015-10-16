@@ -56,7 +56,19 @@ public class ContactDatabaseHelper extends SQLiteOpenHelper {
 
     public void genDatabaseFromCSV(SQLiteDatabase db) throws ContactCSVReadError {
         ChapterPackHandler c = ChapterPackHandlerSupport.getChapterPackHandler(context);
-        if (c != null) c.reLoadContactList(db);
+        if (c != null && c.getCsvHandler() != null) {
+            ContactInfoWrapper[] allInCSV = c.getCsvHandler().getCtactInfoListFromCSV();
+            if (allInCSV.length <= 0) return;
+            ContactDatabaseHandler handler = new ContactDatabaseHandler(db);
+            handler.deleteContacts(null, null);
+            for (ContactInfoWrapper inCsv : allInCSV) {
+                try {
+                    handler.addContact(inCsv);
+                } catch (ContactDatabaseHandler.ContactCSVReadError contactCSVReadError) {
+                    contactCSVReadError.printStackTrace();
+                }
+            }
+        }
 
     }
 

@@ -25,7 +25,10 @@ import java.util.Calendar;
 public class ChapterPackHandlerSupport {
 
     public static final String NEW_PACK_DIRECTORY = "Generated Packs/";
+    public static final String PREF_CHAPTERPACK = "Cpack";
+    public static final String PREF_EVENT_FEED = "EventFeed";
     private static ChapterPackHandler currentHandler;
+    private static boolean contactsLoaded;
 
     /**
      * Check if we currently have a Chapter Pack leaded into the app.
@@ -56,23 +59,17 @@ public class ChapterPackHandlerSupport {
     }
 
     /**
-     * Gets the currently loaded Chapter Pack if we have one, or attempts to load the previously loaded
-     * Chapter Pack if we don't. If no pack is or could be loaded, we return null.
+     * Gets the current Chapter Pack.
+     * If one currently exists in the Downloads directory, we get that pack.
+     * If no pack is or could be loaded, we return null.
      *
      * @param context the context to use
      * @return the currently loaded Chapter Pack, or null
      */
     public static ChapterPackHandler getChapterPackHandler(Context context) {
-        if (currentHandler != null) return currentHandler;
-        String packName = PreferenceManager.getDefaultSharedPreferences(context).getString(ChapterPackHandler.PREF_CHAPTERPACK, null);
-        if (packName == null) return null;
-        for (File file : getOptions()) {
-            if (file.getName().equals(packName)) {
-                currentHandler = new ChapterPackHandler(file, context);
-                return currentHandler;
-            }
-        }
-        return null;
+        if (getOptions().length > 0) return getChapterPackHandler(context, getOptions()[0]);
+        else if (currentHandler != null) return currentHandler;
+        else return null;
     }
 
     /**
@@ -86,9 +83,34 @@ public class ChapterPackHandlerSupport {
     public static ChapterPackHandler getChapterPackHandler(Context context, File pack) {
         if (currentHandler != null && currentHandler.getPackName().equals(pack.getName()))
             return currentHandler;
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(ChapterPackHandler.PREF_CHAPTERPACK, pack.getName());
-        currentHandler = new ChapterPackHandler(pack, context);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        preferences.edit().putString(PREF_CHAPTERPACK, pack.getName());
+        currentHandler = new ChapterPackHandler(moveChapterPack(context, pack));
         return currentHandler;
+    }
+
+    private static File moveChapterPack(Context context, File pack) {
+        File dataDir = context.getExternalFilesDir(null);
+        File newFile;
+        if (pack.getName().contains(".zip")) {
+            newFile = new File(dataDir, "lastloadedpack.zip");
+            boolean renamed = pack.renameTo(newFile);
+            if (!renamed) return null;
+            return newFile;
+        } else {
+            newFile = new File(dataDir, "lastloadedpack");
+            if (!newFile.exists() || newFile.list().length == 0) {
+                boolean mkdired = newFile.mkdirs();
+                boolean deleted = newFile.delete();
+            } else {
+                for (File prevPack : newFile.listFiles()) {
+                    boolean deleted = prevPack.delete();
+                }
+            }
+            boolean renamed = pack.renameTo(newFile);
+            if (!(renamed)) return null;
+            return newFile;
+        }
     }
 
     /**
@@ -102,9 +124,11 @@ public class ChapterPackHandlerSupport {
      * @return the currently loaded event handler, or null
      */
     public static EventRSSHandler getEventHandler(Context context) {
-        if (currentHandler != null || getChapterPackHandler(context) != null)
+        if (currentHandler != null || getChapterPackHandler(context) != null) {
+            PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_EVENT_FEED, currentHandler.getEventUrl());
             return currentHandler.getEventRSSHandler();
-        String url = PreferenceManager.getDefaultSharedPreferences(context).getString(ChapterPackHandler.PREF_EVENT_FEED, null);
+        }
+        String url = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_EVENT_FEED, null);
         if (url == null) return null;
         return new EventRSSHandler(url, true);
     }
@@ -119,9 +143,23 @@ public class ChapterPackHandlerSupport {
      * @return the currently loaded contact handler
      */
     public static ContactDatabaseHandler getContactHandler(Context context) {
-        if (currentHandler != null || getChapterPackHandler(context) != null)
-            return currentHandler.getContactDatabase();
-        return new ContactDatabaseHandler(context);
+        ContactDatabaseHandler returnHandler = new ContactDatabaseHandler(context);
+        if (!contactsLoaded &&
+                (currentHandler != null || getChapterPackHandler(context) != null) &&
+                currentHandler.getCsvHandler() != null) {
+            ContactInfoWrapper[] inPack = currentHandler.getCsvHandler().getCtactInfoListFromCSV();
+            if (!(inPack.length <= 0)) {
+                returnHandler.deleteContacts(null, null);
+                for (ContactInfoWrapper contact : inPack) {
+                    try {
+                        returnHandler.addContact(contact);
+                    } catch (ContactDatabaseHandler.ContactCSVReadError contactCSVReadError) {
+                        contactCSVReadError.printStackTrace();
+                    }
+                }
+            }
+        }
+        return returnHandler;
     }
 
     /**
@@ -140,8 +178,8 @@ public class ChapterPackHandlerSupport {
 
         //Build the chapter packs data
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String packName = preferences.getString(ChapterPackHandler.PREF_CHAPTERPACK, "Chapter Pack :");
-        String url = preferences.getString(ChapterPackHandler.PREF_EVENT_FEED, "");
+        String packName = preferences.getString(PREF_CHAPTERPACK, "Chapter Pack :");
+        String url = preferences.getString(PREF_EVENT_FEED, "");
         if (packName == null || url == null || packName.equals("") || url.equals("")) return false;
         ContactDatabaseHandler handler = getContactHandler(context);
         if (handler == null) return false;
