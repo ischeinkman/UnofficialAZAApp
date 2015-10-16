@@ -26,7 +26,7 @@ public class LocationSupport {
         try {
             location = geocoder.getFromLocationName(address, 1).get(0);
         } catch (Exception e) {
-            return null;
+            return new double[]{0, 0};
         }
         return new double[]{
                 location.getLatitude(),
