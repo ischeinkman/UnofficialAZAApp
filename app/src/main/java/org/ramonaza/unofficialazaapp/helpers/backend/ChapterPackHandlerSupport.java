@@ -30,7 +30,7 @@ public class ChapterPackHandlerSupport {
     public static final String PREF_CHAPTERPACK = "Cpack";
     public static final String PREF_EVENT_FEED = "EventFeed";
     private static ChapterPackHandler currentHandler;
-    private static boolean contactsLoaded;
+    private static boolean contactsLoaded = false;
 
     /**
      * Check if we currently have a Chapter Pack leaded into the app.
@@ -96,6 +96,7 @@ public class ChapterPackHandlerSupport {
         File newFile;
         if (pack.getName().contains(".zip")) {
             newFile = new File(dataDir, "lastloadedpack.zip");
+            if (newFile.exists()) newFile.delete();
             boolean renamed = pack.renameTo(newFile);
             if (!renamed) return null;
             return newFile;
