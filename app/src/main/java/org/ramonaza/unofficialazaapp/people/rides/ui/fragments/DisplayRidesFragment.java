@@ -147,7 +147,7 @@ public class DisplayRidesFragment extends Fragment {
             RidesDatabaseHandler ridesDatabaseHandler = new RidesDatabaseHandler(getActivity());
             ridesDatabaseHandler.updateRides(optimizer.getDrivers(), optimizer.getDriverless());
             driverless = optimizer.getDriverless();
-            rhandler.updateRides(rides,driverless);
+            rhandler.updateRides(rides, driverless);
             return createRidesList(rides, driverless);
         }
 

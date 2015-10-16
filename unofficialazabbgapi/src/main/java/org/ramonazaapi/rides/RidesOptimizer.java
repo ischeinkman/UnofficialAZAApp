@@ -161,8 +161,7 @@ public class RidesOptimizer {
                     }
                 }
             }
-        }
-        else {
+        } else {
             for (DriverInfoWrapper driver : driversToOptimize) {
                 for (ContactInfoWrapper contact : driver.getPassengersInCar()) {
                     if (passengersToOptimize.contains(contact))
@@ -333,8 +332,8 @@ public class RidesOptimizer {
                 if (ridesCluster == null) break;
                 allFull = false;
                 ContactInfoWrapper[] inCluster = ridesCluster.getPassengersInCluster();
-                for(ContactInfoWrapper clusterContact:inCluster){
-                    if(toOptimize.getFreeSpots()<=0) break;
+                for (ContactInfoWrapper clusterContact : inCluster) {
+                    if (toOptimize.getFreeSpots() <= 0) break;
                     toOptimize.addPassengerToCar(clusterContact);
                     ridesCluster.removePassengerFromCluster(clusterContact);
                     passengersToOptimize.remove(clusterContact);
@@ -345,14 +344,14 @@ public class RidesOptimizer {
     }
 
     private RidesCluster getClosestCluster(DriverInfoWrapper driver, Collection<RidesCluster> allClusters, boolean allowSplit) {
-        double minDist=Double.MAX_VALUE;
+        double minDist = Double.MAX_VALUE;
         RidesCluster closestCluster = null;
         for (RidesCluster cluster : allClusters) {
-            if(!allowSplit && cluster.getSize()>driver.getFreeSpots()) continue;
-            double curDist=distBetweenHouses(driver,cluster.getCenter());
-            if(curDist<minDist){
-                closestCluster=cluster;
-                minDist=curDist;
+            if (!allowSplit && cluster.getSize() > driver.getFreeSpots()) continue;
+            double curDist = distBetweenHouses(driver, cluster.getCenter());
+            if (curDist < minDist) {
+                closestCluster = cluster;
+                minDist = curDist;
             }
         }
         return closestCluster;
@@ -361,11 +360,11 @@ public class RidesOptimizer {
     private void latLongPassengersFirstCluster(Class<? extends RidesCluster> clusterType) {
         List<RidesCluster> clusters = RidesCluster.clusterPassengers(clusterType, passengersToOptimize);
         for (RidesCluster cluster : clusters) {
-            while(cluster.getSize()>0){
-                DriverInfoWrapper closestDriver=getClosestDriver(cluster,driversToOptimize,false);
-                if(closestDriver == null) break;
+            while (cluster.getSize() > 0) {
+                DriverInfoWrapper closestDriver = getClosestDriver(cluster, driversToOptimize, false);
+                if (closestDriver == null) break;
                 for (ContactInfoWrapper passengerToAdd : cluster.getPassengersInCluster()) {
-                    if(closestDriver.getFreeSpots()<=0) break;
+                    if (closestDriver.getFreeSpots() <= 0) break;
                     closestDriver.addPassengerToCar(passengerToAdd);
                     cluster.removePassengerFromCluster(passengerToAdd);
                     passengersToOptimize.remove(passengerToAdd);
@@ -375,14 +374,14 @@ public class RidesOptimizer {
     }
 
     private DriverInfoWrapper getClosestDriver(RidesCluster cluster, Collection<DriverInfoWrapper> allDrivers, boolean allowOverstuff) {
-        double minDist=Double.MAX_VALUE;
-        DriverInfoWrapper closestDriver=null;
-        for(DriverInfoWrapper driver: allDrivers){
-            if(driver.getFreeSpots()<=0 && !allowOverstuff) continue;
-            double curDist=distBetweenHouses(driver,cluster.getCenter());
-            if(curDist<minDist){
-                minDist=curDist;
-                closestDriver=driver;
+        double minDist = Double.MAX_VALUE;
+        DriverInfoWrapper closestDriver = null;
+        for (DriverInfoWrapper driver : allDrivers) {
+            if (driver.getFreeSpots() <= 0 && !allowOverstuff) continue;
+            double curDist = distBetweenHouses(driver, cluster.getCenter());
+            if (curDist < minDist) {
+                minDist = curDist;
+                closestDriver = driver;
             }
         }
         return closestDriver;
