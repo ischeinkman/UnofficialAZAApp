@@ -1,14 +1,25 @@
 package org.ramonaza.unofficialazaapp.helpers.backend;
 
+
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 
-import org.ramonaza.unofficialazaapp.events.backend.EventRSSHandler;
+import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
+import org.ramonaza.unofficialazaapp.people.backend.LocationSupport;
+import org.ramonazaapi.chapterpacks.ChapterPackHandler;
+import org.ramonazaapi.contacts.ContactCSVHandler;
+import org.ramonazaapi.contacts.ContactInfoWrapper;
+import org.ramonazaapi.events.EventRSSHandler;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.Calendar;
 
 /**
  * Created by ilan on 9/18/15.
@@ -19,7 +30,7 @@ public class ChapterPackHandlerSupport {
     public static final String PREF_CHAPTERPACK = "Cpack";
     public static final String PREF_EVENT_FEED = "EventFeed";
     private static ChapterPackHandler currentHandler;
-    private static boolean contactsLoaded;
+    private static boolean contactsLoaded = false;
 
     /**
      * Check if we currently have a Chapter Pack leaded into the app.
@@ -85,6 +96,7 @@ public class ChapterPackHandlerSupport {
         File newFile;
         if (pack.getName().contains(".zip")) {
             newFile = new File(dataDir, "lastloadedpack.zip");
+            if (newFile.exists()) newFile.delete();
             boolean renamed = pack.renameTo(newFile);
             if (!renamed) return null;
             return newFile;

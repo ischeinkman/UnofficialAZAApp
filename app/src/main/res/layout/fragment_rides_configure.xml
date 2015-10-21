@@ -11,17 +11,17 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:textSize="24dp"
-        android:text="Algorithm:"
-        android:layout_marginTop="32dp"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"/>
-    <Spinner
-        android:layout_marginTop="32dp"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="32dp"
+        android:text="Algorithm:"
+        android:textSize="24dp" />
+    <Spinner
+        android:id="@+id/AlgorithmSelection"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:entries="@array/algorithmValues"
-        android:id="@+id/AlgorithmSelection"/>
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="32dp"
+        android:entries="@array/algorithmValues" />
     </LinearLayout>
 
     <LinearLayout
@@ -32,33 +32,33 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textSize="24dp"
-            android:text="Cluster Type:"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginTop="32dp"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin" />
+            android:text="Cluster Type:"
+            android:textSize="24dp" />
 
         <Spinner
-            android:layout_marginTop="32dp"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:id="@+id/ClusterSelection"
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
-            android:entries="@array/clusterValues"
-            android:id="@+id/ClusterSelection" />
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="32dp"
+            android:entries="@array/clusterValues" />
     </LinearLayout>
     <CheckBox
-        android:layout_marginTop="32dp"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:id="@+id/RetainRides"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="32dp"
         android:checked="true"
-        android:id="@+id/RetainRides"
         android:text="Retain already set rides"/>
     <Button
+        android:id="@+id/SubmitButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Submit"
-        android:id="@+id/SubmitButton"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="32dp"/>
+        android:layout_marginTop="32dp"
+        android:text="Submit" />
 </LinearLayout>

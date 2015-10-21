@@ -22,6 +22,7 @@ public abstract class RidesCluster {
 
     /**
      * Creates a cluster based on an initial contact
+     *
      * @param firstContact the first contact in the cluster
      */
     public RidesCluster(ContactInfoWrapper firstContact) {
@@ -37,10 +38,10 @@ public abstract class RidesCluster {
      */
     public static List<RidesCluster> clusterPassengers(Class<? extends RidesCluster> clusterType, Collection<ContactInfoWrapper> toCluster) {
         List<RidesCluster> clusters = new ArrayList<RidesCluster>();
-        Set<ContactInfoWrapper> toClusterSet=new HashSet<ContactInfoWrapper>(toCluster);
-        Iterator<ContactInfoWrapper> contactIterator=toClusterSet.iterator();
-        while(contactIterator.hasNext()) {
-            ContactInfoWrapper contact=contactIterator.next();
+        Set<ContactInfoWrapper> toClusterSet = new HashSet<ContactInfoWrapper>(toCluster);
+        Iterator<ContactInfoWrapper> contactIterator = toClusterSet.iterator();
+        while (contactIterator.hasNext()) {
+            ContactInfoWrapper contact = contactIterator.next();
             boolean inCluster = false;
             for (RidesCluster cluster : clusters) {
                 if (cluster.addPassengerToCluster(contact)) {
@@ -64,6 +65,7 @@ public abstract class RidesCluster {
 
     /**
      * Checks whether someone lies within this cluster's range.
+     *
      * @param toCheck the person to check
      * @return if the person lies within the cluster
      */
@@ -71,6 +73,7 @@ public abstract class RidesCluster {
 
     /**
      * Adds a passenger to the cluster.
+     *
      * @param toCheck the passenger to add
      * @return whether the addition was successful
      */
@@ -83,7 +86,7 @@ public abstract class RidesCluster {
 
     public boolean removePassengerFromCluster(ContactInfoWrapper toCheck) {
         boolean isSuccess = contactsInCluster.remove(toCheck);
-        if(isSuccess) recalculate();
+        if (isSuccess) recalculate();
         return isSuccess;
     }
 
@@ -97,6 +100,7 @@ public abstract class RidesCluster {
 
     /**
      * Get the amount of people in the cluster.
+     *
      * @return the amount of people in the cluster
      */
     public int getSize() {
@@ -105,6 +109,7 @@ public abstract class RidesCluster {
 
     /**
      * Gets the people in this cluster.
+     *
      * @return the people in this cluster
      */
     public ContactInfoWrapper[] getPassengersInCluster() {
@@ -115,6 +120,7 @@ public abstract class RidesCluster {
      * Gets the center of cluster, which is considered to be the
      * coordinate the cluster opperates under for rides purposes.
      * Even non-circular clusters should have centers.
+     *
      * @return the center of the cluster
      */
     public abstract double[] getCenter();
