@@ -1,11 +1,6 @@
-The Official App of Ramon AZA #195
+The Unofficial App of the Brotherhood of the Aleph Zadik Aleph.
 ================
-To build:
 
-1.Fork&Clone the repo
+The latest release is downloadable from the [Play Store.](https://play.google.com/store/apps/details?id=org.ramonaza.unofficialazaapp)
 
-2.Email one of the contributors for the CSV phone list
-
-3.Stick the phone list in src/main/assets/
-
-4.Build&Run
+For more information, please see the [wiki.](https://github.com/ischeinkman/UnofficialAZAApp/wiki)
