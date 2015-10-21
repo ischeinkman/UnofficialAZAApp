@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+    <channel>
+        <title>Example Event Data</title>
+        <item>
+            <title>Example Event</title>
+            <description><![CDATA[ <br/> Wednesday, October 21 <br/> Example Event <br/> This is a
+                description for an example event. <br/> The Location of the Event <br/> 7:00 pm -
+                10:00 pm <br/> Reports, money for food, motions <br/> Aleph X <br/> 888 Not A
+                Real Address Lane, Fake City, Monaco <br/> ]]>
+            </description>
+        </item>
+
+    </channel>
+</rss>
