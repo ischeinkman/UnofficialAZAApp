@@ -1,13 +1,13 @@
 package org.ramonazaapi.contacts;
 
-import org.ramonazaapi.interfaces.InfoWrapper;
+import org.ramonazaapi.rides.PersonInfoWrapper;
 
 import java.util.Calendar;
 
 /**
  * Created by Ilan Scheinkman on 1/12/15.
  */
-public class ContactInfoWrapper implements InfoWrapper {
+public class ContactInfoWrapper implements PersonInfoWrapper {
     private String name;
     private String email;
     private String school;
@@ -84,24 +84,24 @@ public class ContactInfoWrapper implements InfoWrapper {
         return latitude;
     }
 
-    public void setLatitude(String latitude) {
-        this.latitude = Double.valueOf(latitude);
-    }
-
     public void setLatitude(double latitude) {
         this.latitude = latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = Double.valueOf(latitude);
     }
 
     public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(String longitude) {
-        this.longitude = Double.valueOf(longitude);
-    }
-
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = Double.valueOf(longitude);
     }
 
     public boolean isPresent() {

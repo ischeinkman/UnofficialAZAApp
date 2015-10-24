@@ -1,7 +1,6 @@
 package org.ramonazaapi.rides;
 
 import org.ramonazaapi.contacts.ContactInfoWrapper;
-import org.ramonazaapi.interfaces.InfoWrapper;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,7 +10,7 @@ import java.util.Set;
 /**
  * Created by ilanscheinkman on 3/14/15.
  */
-public class DriverInfoWrapper implements InfoWrapper {
+public class DriverInfoWrapper implements PersonInfoWrapper {
     private int spots;
     private String name;
     private int area;

@@ -1,4 +1,4 @@
-package org.ramonazaapi.rides.optimizationsupport.clusters;
+package org.ramonazaapi.rides.clusters;
 
 import org.ramonazaapi.contacts.ContactInfoWrapper;
 import org.ramonazaapi.rides.RidesOptimizer;

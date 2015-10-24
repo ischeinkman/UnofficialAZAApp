@@ -19,11 +19,15 @@ import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
 import org.ramonazaapi.rides.DriverInfoWrapper;
 import org.ramonazaapi.rides.RidesOptimizer;
-import org.ramonazaapi.rides.optimizationsupport.clusters.ExpansionistCluster;
-import org.ramonazaapi.rides.optimizationsupport.clusters.HungryCluster;
-import org.ramonazaapi.rides.optimizationsupport.clusters.LazyCluster;
-import org.ramonazaapi.rides.optimizationsupport.clusters.RidesCluster;
-import org.ramonazaapi.rides.optimizationsupport.clusters.SnakeCluster;
+import org.ramonazaapi.rides.algorithms.ClusterMatch;
+import org.ramonazaapi.rides.algorithms.FlamboyantElephant;
+import org.ramonazaapi.rides.algorithms.NaiveHungarian;
+import org.ramonazaapi.rides.algorithms.SerialArson;
+import org.ramonazaapi.rides.clusters.ExpansionistCluster;
+import org.ramonazaapi.rides.clusters.HungryCluster;
+import org.ramonazaapi.rides.clusters.LazyCluster;
+import org.ramonazaapi.rides.clusters.RidesCluster;
+import org.ramonazaapi.rides.clusters.SnakeCluster;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,7 +43,7 @@ public class DisplayRidesFragment extends Fragment {
     private TextView ridesDisplay;
     private ProgressBar mBar;
 
-    private int optimizationAlgorithm;
+    private int algorithmIndex;
     private int clusterIndex;
     private boolean retainRides;
 
@@ -106,6 +110,23 @@ public class DisplayRidesFragment extends Fragment {
         }
     }
 
+    private static RidesOptimizer.RidesAlgorithm[] getAlgorithmsByIndex(int index) {
+        switch (index) {
+            case 0:
+                return null;
+            case 1:
+                return new RidesOptimizer.RidesAlgorithm[]{new SerialArson()};
+            case 2:
+                return new RidesOptimizer.RidesAlgorithm[]{new FlamboyantElephant()};
+            case 3:
+                return new RidesOptimizer.RidesAlgorithm[]{new NaiveHungarian()};
+            case 4:
+                return new RidesOptimizer.RidesAlgorithm[]{new ClusterMatch()};
+            default:
+                return null;
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,7 +139,7 @@ public class DisplayRidesFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_display_rides, container, false);
         ridesDisplay = (TextView) rootView.findViewById(R.id.RidesTextList);
         mBar = (ProgressBar) rootView.findViewById(R.id.cProgressBar);
-        optimizationAlgorithm = getArguments().getInt(EXTRA_ALGORITHM);
+        algorithmIndex = getArguments().getInt(EXTRA_ALGORITHM);
         clusterIndex = getArguments().getInt(EXTRA_CLUSTER_TYPE);
         retainRides = getArguments().getBoolean(EXTRA_RETAIN_RIDES);
         new CreateRidesText().execute();
@@ -142,7 +163,7 @@ public class DisplayRidesFragment extends Fragment {
             RidesOptimizer optimizer = new RidesOptimizer();
             optimizer.loadDriver(rides);
             optimizer.loadPassengers(driverless);
-            optimizer.setAlgorithm(optimizationAlgorithm, retainRides, getClusterByIndex(clusterIndex));
+            optimizer.setUpAlgorithms(getAlgorithmsByIndex(algorithmIndex), retainRides, getClusterByIndex(clusterIndex));
             optimizer.optimize();
             RidesDatabaseHandler ridesDatabaseHandler = new RidesDatabaseHandler(getActivity());
             ridesDatabaseHandler.updateRides(optimizer.getDrivers(), optimizer.getDriverless());
