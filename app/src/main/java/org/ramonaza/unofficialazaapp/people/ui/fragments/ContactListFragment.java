@@ -9,12 +9,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import org.ramonaza.unofficialazaapp.R;
+import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
+import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
 import org.ramonaza.unofficialazaapp.frontpage.ui.activities.FrontalActivity;
 import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextListFragment;
-import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
-import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHelper;
 import org.ramonaza.unofficialazaapp.people.ui.activities.AddCustomContactActivity;
 import org.ramonaza.unofficialazaapp.people.ui.activities.ContactDataActivity;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
@@ -84,13 +84,13 @@ public class ContactListFragment extends InfoWrapperTextListFragment {
             ChapterPackHandlerSupport.getChapterPackHandler(getActivity(), ChapterPackHandlerSupport.getOptions()[0]);
         }
         ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(getActivity());
-        ContactInfoWrapper[] currentContacts = handler.getContacts(null, ContactDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
+        ContactInfoWrapper[] currentContacts = handler.getContacts(null, AppDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
         if (currentContacts.length <= 1) {
-            ContactDatabaseHelper dbh = new ContactDatabaseHelper(getActivity());
+            AppDatabaseHelper dbh = new AppDatabaseHelper(getActivity());
             SQLiteDatabase db = dbh.getWritableDatabase();
             dbh.onDelete(db);
             dbh.onCreate(db);
-            currentContacts = handler.getContacts(null, ContactDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
+            currentContacts = handler.getContacts(null, AppDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
         }
         return currentContacts;
     }

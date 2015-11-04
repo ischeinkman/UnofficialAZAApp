@@ -1,11 +1,11 @@
-package org.ramonaza.unofficialazaapp.people.backend;
+package org.ramonaza.unofficialazaapp.database;
 
 import android.provider.BaseColumns;
 
 /**
  * Created by ilanscheinkman on 3/12/15.
  */
-public final class ContactDatabaseContract {
+public final class AppDatabaseContract {
 
     public static final String VTYPE_TEXT = "TEXT";
     public static final String VTYPE_INT = "INTEGER";
@@ -47,6 +47,7 @@ public final class ContactDatabaseContract {
         public static final String COLUMN_ADDRESS = "driveraddress";
         public static final String COLUMN_LATITUDE = "driveraddresslat";
         public static final String COLUMN_LONGITUDE = "driveraddresslong";
+        public static final String COLUMN_CONTACT_INFO = "drivercontactinfo";
         public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" +
                 DriverListTable._ID + " INTEGER PRIMARY KEY, " +
                 COLUMN_NAME + " " + VTYPE_TEXT + ", " +
@@ -54,7 +55,9 @@ public final class ContactDatabaseContract {
                 COLUMN_LATITUDE + " " + VTYPE_TEXT + ", " +
                 COLUMN_LONGITUDE + " " + VTYPE_TEXT + ", " +
                 COLUMN_AREA + " " + VTYPE_INT + ", " +
-                COLUMN_SPACE + " " + VTYPE_INT + ")";
+                COLUMN_SPACE + " " + VTYPE_INT + ", " +
+                COLUMN_CONTACT_INFO + " " + VTYPE_INT + ", " +
+                ")";
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
 

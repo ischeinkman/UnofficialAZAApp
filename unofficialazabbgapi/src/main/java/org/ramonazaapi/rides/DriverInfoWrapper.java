@@ -13,15 +13,27 @@ import java.util.Set;
 public class DriverInfoWrapper implements PersonInfoWrapper {
     private int spots;
     private String name;
-    private int area;
     private String address;
     private double latitude;
     private double longitude;
     private int id;
+    private ContactInfoWrapper contactInfo;
+
+
     private Set<ContactInfoWrapper> passengersInCar;
 
     public DriverInfoWrapper() {
         this.passengersInCar = new HashSet<ContactInfoWrapper>(spots + 1);
+        this.contactInfo = null;
+    }
+
+
+    public ContactInfoWrapper getContactInfo() {
+        return contactInfo;
+    }
+
+    public void setContactInfo(ContactInfoWrapper contactInfo) {
+        this.contactInfo = contactInfo;
     }
 
     public double getLatitude() {
@@ -66,14 +78,6 @@ public class DriverInfoWrapper implements PersonInfoWrapper {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getArea() {
-        return area;
-    }
-
-    public void setArea(int area) {
-        this.area = area;
     }
 
     public int getId() {

@@ -14,9 +14,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.ramonaza.unofficialazaapp.R;
+import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
 import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
-import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHelper;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
 import org.ramonazaapi.rides.DriverInfoWrapper;
@@ -142,22 +142,29 @@ public class AddCustomDriverFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... params) {
-            SQLiteDatabase db = new ContactDatabaseHelper(context).getWritableDatabase();
+            SQLiteDatabase db = new AppDatabaseHelper(context).getWritableDatabase();
             RidesDatabaseHandler handler = new RidesDatabaseHandler(db);
+
             mDriver.setName(driverName);
             int inpSpots = Integer.parseInt(driverSpots);
+
             mDriver.setAddress(driverAddress);
             if (mDriver.getAddress().equals(presContact.getAddress())) {
                 mDriver.setLongitude("" + presContact.getLongitude());
                 mDriver.setLatitude("" + presContact.getLatitude());
             }
+
             if (mDriver.getName().equals(presContact.getName())) mDriver.setSpots(inpSpots + 1);
             else mDriver.setSpots(inpSpots);
+
+            if (presContact != null) mDriver.setContactInfo(presContact);
+
             try {
                 handler.addDriver(mDriver);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
             if (presContact != null) {
                 ContactDatabaseHandler cHandler = new ContactDatabaseHandler(db);
                 presContact.setPresent(true);
@@ -168,6 +175,7 @@ public class AddCustomDriverFragment extends Fragment {
                 }
                 handler.addPassengersToCar(mDriver.getId(), new ContactInfoWrapper[]{presContact});
             }
+
             getActivity().finish();
             return null;
         }

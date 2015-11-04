@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -14,16 +14,18 @@
     <ListView
         android:id="@+id/infowrapperadapterlist"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"></ListView>
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="58dp"></ListView>
 
         <LinearLayout
             android:id="@+id/listfooter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
+            android:layout_alignParentBottom="true"
             android:layout_marginBottom="8dp"
-            android:layout_weight="0"
             android:orientation="horizontal">
             <Button
                 android:id="@+id/AddPresetContactButton"
@@ -47,4 +49,4 @@
         </LinearLayout>
 
 
-</LinearLayout>
+</RelativeLayout>

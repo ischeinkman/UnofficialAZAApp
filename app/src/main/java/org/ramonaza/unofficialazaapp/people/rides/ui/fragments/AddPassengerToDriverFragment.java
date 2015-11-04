@@ -3,9 +3,9 @@ package org.ramonaza.unofficialazaapp.people.rides.ui.fragments;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
 import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperCheckBoxesFragment;
-import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesDriverManipActivity;
@@ -46,9 +46,9 @@ public class AddPassengerToDriverFragment extends InfoWrapperCheckBoxesFragment 
     public InfoWrapper[] generateInfo() {
         ContactDatabaseHandler dbhandler = ChapterPackHandlerSupport.getContactHandler(getActivity());
         return dbhandler.getContacts(new String[]{
-                ContactDatabaseContract.ContactListTable.COLUMN_PRESENT + "=1",
-                ContactDatabaseContract.ContactListTable._ID + " NOT IN (" + "SELECT " + ContactDatabaseContract.RidesListTable.COLUMN_PASSENGER + " FROM " + ContactDatabaseContract.RidesListTable.TABLE_NAME + ")"
-        }, ContactDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
+                AppDatabaseContract.ContactListTable.COLUMN_PRESENT + "=1",
+                AppDatabaseContract.ContactListTable._ID + " NOT IN (" + "SELECT " + AppDatabaseContract.RidesListTable.COLUMN_PASSENGER + " FROM " + AppDatabaseContract.RidesListTable.TABLE_NAME + ")"
+        }, AppDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
     }
 
     private class SubmitFromList extends AsyncTask<InfoWrapper, Void, Void> {

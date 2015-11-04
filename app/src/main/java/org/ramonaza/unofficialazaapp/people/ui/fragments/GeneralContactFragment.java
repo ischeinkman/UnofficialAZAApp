@@ -22,8 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.ramonaza.unofficialazaapp.R;
-import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
-import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHelper;
+import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
+import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
 
 /**
@@ -99,18 +99,18 @@ public class GeneralContactFragment extends Fragment {
             presentSwitch.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ContactDatabaseHelper dbH = new ContactDatabaseHelper(getActivity());
+                    AppDatabaseHelper dbH = new AppDatabaseHelper(getActivity());
                     SQLiteDatabase db = dbH.getWritableDatabase();
                     ContentValues cValues = new ContentValues();
                     if (mContact.isPresent()) {
                         mContact.setPresent(false);
-                        cValues.put(ContactDatabaseContract.ContactListTable.COLUMN_PRESENT, 0);
+                        cValues.put(AppDatabaseContract.ContactListTable.COLUMN_PRESENT, 0);
                     } else {
                         mContact.setPresent(true);
-                        cValues.put(ContactDatabaseContract.ContactListTable.COLUMN_PRESENT, 1);
+                        cValues.put(AppDatabaseContract.ContactListTable.COLUMN_PRESENT, 1);
                     }
                     refreshInfoView(information);
-                    db.update(ContactDatabaseContract.ContactListTable.TABLE_NAME, cValues, ContactDatabaseContract.ContactListTable._ID + "=?", new String[]{"" + mContact.getId()});
+                    db.update(AppDatabaseContract.ContactListTable.TABLE_NAME, cValues, AppDatabaseContract.ContactListTable._ID + "=?", new String[]{"" + mContact.getId()});
                 }
             });
             rootLayout.addView(presentSwitch);
