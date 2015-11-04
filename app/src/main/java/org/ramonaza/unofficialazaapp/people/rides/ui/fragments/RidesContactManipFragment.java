@@ -11,9 +11,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.ramonaza.unofficialazaapp.R;
-import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
+import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
+import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
-import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHelper;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesContactManipActivity;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
@@ -86,14 +86,14 @@ public class RidesContactManipFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Integer... params) {
-            SQLiteDatabase db = new ContactDatabaseHelper(context).getWritableDatabase();
+            SQLiteDatabase db = new AppDatabaseHelper(context).getWritableDatabase();
             RidesDatabaseHandler rhandler = new RidesDatabaseHandler(db);
             ContactDatabaseHandler chandler = new ContactDatabaseHandler(db);
             mContact = chandler.getContact(params[0]);
             String[] whereclause = new String[]{
-                    String.format("%s in (SELECT %s FROM %s WHERE %s = %s)", ContactDatabaseContract.DriverListTable._ID,
-                            ContactDatabaseContract.RidesListTable.COLUMN_CAR, ContactDatabaseContract.RidesListTable.TABLE_NAME,
-                            ContactDatabaseContract.RidesListTable.COLUMN_PASSENGER, mContact.getId())
+                    String.format("%s in (SELECT %s FROM %s WHERE %s = %s)", AppDatabaseContract.DriverListTable._ID,
+                            AppDatabaseContract.RidesListTable.COLUMN_CAR, AppDatabaseContract.RidesListTable.TABLE_NAME,
+                            AppDatabaseContract.RidesListTable.COLUMN_PASSENGER, mContact.getId())
             };
             drivers = rhandler.getDrivers(whereclause, null);
             return null;

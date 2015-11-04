@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import org.ramonaza.unofficialazaapp.R;
+import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextWithButtonFragment;
-import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.AddContactDriverActivity;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.AddCustomDriverActivity;
@@ -85,7 +85,7 @@ public class DriversFragment extends InfoWrapperTextWithButtonFragment {
     @Override
     public InfoWrapper[] generateInfo() {
         RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
-        return handler.getDrivers(null, ContactDatabaseContract.DriverListTable.COLUMN_NAME + " ASC");
+        return handler.getDrivers(null, AppDatabaseContract.DriverListTable.COLUMN_NAME + " ASC");
     }
 
 

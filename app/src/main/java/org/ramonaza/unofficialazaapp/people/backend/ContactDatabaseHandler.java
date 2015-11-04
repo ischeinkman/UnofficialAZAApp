@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 
+import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
+import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
 
 
@@ -23,7 +25,7 @@ public class ContactDatabaseHandler {
      * @param context the context to retrieve the database from
      */
     public ContactDatabaseHandler(Context context) {
-        ContactDatabaseHelper dbHelper = new ContactDatabaseHelper(context);
+        AppDatabaseHelper dbHelper = new AppDatabaseHelper(context);
         db = dbHelper.getWritableDatabase();
     }
 
@@ -51,19 +53,19 @@ public class ContactDatabaseHandler {
         queryResults.moveToFirst();
         do {
             ContactInfoWrapper temp = new ContactInfoWrapper();
-            temp.setId(queryResults.getInt(queryResults.getColumnIndexOrThrow(ContactDatabaseContract.ContactListTable._ID)));
-            temp.setName(queryResults.getString(queryResults.getColumnIndexOrThrow(ContactDatabaseContract.ContactListTable.COLUMN_NAME)));
-            temp.setSchool(queryResults.getString(queryResults.getColumnIndexOrThrow(ContactDatabaseContract.ContactListTable.COLUMN_SCHOOL)));
-            temp.setPhoneNumber(queryResults.getString(queryResults.getColumnIndexOrThrow(ContactDatabaseContract.ContactListTable.COLUMN_PHONE)));
-            temp.setGradYear(queryResults.getString(queryResults.getColumnIndexOrThrow(ContactDatabaseContract.ContactListTable.COLUMN_GRADYEAR)));
-            temp.setEmail(queryResults.getString(queryResults.getColumnIndexOrThrow(ContactDatabaseContract.ContactListTable.COLUMN_EMAIL)));
-            temp.setAddress(queryResults.getString(queryResults.getColumnIndexOrThrow(ContactDatabaseContract.ContactListTable.COLUMN_ADDRESS)));
-            temp.setArea(queryResults.getInt(queryResults.getColumnIndexOrThrow(ContactDatabaseContract.ContactListTable.COLUMN_AREA)));
-            temp.setLatitude(queryResults.getString(queryResults.getColumnIndexOrThrow(ContactDatabaseContract.ContactListTable.COLUMN_LATITUDE)));
-            temp.setLongitude(queryResults.getString(queryResults.getColumnIndexOrThrow(ContactDatabaseContract.ContactListTable.COLUMN_LONGITUDE)));
-            if (queryResults.getInt(queryResults.getColumnIndexOrThrow(ContactDatabaseContract.ContactListTable.COLUMN_PRESENT)) == 1) {
+            temp.setId(queryResults.getInt(queryResults.getColumnIndexOrThrow(AppDatabaseContract.ContactListTable._ID)));
+            temp.setName(queryResults.getString(queryResults.getColumnIndexOrThrow(AppDatabaseContract.ContactListTable.COLUMN_NAME)));
+            temp.setSchool(queryResults.getString(queryResults.getColumnIndexOrThrow(AppDatabaseContract.ContactListTable.COLUMN_SCHOOL)));
+            temp.setPhoneNumber(queryResults.getString(queryResults.getColumnIndexOrThrow(AppDatabaseContract.ContactListTable.COLUMN_PHONE)));
+            temp.setGradYear(queryResults.getString(queryResults.getColumnIndexOrThrow(AppDatabaseContract.ContactListTable.COLUMN_GRADYEAR)));
+            temp.setEmail(queryResults.getString(queryResults.getColumnIndexOrThrow(AppDatabaseContract.ContactListTable.COLUMN_EMAIL)));
+            temp.setAddress(queryResults.getString(queryResults.getColumnIndexOrThrow(AppDatabaseContract.ContactListTable.COLUMN_ADDRESS)));
+            temp.setArea(queryResults.getInt(queryResults.getColumnIndexOrThrow(AppDatabaseContract.ContactListTable.COLUMN_AREA)));
+            temp.setLatitude(queryResults.getString(queryResults.getColumnIndexOrThrow(AppDatabaseContract.ContactListTable.COLUMN_LATITUDE)));
+            temp.setLongitude(queryResults.getString(queryResults.getColumnIndexOrThrow(AppDatabaseContract.ContactListTable.COLUMN_LONGITUDE)));
+            if (queryResults.getInt(queryResults.getColumnIndexOrThrow(AppDatabaseContract.ContactListTable.COLUMN_PRESENT)) == 1) {
                 temp.setPresent(true);
-            } else if (queryResults.getInt(queryResults.getColumnIndexOrThrow(ContactDatabaseContract.ContactListTable.COLUMN_PRESENT)) == 0) {
+            } else if (queryResults.getInt(queryResults.getColumnIndexOrThrow(AppDatabaseContract.ContactListTable.COLUMN_PRESENT)) == 0) {
                 temp.setPresent(false);
             }
             contacts[i] = temp;
@@ -87,16 +89,16 @@ public class ContactDatabaseHandler {
      */
     public void addContact(ContactInfoWrapper toAdd) throws ContactCSVReadError {
         ContentValues value = new ContentValues();
-        value.put(ContactDatabaseContract.ContactListTable.COLUMN_NAME, toAdd.getName());
-        value.put(ContactDatabaseContract.ContactListTable.COLUMN_ADDRESS, toAdd.getAddress());
-        value.put(ContactDatabaseContract.ContactListTable.COLUMN_EMAIL, toAdd.getEmail());
-        value.put(ContactDatabaseContract.ContactListTable.COLUMN_GRADYEAR, toAdd.getGradYear());
-        value.put(ContactDatabaseContract.ContactListTable.COLUMN_PHONE, toAdd.getPhoneNumber());
-        value.put(ContactDatabaseContract.ContactListTable.COLUMN_SCHOOL, toAdd.getSchool());
-        value.put(ContactDatabaseContract.ContactListTable.COLUMN_PRESENT, toAdd.isPresent());
-        value.put(ContactDatabaseContract.ContactListTable.COLUMN_LATITUDE, toAdd.getLatitude());
-        value.put(ContactDatabaseContract.ContactListTable.COLUMN_LONGITUDE, toAdd.getLongitude());
-        long rowId = db.insert(ContactDatabaseContract.ContactListTable.TABLE_NAME, null, value);
+        value.put(AppDatabaseContract.ContactListTable.COLUMN_NAME, toAdd.getName());
+        value.put(AppDatabaseContract.ContactListTable.COLUMN_ADDRESS, toAdd.getAddress());
+        value.put(AppDatabaseContract.ContactListTable.COLUMN_EMAIL, toAdd.getEmail());
+        value.put(AppDatabaseContract.ContactListTable.COLUMN_GRADYEAR, toAdd.getGradYear());
+        value.put(AppDatabaseContract.ContactListTable.COLUMN_PHONE, toAdd.getPhoneNumber());
+        value.put(AppDatabaseContract.ContactListTable.COLUMN_SCHOOL, toAdd.getSchool());
+        value.put(AppDatabaseContract.ContactListTable.COLUMN_PRESENT, toAdd.isPresent());
+        value.put(AppDatabaseContract.ContactListTable.COLUMN_LATITUDE, toAdd.getLatitude());
+        value.put(AppDatabaseContract.ContactListTable.COLUMN_LONGITUDE, toAdd.getLongitude());
+        long rowId = db.insert(AppDatabaseContract.ContactListTable.TABLE_NAME, null, value);
         if (rowId == -1l) throw new ContactCSVReadError("Null Contact Read", toAdd);
         else toAdd.setId((int) rowId);
     }
@@ -109,17 +111,17 @@ public class ContactDatabaseHandler {
      */
     public void updateContact(ContactInfoWrapper toUpdate) throws ContactCSVReadError {
         ContentValues value = new ContentValues();
-        value.put(ContactDatabaseContract.ContactListTable.COLUMN_NAME, toUpdate.getName());
-        value.put(ContactDatabaseContract.ContactListTable.COLUMN_ADDRESS, toUpdate.getAddress());
-        value.put(ContactDatabaseContract.ContactListTable.COLUMN_EMAIL, toUpdate.getEmail());
-        value.put(ContactDatabaseContract.ContactListTable.COLUMN_GRADYEAR, toUpdate.getGradYear());
-        value.put(ContactDatabaseContract.ContactListTable.COLUMN_PHONE, toUpdate.getPhoneNumber());
-        value.put(ContactDatabaseContract.ContactListTable.COLUMN_SCHOOL, toUpdate.getSchool());
-        value.put(ContactDatabaseContract.ContactListTable.COLUMN_LATITUDE, toUpdate.getLatitude());
-        value.put(ContactDatabaseContract.ContactListTable.COLUMN_LONGITUDE, toUpdate.getLongitude());
-        value.put(ContactDatabaseContract.ContactListTable.COLUMN_PRESENT, toUpdate.isPresent());
-        long rowId = db.update(ContactDatabaseContract.ContactListTable.TABLE_NAME, value,
-                ContactDatabaseContract.ContactListTable._ID + "=?", new String[]{"" + toUpdate.getId()});
+        value.put(AppDatabaseContract.ContactListTable.COLUMN_NAME, toUpdate.getName());
+        value.put(AppDatabaseContract.ContactListTable.COLUMN_ADDRESS, toUpdate.getAddress());
+        value.put(AppDatabaseContract.ContactListTable.COLUMN_EMAIL, toUpdate.getEmail());
+        value.put(AppDatabaseContract.ContactListTable.COLUMN_GRADYEAR, toUpdate.getGradYear());
+        value.put(AppDatabaseContract.ContactListTable.COLUMN_PHONE, toUpdate.getPhoneNumber());
+        value.put(AppDatabaseContract.ContactListTable.COLUMN_SCHOOL, toUpdate.getSchool());
+        value.put(AppDatabaseContract.ContactListTable.COLUMN_LATITUDE, toUpdate.getLatitude());
+        value.put(AppDatabaseContract.ContactListTable.COLUMN_LONGITUDE, toUpdate.getLongitude());
+        value.put(AppDatabaseContract.ContactListTable.COLUMN_PRESENT, toUpdate.isPresent());
+        long rowId = db.update(AppDatabaseContract.ContactListTable.TABLE_NAME, value,
+                AppDatabaseContract.ContactListTable._ID + "=?", new String[]{"" + toUpdate.getId()});
         if (rowId == -1l) throw new ContactCSVReadError("Null Contact Read", toUpdate);
     }
 
@@ -129,8 +131,8 @@ public class ContactDatabaseHandler {
      * @param toDelete the ID of the contact to delete
      */
     public void deleteContact(int toDelete) {
-        db.delete(ContactDatabaseContract.ContactListTable.TABLE_NAME, "?=?", new String[]{
-                ContactDatabaseContract.ContactListTable._ID,
+        db.delete(AppDatabaseContract.ContactListTable.TABLE_NAME, "?=?", new String[]{
+                AppDatabaseContract.ContactListTable._ID,
                 "" + toDelete
         });
     }
@@ -142,7 +144,7 @@ public class ContactDatabaseHandler {
      * @param whereArgs    an array of arguements for the where clauses
      */
     public void deleteContacts(@Nullable String whereClauses, @Nullable String[] whereArgs) {
-        db.delete(ContactDatabaseContract.ContactListTable.TABLE_NAME, whereClauses, whereArgs);
+        db.delete(AppDatabaseContract.ContactListTable.TABLE_NAME, whereClauses, whereArgs);
     }
 
     /**
@@ -153,8 +155,8 @@ public class ContactDatabaseHandler {
      */
     public ContactInfoWrapper getContact(int id) {
         String query = String.format("SELECT * FROM %s WHERE %s=%d LIMIT 1",
-                ContactDatabaseContract.ContactListTable.TABLE_NAME,
-                ContactDatabaseContract.ContactListTable._ID,
+                AppDatabaseContract.ContactListTable.TABLE_NAME,
+                AppDatabaseContract.ContactListTable._ID,
                 id
         );
         Cursor cursor = db.rawQuery(query, null);
@@ -171,10 +173,10 @@ public class ContactDatabaseHandler {
      */
     public void updateField(String field, String value, ContactInfoWrapper[] toUpdate) {
         String query = String.format("UPDATE %s SET %s=%s WHERE %s IN (",
-                ContactDatabaseContract.ContactListTable.TABLE_NAME,
+                AppDatabaseContract.ContactListTable.TABLE_NAME,
                 field,
                 value,
-                ContactDatabaseContract.ContactListTable._ID);
+                AppDatabaseContract.ContactListTable._ID);
         for (ContactInfoWrapper contact : toUpdate) query += contact.getId() + ", ";
         query = query.substring(0, query.length() - 2);
         query += ")";
@@ -190,10 +192,10 @@ public class ContactDatabaseHandler {
      */
     public void updateFieldByIDs(String field, String value, int[] toUpdate) {
         String query = String.format("UPDATE %s SET %s=%s WHERE %s IN (",
-                ContactDatabaseContract.ContactListTable.TABLE_NAME,
+                AppDatabaseContract.ContactListTable.TABLE_NAME,
                 field,
                 value,
-                ContactDatabaseContract.ContactListTable._ID);
+                AppDatabaseContract.ContactListTable._ID);
         for (int contact : toUpdate) query += contact + ", ";
         query = query.substring(0, query.length() - 2);
         query += ")";
@@ -208,7 +210,7 @@ public class ContactDatabaseHandler {
      * @return the retrieved contacts
      */
     public ContactInfoWrapper[] getContacts(@Nullable String[] whereclauses, @Nullable String orderBy) {
-        String query = String.format("SELECT * FROM %s ", ContactDatabaseContract.ContactListTable.TABLE_NAME);
+        String query = String.format("SELECT * FROM %s ", AppDatabaseContract.ContactListTable.TABLE_NAME);
         if (whereclauses != null && whereclauses.length > 0) {
             query += "WHERE ";
             for (String wc : whereclauses) query += " " + wc + " AND";
