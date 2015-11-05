@@ -1,15 +1,19 @@
 package org.ramonaza.unofficialazaapp.people.rides.ui.fragments;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
@@ -29,6 +33,9 @@ import org.ramonazaapi.rides.clusters.LazyCluster;
 import org.ramonazaapi.rides.clusters.RidesCluster;
 import org.ramonazaapi.rides.clusters.SnakeCluster;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link DisplayRidesFragment#newInstance} factory method to
@@ -42,6 +49,9 @@ public class DisplayRidesFragment extends Fragment {
 
     private TextView ridesDisplay;
     private ProgressBar mBar;
+
+    private List<DriverInfoWrapper> contactableDrivers;
+    private boolean ridesLoaded;
 
     private int algorithmIndex;
     private int clusterIndex;
@@ -130,18 +140,86 @@ public class DisplayRidesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ridesLoaded = false;
+        contactableDrivers = new ArrayList<>();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_display_rides, container, false);
-        ridesDisplay = (TextView) rootView.findViewById(R.id.RidesTextList);
-        mBar = (ProgressBar) rootView.findViewById(R.id.cProgressBar);
+
         algorithmIndex = getArguments().getInt(EXTRA_ALGORITHM);
         clusterIndex = getArguments().getInt(EXTRA_CLUSTER_TYPE);
         retainRides = getArguments().getBoolean(EXTRA_RETAIN_RIDES);
+
+        // Inflate the layout for this fragment
+        View rootView = inflater.inflate(R.layout.fragment_display_rides, container, false);
+
+        ridesDisplay = (TextView) rootView.findViewById(R.id.RidesTextList);
+        mBar = (ProgressBar) rootView.findViewById(R.id.cProgressBar);
+
+        Button textButton = (Button) rootView.findViewById(R.id.TextRidesButton);
+        textButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (ridesLoaded && contactableDrivers.size() > 0) {
+                    String ridesMsg = getString(R.string.rides_text_send_format);
+                    SmsManager smsManager = SmsManager.getDefault();
+                    for (DriverInfoWrapper contactable : contactableDrivers) {
+                        String passengerlist = "";
+                        for (ContactInfoWrapper passenger : contactable.getPassengersInCar()) {
+                            passengerlist += "\n-" + passenger.getName();
+                        }
+                        String firstName = contactable.getName().split(" ")[0];
+                        String msg = String.format(ridesMsg, firstName, passengerlist);
+                        smsManager.sendTextMessage(contactable.getContactInfo().getPhoneNumber(), null, msg, null, null);
+                    }
+                    Toast.makeText(getActivity(), "Text Messages Sent.", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getActivity(), "No contactable drivers found.", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        Button emailButton = (Button) rootView.findViewById(R.id.EmailRidesButton);
+        emailButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (ridesLoaded && contactableDrivers.size() > 0) {
+                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                    emailIntent.setType("message/rfc822");
+
+                    String[] addresses = new String[contactableDrivers.size()];
+                    for (int i = 0; i < addresses.length; i++) {
+                        addresses[i] = contactableDrivers.get(i).getContactInfo().getEmail();
+                    }
+                    emailIntent.putExtra(Intent.EXTRA_EMAIL, addresses);
+
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Current Rides List");
+
+                    String msg = getString(R.string.rides_email_send_format);
+                    String ridesBody = "";
+                    for (DriverInfoWrapper driver : contactableDrivers) {
+                        ridesBody += driver.getName() + "\'s car:\n";
+                        for (ContactInfoWrapper passeger : driver.getPassengersInCar()) {
+                            ridesBody += "- " + passeger.getName() + "\n";
+                        }
+                    }
+                    String fullBody = String.format(msg, ridesBody);
+                    emailIntent.putExtra(Intent.EXTRA_TEXT, fullBody);
+
+                    try {
+                        startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+                    } catch (android.content.ActivityNotFoundException ex) {
+                        Toast.makeText(DisplayRidesFragment.this.getActivity(), "Cannot send email.", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getActivity(), "No contactable drivers found.", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
         new CreateRidesText().execute();
         return rootView;
     }
@@ -169,6 +247,11 @@ public class DisplayRidesFragment extends Fragment {
             ridesDatabaseHandler.updateRides(optimizer.getDrivers(), optimizer.getDriverless());
             driverless = optimizer.getDriverless();
             rhandler.updateRides(rides, driverless);
+            for (DriverInfoWrapper driverToCheck : rides) {
+                if (driverToCheck.getContactInfo() != null) {
+                    contactableDrivers.add(driverToCheck);
+                }
+            }
             return createRidesList(rides, driverless);
         }
 
@@ -177,6 +260,7 @@ public class DisplayRidesFragment extends Fragment {
             super.onPostExecute(s);
             mBar.setVisibility(View.GONE);
             ridesDisplay.setText(Html.fromHtml(s));
+            ridesLoaded = true;
         }
 
         private void createRides() {
