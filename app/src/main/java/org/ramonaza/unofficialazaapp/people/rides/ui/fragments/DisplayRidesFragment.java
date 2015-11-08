@@ -164,15 +164,19 @@ public class DisplayRidesFragment extends Fragment {
             public void onClick(View view) {
 
                 if (ridesLoaded && contactableDrivers.size() > 0) {
-                    String ridesMsg = getString(R.string.rides_text_send_format);
+                    String driverMsg = getString(R.string.rides_driver_text_send_format);
+                    String passengerMsg = getString(R.string.rides_passenger_text_send_format);
                     SmsManager smsManager = SmsManager.getDefault();
                     for (DriverInfoWrapper contactable : contactableDrivers) {
                         String passengerlist = "";
                         for (ContactInfoWrapper passenger : contactable.getPassengersInCar()) {
-                            passengerlist += "\n-" + passenger.getName();
+                            passengerlist += "\n-" + passenger.getName() + "\tPhone: " + passenger.getPhoneNumber();
+                            String firstName = passenger.getName().split(" ")[0];
+                            String msg = String.format(passengerMsg, firstName, contactable.getName(), contactable.getContactInfo().getPhoneNumber());
+                            smsManager.sendTextMessage(passenger.getPhoneNumber(), null, msg, null, null);
                         }
                         String firstName = contactable.getName().split(" ")[0];
-                        String msg = String.format(ridesMsg, firstName, passengerlist);
+                        String msg = String.format(driverMsg, firstName, passengerlist);
                         smsManager.sendTextMessage(contactable.getContactInfo().getPhoneNumber(), null, msg, null, null);
                     }
                     Toast.makeText(getActivity(), "Text Messages Sent.", Toast.LENGTH_LONG).show();
@@ -202,8 +206,8 @@ public class DisplayRidesFragment extends Fragment {
                     String ridesBody = "";
                     for (DriverInfoWrapper driver : contactableDrivers) {
                         ridesBody += driver.getName() + "\'s car:\n";
-                        for (ContactInfoWrapper passeger : driver.getPassengersInCar()) {
-                            ridesBody += "- " + passeger.getName() + "\n";
+                        for (ContactInfoWrapper passenger : driver.getPassengersInCar()) {
+                            ridesBody += "- " + passenger.getName() + "\n";
                         }
                     }
                     String fullBody = String.format(msg, ridesBody);
