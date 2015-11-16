@@ -49,7 +49,8 @@ public class DisplayRidesFragment extends Fragment {
     private TextView ridesDisplay;
     private ProgressBar mBar;
 
-    private List<DriverInfoWrapper> contactableDrivers;
+    private DriverInfoWrapper[] rides;
+    private ContactInfoWrapper[] driverless;
     private boolean ridesLoaded;
 
     private int algorithmIndex;
@@ -140,7 +141,6 @@ public class DisplayRidesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ridesLoaded = false;
-        contactableDrivers = new ArrayList<>();
     }
 
     @Override
@@ -162,21 +162,33 @@ public class DisplayRidesFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                if (ridesLoaded && contactableDrivers.size() > 0) {
+                if (ridesLoaded) {
                     String driverMsg = getString(R.string.rides_driver_text_send_format);
                     String passengerMsg = getString(R.string.rides_passenger_text_send_format);
+                    String driverlessMsg = getString(R.string.rides_driverless_text_send_format);
                     SmsManager smsManager = SmsManager.getDefault();
-                    for (DriverInfoWrapper contactable : contactableDrivers) {
+                    for (DriverInfoWrapper toText : rides) {
                         String passengerlist = "";
-                        for (ContactInfoWrapper passenger : contactable.getPassengersInCar()) {
+                        for (ContactInfoWrapper passenger : toText.getPassengersInCar()) {
                             passengerlist += "\n-" + passenger.getName() + "\tPhone: " + passenger.getPhoneNumber();
-                            String firstName = passenger.getName().split(" ")[0];
-                            String msg = String.format(passengerMsg, firstName, contactable.getName(), contactable.getContactInfo().getPhoneNumber());
-                            smsManager.sendTextMessage(passenger.getPhoneNumber(), null, msg, null, null);
+                            if (passenger.phoneNumberIsValid()) {
+                                String firstName = passenger.getName().split(" ")[0];
+                                String msg = String.format(passengerMsg, firstName, toText.getName(), toText.getContactInfo().getPhoneNumber());
+                                smsManager.sendTextMessage(passenger.getPhoneNumber(), null, msg, null, null);
+                            }
                         }
-                        String firstName = contactable.getName().split(" ")[0];
-                        String msg = String.format(driverMsg, firstName, passengerlist);
-                        smsManager.sendTextMessage(contactable.getContactInfo().getPhoneNumber(), null, msg, null, null);
+                        if (toText.isContactable() && toText.getContactInfo().phoneNumberIsValid()) {
+                            String firstName = toText.getName().split(" ")[0];
+                            String msg = String.format(driverMsg, firstName, passengerlist);
+                            smsManager.sendTextMessage(toText.getContactInfo().getPhoneNumber(), null, msg, null, null);
+                        }
+                    }
+                    for (ContactInfoWrapper walker : driverless) {
+                        if (walker.phoneNumberIsValid()) {
+                            String firstName = walker.getName().split(" ")[0];
+                            String msg = String.format(driverlessMsg, firstName);
+                            smsManager.sendTextMessage(walker.getPhoneNumber(), null, msg, null, null);
+                        }
                     }
                     Toast.makeText(getActivity(), "Text Messages Sent.", Toast.LENGTH_LONG).show();
                 } else {
@@ -189,26 +201,24 @@ public class DisplayRidesFragment extends Fragment {
         emailButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (ridesLoaded && contactableDrivers.size() > 0) {
+                if (ridesLoaded) {
                     Intent emailIntent = new Intent(Intent.ACTION_SEND);
                     emailIntent.setType("message/rfc822");
 
-                    String[] addresses = new String[contactableDrivers.size()];
-                    for (int i = 0; i < addresses.length; i++) {
-                        addresses[i] = contactableDrivers.get(i).getContactInfo().getEmail();
+                    List<String> emailAddresses = new ArrayList<String>();
+                    for (DriverInfoWrapper driver : rides) {
+                        if (driver.isContactable() && driver.getContactInfo().emailIsValid())
+                            emailAddresses.add(driver.getContactInfo().getEmail());
                     }
-                    emailIntent.putExtra(Intent.EXTRA_EMAIL, addresses);
+                    for (ContactInfoWrapper walker : driverless) {
+                        if (walker.emailIsValid()) emailAddresses.add(walker.getEmail());
+                    }
+                    emailIntent.putExtra(Intent.EXTRA_EMAIL, emailAddresses.toArray(new String[emailAddresses.size()]));
 
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Current Rides List");
 
                     String msg = getString(R.string.rides_email_send_format);
-                    String ridesBody = "";
-                    for (DriverInfoWrapper driver : contactableDrivers) {
-                        ridesBody += driver.getName() + "\'s car:\n";
-                        for (ContactInfoWrapper passenger : driver.getPassengersInCar()) {
-                            ridesBody += "- " + passenger.getName() + "\n";
-                        }
-                    }
+                    String ridesBody = createRidesList(rides, driverless);
                     String fullBody = String.format(msg, ridesBody);
                     emailIntent.putExtra(Intent.EXTRA_TEXT, fullBody);
 
@@ -234,8 +244,6 @@ public class DisplayRidesFragment extends Fragment {
 
     private class CreateRidesText extends AsyncTask<Void, Void, String> {
 
-        DriverInfoWrapper[] rides;
-        ContactInfoWrapper[] driverless;
         private RidesDatabaseHandler rhandler;
 
         @Override
@@ -250,11 +258,6 @@ public class DisplayRidesFragment extends Fragment {
             ridesDatabaseHandler.updateRides(optimizer.getDrivers(), optimizer.getDriverless());
             driverless = optimizer.getDriverless();
             rhandler.updateRides(rides, driverless);
-            for (DriverInfoWrapper driverToCheck : rides) {
-                if (driverToCheck.getContactInfo() != null) {
-                    contactableDrivers.add(driverToCheck);
-                }
-            }
             return createRidesList(rides, driverless);
         }
 
