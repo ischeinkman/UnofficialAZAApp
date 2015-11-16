@@ -36,6 +36,10 @@ public class DriverInfoWrapper implements PersonInfoWrapper {
         this.contactInfo = contactInfo;
     }
 
+    public boolean isContactable() {
+        return contactInfo != null;
+    }
+
     public double getLatitude() {
         return latitude;
     }
