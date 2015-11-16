@@ -84,24 +84,24 @@ public class ContactInfoWrapper implements PersonInfoWrapper {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
     public void setLatitude(String latitude) {
         this.latitude = Double.valueOf(latitude);
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 
     public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
     public void setLongitude(String longitude) {
         this.longitude = Double.valueOf(longitude);
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     public boolean isPresent() {
@@ -136,6 +136,10 @@ public class ContactInfoWrapper implements PersonInfoWrapper {
         if (this.email == null) this.email = email;
     }
 
+    public boolean emailIsValid() {
+        return email.contains("@") && email.contains(".com") && email.length() >= 5;
+    }
+
     public String getSchool() {
         return this.school;
     }
@@ -150,6 +154,12 @@ public class ContactInfoWrapper implements PersonInfoWrapper {
 
     public void setPhoneNumber(String phoneNumber) {
         if (this.phoneNumber == null) this.phoneNumber = phoneNumber;
+    }
+
+    public boolean phoneNumberIsValid() {
+        return phoneNumber != null && //has a phone number
+                (phoneNumber.length() == 7 || phoneNumber.length() == 9 || phoneNumber.length() == 10) && //valid length
+                phoneNumber.matches("\\d");
     }
 
     public String getAddress() {
