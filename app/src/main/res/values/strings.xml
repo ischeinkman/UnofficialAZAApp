@@ -51,4 +51,5 @@
     <string name="rides_driver_text_send_format" formatted="false">Hey %s! Rides are done. Here\'s your car:\n%s\n\nAny questions just call me.</string>
     <string name="rides_passenger_text_send_format" formatted="false">Hey %s! Rides are done. You\'re in %s\'s car. Their phone number is %s.\n\nAny questions just call me.</string>
     <string name="rides_email_send_format" formatted="false">Hey all! These are the current rides:\n%s \n\nIf you have any questions, comment, or alteration requests, just contact me. </string>
+    <string name="rides_driverless_text_send_format" formatted="false">Hey %s! Rides are done. Unfortunately you are not currently in a car. If you would like this changed, just call me.</string>
 </resources>
