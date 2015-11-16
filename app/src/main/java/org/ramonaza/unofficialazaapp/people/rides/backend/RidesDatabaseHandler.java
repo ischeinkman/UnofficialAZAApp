@@ -178,22 +178,14 @@ public class RidesDatabaseHandler extends ContactDatabaseHandler {
      * @param driverless the people not in cars
      */
     public void updateRides(DriverInfoWrapper[] drivers, ContactInfoWrapper[] driverless) {
-        String driverlessIDs;
-        if (driverless.length != 0) {
-            driverlessIDs = "(";
-            for (ContactInfoWrapper driverlessPassenger : driverless) {
-                driverlessIDs += driverlessPassenger.getId() + ",";
-            }
-            driverlessIDs = driverlessIDs.substring(0, driverlessIDs.length() - 1);
-            driverlessIDs += ")";
-            db.execSQL("DELETE FROM " + AppDatabaseContract.RidesListTable.TABLE_NAME +
-                    " WHERE " + AppDatabaseContract.RidesListTable.COLUMN_PASSENGER +
-                    " IN " + driverlessIDs);
-        }
+        db.execSQL("TRUNCATE TABLE " + AppDatabaseContract.RidesListTable.TABLE_NAME);
+        updateContactField(AppDatabaseContract.ContactListTable.COLUMN_PRESENT, "0", null);
         for (DriverInfoWrapper driver : drivers) {
-            addPassengersToCar(driver.getId(), driver.getPassengersInCar().toArray(new ContactInfoWrapper[driver.getPassengersInCar().size()
-                    ]));
+            ContactInfoWrapper[] inCar = driver.getPassengersInCar().toArray(new ContactInfoWrapper[driver.getPassengersInCar().size()]);
+            updateContactField(AppDatabaseContract.ContactListTable.COLUMN_PRESENT, "1", inCar);
+            addPassengersToCar(driver.getId(), inCar);
         }
+        updateContactField(AppDatabaseContract.ContactListTable.COLUMN_PRESENT, "1", driverless);
     }
 
     /**
