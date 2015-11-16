@@ -18,7 +18,6 @@ import android.widget.Toast;
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
 import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
-import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
 import org.ramonazaapi.rides.DriverInfoWrapper;
@@ -267,14 +266,13 @@ public class DisplayRidesFragment extends Fragment {
             SQLiteDatabase db = new AppDatabaseHelper(getActivity()).getWritableDatabase();
             rhandler = new RidesDatabaseHandler(db);
             rides = rhandler.getDrivers(null, AppDatabaseContract.DriverListTable.COLUMN_NAME + " ASC");
-            ContactDatabaseHandler chandler = new ContactDatabaseHandler(db);
             String[] whereclause;
             whereclause = new String[]{
                     String.format("%s = %d", AppDatabaseContract.ContactListTable.COLUMN_PRESENT, 1),
                     String.format("not %s in (SELECT %s FROM %s)", AppDatabaseContract.ContactListTable._ID,
                             AppDatabaseContract.RidesListTable.COLUMN_PASSENGER, AppDatabaseContract.RidesListTable.TABLE_NAME)
             };
-            driverless = chandler.getContacts(whereclause, null);
+            driverless = rhandler.getContacts(whereclause, null);
         }
     }
 
