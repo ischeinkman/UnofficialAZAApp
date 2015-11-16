@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 
 import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
-import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
 import org.ramonazaapi.rides.DriverInfoWrapper;
@@ -15,17 +14,16 @@ import org.ramonazaapi.rides.DriverInfoWrapper;
 /**
  * Created by ilanscheinkman on 7/16/15.
  */
-public class RidesDatabaseHandler {
+public class RidesDatabaseHandler extends ContactDatabaseHandler {
 
     private SQLiteDatabase db;
 
     public RidesDatabaseHandler(Context context) {
-        AppDatabaseHelper dbHelper = new AppDatabaseHelper(context);
-        this.db = dbHelper.getWritableDatabase();
+        super(context);
     }
 
     public RidesDatabaseHandler(SQLiteDatabase db) {
-        this.db = db;
+        super(db);
     }
 
     /**
@@ -52,8 +50,6 @@ public class RidesDatabaseHandler {
             return new DriverInfoWrapper[0];
         }
 
-        ContactDatabaseHandler contactDatabaseHandler = null; //For contact info retrieval
-
         DriverInfoWrapper[] drivers = new DriverInfoWrapper[queryResults.getCount()];
 
         int i = 0;
@@ -68,9 +64,7 @@ public class RidesDatabaseHandler {
             temp.setLongitude(queryResults.getString(queryResults.getColumnIndexOrThrow(AppDatabaseContract.DriverListTable.COLUMN_LONGITUDE)));
             int contactInfoId = queryResults.getInt(queryResults.getColumnIndexOrThrow(AppDatabaseContract.DriverListTable.COLUMN_CONTACT_INFO));
             if (contactInfoId >= 0) {
-                if (contactDatabaseHandler == null)
-                    contactDatabaseHandler = new ContactDatabaseHandler(db);
-                temp.setContactInfo(contactDatabaseHandler.getContact(contactInfoId));
+                temp.setContactInfo(getContact(contactInfoId));
             }
             drivers[i] = temp;
             i++;
@@ -92,7 +86,6 @@ public class RidesDatabaseHandler {
      * @return the driver with this ID
      */
     public DriverInfoWrapper getDriver(int id) {
-        ContactDatabaseHandler contactDatabaseHandler = null;
 
         String query = "SELECT * FROM " + AppDatabaseContract.DriverListTable.TABLE_NAME +
                 " WHERE " + AppDatabaseContract.DriverListTable._ID + " = " + id;
@@ -108,9 +101,7 @@ public class RidesDatabaseHandler {
         driver.setLongitude(queryResults.getString(queryResults.getColumnIndexOrThrow(AppDatabaseContract.DriverListTable.COLUMN_LONGITUDE)));
         int contactInfo = queryResults.getInt(queryResults.getColumnIndexOrThrow(AppDatabaseContract.DriverListTable.COLUMN_CONTACT_INFO));
         if (contactInfo >= 0) {
-            if (contactDatabaseHandler == null)
-                contactDatabaseHandler = new ContactDatabaseHandler(db);
-            driver.setContactInfo(contactDatabaseHandler.getContact(contactInfo));
+            driver.setContactInfo(getContact(contactInfo));
         }
 
         ContactInfoWrapper[] carPassengers = getPassengersInCar(id);

@@ -13,6 +13,7 @@ import android.widget.Button;
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
 import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
+import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextWithButtonFragment;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
@@ -96,7 +97,7 @@ public class PassengersFragment extends InfoWrapperTextWithButtonFragment {
 
     @Override
     public InfoWrapper[] generateInfo() {
-        ContactDatabaseHandler handler = new ContactDatabaseHandler(db);
+        ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(getActivity());
         return handler.getContacts(new String[]{
                 AppDatabaseContract.ContactListTable.COLUMN_PRESENT + "=1",
         }, AppDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");

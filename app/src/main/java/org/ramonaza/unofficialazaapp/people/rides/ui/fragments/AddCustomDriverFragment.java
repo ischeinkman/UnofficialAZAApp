@@ -166,10 +166,9 @@ public class AddCustomDriverFragment extends Fragment {
             }
 
             if (presContact != null) {
-                ContactDatabaseHandler cHandler = new ContactDatabaseHandler(db);
                 presContact.setPresent(true);
                 try {
-                    cHandler.updateContact(presContact);
+                    handler.updateContact(presContact);
                 } catch (ContactDatabaseHandler.ContactCSVReadError contactCSVReadError) {
                     contactCSVReadError.printStackTrace();
                 }
