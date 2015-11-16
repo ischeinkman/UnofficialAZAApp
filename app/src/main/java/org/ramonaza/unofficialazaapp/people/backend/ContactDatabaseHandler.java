@@ -169,17 +169,24 @@ public class ContactDatabaseHandler {
      *
      * @param field    the field to update
      * @param value    the value to update to
-     * @param toUpdate the contacts to update
+     * @param toUpdate the contacts to update. If toUpdate is set to null, update all contacts.
      */
-    public void updateField(String field, String value, ContactInfoWrapper[] toUpdate) {
-        String query = String.format("UPDATE %s SET %s=%s WHERE %s IN (",
-                AppDatabaseContract.ContactListTable.TABLE_NAME,
-                field,
-                value,
-                AppDatabaseContract.ContactListTable._ID);
-        for (ContactInfoWrapper contact : toUpdate) query += contact.getId() + ", ";
-        query = query.substring(0, query.length() - 2);
-        query += ")";
+    public void updateContactField(String field, String value, @Nullable ContactInfoWrapper[] toUpdate) {
+        String query;
+        if (toUpdate != null) {
+            query = String.format("UPDATE %s SET %s=%s WHERE %s IN (",
+                    AppDatabaseContract.ContactListTable.TABLE_NAME,
+                    field,
+                    value,
+                    AppDatabaseContract.ContactListTable._ID);
+            for (ContactInfoWrapper contact : toUpdate) query += contact.getId() + ", ";
+            query = query.substring(0, query.length() - 2);
+            query += ")";
+        } else {
+            query = String.format("UPDATE %s SET %s=%s ",
+                    AppDatabaseContract.ContactListTable.TABLE_NAME,
+                    field);
+        }
         db.execSQL(query, new String[0]);
     }
 
@@ -188,14 +195,21 @@ public class ContactDatabaseHandler {
      *
      * @param field    the field to update
      * @param value    the value to update to
-     * @param toUpdate an array containing the IDs of the contacts to update
+     * @param toUpdate an array containing the IDs of the contacts to update. If toUpdate is set to null, update all contacts.
      */
-    public void updateFieldByIDs(String field, String value, int[] toUpdate) {
-        String query = String.format("UPDATE %s SET %s=%s WHERE %s IN (",
-                AppDatabaseContract.ContactListTable.TABLE_NAME,
-                field,
-                value,
-                AppDatabaseContract.ContactListTable._ID);
+    public void updateContactFieldByIDs(String field, String value, @Nullable int[] toUpdate) {
+        String query;
+        if (toUpdate != null) {
+            query = String.format("UPDATE %s SET %s=%s WHERE %s IN (",
+                    AppDatabaseContract.ContactListTable.TABLE_NAME,
+                    field,
+                    value,
+                    AppDatabaseContract.ContactListTable._ID);
+        } else {
+            query = String.format("UPDATE %s SET %s=%s ",
+                    AppDatabaseContract.ContactListTable.TABLE_NAME,
+                    field);
+        }
         for (int contact : toUpdate) query += contact + ", ";
         query = query.substring(0, query.length() - 2);
         query += ")";

@@ -52,7 +52,7 @@ public class PresentContactFromListFragment extends InfoWrapperCheckBoxesFragmen
         protected Void doInBackground(InfoWrapper... params) {
             ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(getActivity());
             ContactInfoWrapper[] presentContacts = Arrays.copyOf(params, params.length, ContactInfoWrapper[].class);
-            handler.updateField(AppDatabaseContract.ContactListTable.COLUMN_PRESENT, "1", presentContacts);
+            handler.updateContactField(AppDatabaseContract.ContactListTable.COLUMN_PRESENT, "1", presentContacts);
             return null;
         }
 
