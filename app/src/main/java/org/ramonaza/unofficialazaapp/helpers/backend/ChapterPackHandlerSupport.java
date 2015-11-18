@@ -69,7 +69,10 @@ public class ChapterPackHandlerSupport {
      * @return the currently loaded Chapter Pack, or null
      */
     public static ChapterPackHandler getChapterPackHandler(Context context) {
-        if (getOptions().length > 0) return getChapterPackHandler(context, getOptions()[0]);
+        if (getOptions().length > 0) {
+            contactsLoaded = false;
+            return getChapterPackHandler(context, getOptions()[0]);
+        }
         else if (currentHandler != null) return currentHandler;
         else return null;
     }
@@ -88,6 +91,7 @@ public class ChapterPackHandlerSupport {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         preferences.edit().putString(PREF_CHAPTERPACK, pack.getName());
         currentHandler = new ChapterPackHandler(moveChapterPack(context, pack));
+        contactsLoaded = false;
         return currentHandler;
     }
 

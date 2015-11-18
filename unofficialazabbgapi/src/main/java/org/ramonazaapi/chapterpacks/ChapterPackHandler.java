@@ -8,6 +8,8 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -72,13 +74,28 @@ public class ChapterPackHandler {
         } catch (IOException e) {
             return false;
         }
-        ZipEntry eventZipFile = file.getEntry(EVENT_FILE_NAME);
-        InputStream fileStream;
+        InputStream fileStream = null;
+        ZipEntry eventEntry = null;
+
+        Enumeration<? extends ZipEntry> inFile = file.entries();
+
+        while (inFile.hasMoreElements()) {
+            eventEntry = inFile.nextElement();
+            String[] splitByDir = eventEntry.getName().split("/");
+            if (Arrays.asList(splitByDir).contains(EVENT_FILE_NAME)) {
+                break;
+            }
+            if (!inFile.hasMoreElements()) {
+                eventEntry = null;
+            }
+        }
+
         try {
-            fileStream = file.getInputStream(eventZipFile);
+            fileStream = file.getInputStream(eventEntry);
         } catch (IOException e) {
             return false;
         }
+
         Scanner streamScanner = new Scanner(fileStream);
         StringBuilder builder = new StringBuilder(100);
         while (streamScanner.hasNext()) {
@@ -133,8 +150,22 @@ public class ChapterPackHandler {
         } catch (IOException e) {
             return null;
         }
-        ZipEntry contactZipEntry = file.getEntry(CSV_NAME);
-        InputStream fileStream;
+
+        ZipEntry contactZipEntry = null;
+        InputStream fileStream = null;
+
+        Enumeration<? extends ZipEntry> inFile = file.entries();
+        while (inFile.hasMoreElements()) {
+            contactZipEntry = inFile.nextElement();
+            String[] splitByDir = contactZipEntry.getName().split("/");
+            if (Arrays.asList(splitByDir).contains(CSV_NAME)) {
+                break;
+            }
+            if (!inFile.hasMoreElements()) {
+                contactZipEntry = null;
+            }
+        }
+
         try {
             fileStream = file.getInputStream(contactZipEntry);
         } catch (IOException e) {
@@ -159,10 +190,12 @@ public class ChapterPackHandler {
     }
 
     public ContactCSVHandler getCsvHandler() {
+        if (!contactsLoaded) loadContactList();
         return csvHandler;
     }
 
     public String getEventUrl() {
+        if (!eventsLoaded) loadEventFeed();
         return eventUrl;
     }
 
