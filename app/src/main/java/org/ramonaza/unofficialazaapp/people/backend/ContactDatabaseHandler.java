@@ -17,7 +17,7 @@ import org.ramonazaapi.contacts.ContactInfoWrapper;
  */
 public class ContactDatabaseHandler {
 
-    private SQLiteDatabase db;
+    protected SQLiteDatabase db;
 
     /**
      * Creates a handler based on a context.
@@ -173,7 +173,12 @@ public class ContactDatabaseHandler {
      */
     public void updateContactField(String field, String value, @Nullable ContactInfoWrapper[] toUpdate) {
         String query;
-        if (toUpdate != null) {
+        if (toUpdate == null) {
+            query = String.format("UPDATE %s SET %s=%s ",
+                    AppDatabaseContract.ContactListTable.TABLE_NAME,
+                    field,
+                    value);
+        } else if (toUpdate.length > 0) {
             query = String.format("UPDATE %s SET %s=%s WHERE %s IN (",
                     AppDatabaseContract.ContactListTable.TABLE_NAME,
                     field,
@@ -183,9 +188,7 @@ public class ContactDatabaseHandler {
             query = query.substring(0, query.length() - 2);
             query += ")";
         } else {
-            query = String.format("UPDATE %s SET %s=%s ",
-                    AppDatabaseContract.ContactListTable.TABLE_NAME,
-                    field);
+            return;
         }
         db.execSQL(query, new String[0]);
     }
@@ -199,16 +202,18 @@ public class ContactDatabaseHandler {
      */
     public void updateContactFieldByIDs(String field, String value, @Nullable int[] toUpdate) {
         String query;
-        if (toUpdate != null) {
+        if (toUpdate == null) {
+            query = String.format("UPDATE %s SET %s=%s ",
+                    AppDatabaseContract.ContactListTable.TABLE_NAME,
+                    field);
+        } else if (toUpdate.length > 0) {
             query = String.format("UPDATE %s SET %s=%s WHERE %s IN (",
                     AppDatabaseContract.ContactListTable.TABLE_NAME,
                     field,
                     value,
                     AppDatabaseContract.ContactListTable._ID);
         } else {
-            query = String.format("UPDATE %s SET %s=%s ",
-                    AppDatabaseContract.ContactListTable.TABLE_NAME,
-                    field);
+            return;
         }
         for (int contact : toUpdate) query += contact + ", ";
         query = query.substring(0, query.length() - 2);
