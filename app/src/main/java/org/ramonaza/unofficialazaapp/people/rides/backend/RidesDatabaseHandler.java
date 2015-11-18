@@ -16,8 +16,6 @@ import org.ramonazaapi.rides.DriverInfoWrapper;
  */
 public class RidesDatabaseHandler extends ContactDatabaseHandler {
 
-    private SQLiteDatabase db;
-
     public RidesDatabaseHandler(Context context) {
         super(context);
     }
@@ -178,7 +176,7 @@ public class RidesDatabaseHandler extends ContactDatabaseHandler {
      * @param driverless the people not in cars
      */
     public void updateRides(DriverInfoWrapper[] drivers, ContactInfoWrapper[] driverless) {
-        db.execSQL("TRUNCATE TABLE " + AppDatabaseContract.RidesListTable.TABLE_NAME);
+        db.execSQL("DELETE FROM " + AppDatabaseContract.RidesListTable.TABLE_NAME);
         updateContactField(AppDatabaseContract.ContactListTable.COLUMN_PRESENT, "0", null);
         for (DriverInfoWrapper driver : drivers) {
             ContactInfoWrapper[] inCar = driver.getPassengersInCar().toArray(new ContactInfoWrapper[driver.getPassengersInCar().size()]);
