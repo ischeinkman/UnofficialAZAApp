@@ -7,8 +7,8 @@ android {
         applicationId "org.ramonaza.unofficialazaapp"
         minSdkVersion 16
         targetSdkVersion 21
-        versionCode 11
-        versionName "1.1"
+        versionCode 12
+        versionName "1.2"
     }
     buildTypes {
         release {
@@ -30,4 +30,5 @@ dependencies {
     compile 'com.android.support:support-v13:21.0.3'
     compile 'com.opencsv:opencsv:3.1'
     compile project(':unofficialazabbgapi')
+    compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.4.1'
 }
