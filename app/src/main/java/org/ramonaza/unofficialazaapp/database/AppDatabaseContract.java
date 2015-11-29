@@ -56,7 +56,7 @@ public final class AppDatabaseContract {
                 COLUMN_LONGITUDE + " " + VTYPE_TEXT + ", " +
                 COLUMN_AREA + " " + VTYPE_INT + ", " +
                 COLUMN_SPACE + " " + VTYPE_INT + ", " +
-                COLUMN_CONTACT_INFO + " " + VTYPE_INT + ", " +
+                COLUMN_CONTACT_INFO + " " + VTYPE_INT +
                 ")";
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
