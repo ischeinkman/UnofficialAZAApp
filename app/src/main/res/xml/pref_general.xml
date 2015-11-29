@@ -3,14 +3,18 @@
 
 
     <CheckBoxPreference
+        android:defaultValue="false"
         android:key="rides"
         android:title="@string/pref_title_rides"
-        android:defaultValue="false"
         />
     <CheckBoxPreference
-        android:key="admin"
-        android:title="@string/pref_title_dev"
         android:defaultValue="false"
+        android:key="admin"
+        android:title="@string/pref_title_dev" />
+    <Preference
+        android:key="loadpackbutton"
+        android:summary="Opens a new dialog"
+        android:title="Load Chapter Pack"
         />
 
 </PreferenceScreen>

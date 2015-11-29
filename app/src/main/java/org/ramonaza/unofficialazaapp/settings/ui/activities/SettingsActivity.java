@@ -1,6 +1,9 @@
 package org.ramonaza.unofficialazaapp.settings.ui.activities;
 
 import android.annotation.TargetApi;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -20,6 +23,7 @@ import android.widget.Toast;
 
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
+import org.ramonaza.unofficialazaapp.settings.ui.fragments.ChapterPackSelectorFragment;
 
 import java.util.List;
 
@@ -153,6 +157,25 @@ public class SettingsActivity extends PreferenceActivity {
         // Add 'general' preferences.
         addPreferencesFromResource(R.xml.pref_general);
 
+        Preference loadPackButton = findPreference("loadpackbutton");
+        if (loadPackButton != null) {
+            loadPackButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+                    if (prev != null) {
+                        ft.remove(prev);
+                    }
+                    ft.addToBackStack(null);
+                    DialogFragment newFragment = new ChapterPackSelectorFragment();
+                    newFragment.show(ft, "dialog");
+
+                    return true;
+                }
+            });
+        }
+
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isDebug = preferences.getBoolean("admin", false);
         if (isDebug) {
@@ -207,7 +230,24 @@ public class SettingsActivity extends PreferenceActivity {
             // updated to reflect the new value, per the Android Design
             // guidelines.
             //bindPreferenceSummaryToValue(findPreference("example_text"));
+            Preference loadPackButton = findPreference("loadpackbutton");
+            if (loadPackButton != null) {
+                loadPackButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+                        if (prev != null) {
+                            ft.remove(prev);
+                        }
+                        ft.addToBackStack(null);
+                        DialogFragment newFragment = new ChapterPackSelectorFragment();
+                        newFragment.show(ft, "dialog");
 
+                        return true;
+                    }
+                });
+            }
         }
     }
 
