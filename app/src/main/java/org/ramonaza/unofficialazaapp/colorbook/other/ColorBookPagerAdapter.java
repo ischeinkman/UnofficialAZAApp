@@ -16,6 +16,7 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import org.ramonaza.unofficialazaapp.colorbook.fragments.ColorBookPageFragment;
+import org.ramonaza.unofficialazaapp.helpers.backend.GenderedConstants;
 
 import java.io.IOException;
 
@@ -36,19 +37,14 @@ public class ColorBookPagerAdapter extends FragmentStatePagerAdapter {
 
     private int count;
 
+    private Context context;
+
     public ColorBookPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
-
-        try {
-            ParcelFileDescriptor mFileDescriptor = context.getAssets().openFd("ColorBook.pdf").getParcelFileDescriptor();
-            mRenderer = new PdfRenderer(mFileDescriptor);
-            count = mRenderer.getPageCount();
-        } catch (IOException e) {
-            return;
-        }
-
+        this.context = context;
         screenDims = calcScreenDims(context);
         pagesCache = new LruCache<>(4);
+        count = GenderedConstants.COLORBOOK_SIZE;
 
     }
 
@@ -90,6 +86,15 @@ public class ColorBookPagerAdapter extends FragmentStatePagerAdapter {
             page = pagenums[0];
             if (pagesCache.get(page) != null) {
                 return pagesCache.get(page);
+            }
+
+            if (mRenderer == null) {
+                try {
+                    ParcelFileDescriptor mFileDescriptor = context.getAssets().openFd("ColorBook.pdf").getParcelFileDescriptor();
+                    mRenderer = new PdfRenderer(mFileDescriptor);
+                } catch (IOException e) {
+
+                }
             }
             PdfRenderer.Page currentPage = mRenderer.openPage(page);
             int[] imgDims = getImgDimensionsHorizontalFit(currentPage, screenDims);
