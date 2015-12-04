@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_section_bluebook">Blue Book</string>
+    <string name="TableOfContentsMenuButton">Table of Contents</string>
+    <string name="GotoPageMenuButton">Go To Page...</string>
+    <string-array name="TableOfContents">
+        <item>Beginning</item>
+        <item>History and Structure</item>
+        <item>AZA Programming</item>
+        <item>Rituals and Procedures</item>
+        <item>BBYO Member Code of Conduct</item>
+    </string-array>
+</resources>

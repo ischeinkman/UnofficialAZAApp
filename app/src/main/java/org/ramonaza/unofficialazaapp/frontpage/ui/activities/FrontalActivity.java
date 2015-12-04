@@ -11,7 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import org.ramonaza.unofficialazaapp.R;
-import org.ramonaza.unofficialazaapp.colorbook.fragments.ColorBookFragment;
+import org.ramonaza.unofficialazaapp.colorbook.ui.fragments.ColorBookFragment;
 import org.ramonaza.unofficialazaapp.events.ui.fragments.EventListFragment;
 import org.ramonaza.unofficialazaapp.frontpage.ui.fragments.NavigationDrawerFragment;
 import org.ramonaza.unofficialazaapp.helpers.ui.activities.BaseActivity;
@@ -21,7 +21,8 @@ import org.ramonaza.unofficialazaapp.songs.ui.fragments.SongListFragment;
 
 
 public class FrontalActivity extends BaseActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks,
+        ColorBookFragment.ColorBookCallbacks {
 
     public static final String EXTRA_OPENEDPAGE = "org.ramonaza.unofficialazaapp.OPENED_PAGE";
     private static final int EVENTS_PAGE_INDEX = 0;
@@ -155,6 +156,11 @@ public class FrontalActivity extends BaseActivity
         mTitle = getActionBarTitle(fragSwitch);
     }
 
+    @Override
+    public void setDrawerLockMode(int mode) {
+        mNavigationDrawerFragment.setDrawerLockMode(mode);
+    }
+
     public void onSectionAttached(int number) {
         mTitle = getActionBarTitle(number - 1);
     }
@@ -207,5 +213,15 @@ public class FrontalActivity extends BaseActivity
             default:
                 return getTitle();
         }
+    }
+
+    public void onUiHide() {
+        if (!(getActionBar() == null)) getActionBar().hide();
+        setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+    }
+
+    public void onUiShow() {
+        if (!(getActionBar() == null)) getActionBar().show();
+        setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
     }
 }

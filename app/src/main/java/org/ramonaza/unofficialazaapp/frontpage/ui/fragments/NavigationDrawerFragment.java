@@ -306,6 +306,10 @@ public class NavigationDrawerFragment extends Fragment {
         return getActivity().getActionBar();
     }
 
+    public void setDrawerLockMode(int mode) {
+        mDrawerLayout.setDrawerLockMode(mode);
+    }
+
     /**
      * Callbacks interface that all activities using this fragment must implement.
      */
@@ -314,5 +318,7 @@ public class NavigationDrawerFragment extends Fragment {
          * Called when an item in the navigation drawer is selected.
          */
         void onNavigationDrawerItemSelected(int position);
+
+        void setDrawerLockMode(int mode);
     }
 }
