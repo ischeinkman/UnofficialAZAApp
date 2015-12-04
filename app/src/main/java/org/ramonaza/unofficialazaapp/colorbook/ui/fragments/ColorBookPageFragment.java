@@ -1,10 +1,12 @@
-package org.ramonaza.unofficialazaapp.colorbook.fragments;
+package org.ramonaza.unofficialazaapp.colorbook.ui.fragments;
 
 import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -20,28 +22,30 @@ import org.ramonaza.unofficialazaapp.R;
  */
 public class ColorBookPageFragment extends Fragment {
 
-
     public static final String PAGE_NUMBER = "org.ramonaza.unofficialazaapp.PAGENUM";
     public static final String PRELOADED_IMAGE = "instance";
-
     private int pagenum;
     private View rootView;
     private SubsamplingScaleImageView imageView;
     private ProgressBar bar;
-
-
+    private boolean hasBeenTouched;
+    private BookCallbacks caller;
     public ColorBookPageFragment() {
 
     }
 
-
-    public static ColorBookPageFragment newInstance(int pagenum, Bitmap preloadedMap) {
+    public static ColorBookPageFragment newInstance(int pagenum, Bitmap preloadedMap, BookCallbacks caller) {
         ColorBookPageFragment rval = new ColorBookPageFragment();
         Bundle args = new Bundle();
         args.putParcelable(PRELOADED_IMAGE, preloadedMap);
         args.putInt(PAGE_NUMBER, pagenum);
         rval.setArguments(args);
+        rval.setCaller(caller);
         return rval;
+    }
+
+    public void setCaller(BookCallbacks caller) {
+        this.caller = caller;
     }
 
     @Override
@@ -55,6 +59,7 @@ public class ColorBookPageFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        hasBeenTouched = false;
         if (savedInstanceState != null) {
             pagenum = savedInstanceState.getInt(PAGE_NUMBER);
         }
@@ -66,6 +71,26 @@ public class ColorBookPageFragment extends Fragment {
             imageView.setImage(ImageSource.bitmap((Bitmap) args.getParcelable(PRELOADED_IMAGE)));
             bar.setVisibility(View.GONE);
         }
+        final GestureDetector detector = new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                if (velocityY > 0) {
+                    float xVelMag = (velocityX >= 0) ? velocityX : -1 * velocityX;
+                    float yVelMag = (velocityY >= 0) ? velocityY : -1 * velocityY;
+                    if (yVelMag > 2 * xVelMag) {
+                        caller.onDownSwipe();
+                        return true;
+                    }
+                }
+                return super.onFling(e1, e2, velocityX, velocityY);
+            }
+        });
+        imageView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return detector.onTouchEvent(motionEvent);
+            }
+        });
         return rootView;
     }
 
@@ -97,4 +122,10 @@ public class ColorBookPageFragment extends Fragment {
             ((ViewGroup) view).removeAllViews();
         }
     }
+
+    public interface BookCallbacks {
+        public void onDownSwipe();
+    }
+
+
 }

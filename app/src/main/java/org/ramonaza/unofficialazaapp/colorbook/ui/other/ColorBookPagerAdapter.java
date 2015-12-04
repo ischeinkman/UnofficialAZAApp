@@ -1,4 +1,4 @@
-package org.ramonaza.unofficialazaapp.colorbook.other;
+package org.ramonaza.unofficialazaapp.colorbook.ui.other;
 
 import android.annotation.TargetApi;
 import android.app.Fragment;
@@ -15,8 +15,8 @@ import android.util.LruCache;
 import android.view.Display;
 import android.view.WindowManager;
 
-import org.ramonaza.unofficialazaapp.colorbook.fragments.ColorBookPageFragment;
-import org.ramonaza.unofficialazaapp.helpers.backend.GenderedConstants;
+import org.ramonaza.unofficialazaapp.colorbook.backend.ColorbookConstants;
+import org.ramonaza.unofficialazaapp.colorbook.ui.fragments.ColorBookPageFragment;
 
 import java.io.IOException;
 
@@ -28,23 +28,21 @@ import java.io.IOException;
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class ColorBookPagerAdapter extends FragmentStatePagerAdapter {
 
-
     public int[] screenDims;
-
     PdfRenderer mRenderer;
-
     LruCache<Integer, Bitmap> pagesCache;
-
+    private ColorBookPageFragment.BookCallbacks callbacks;
     private int count;
 
     private Context context;
 
-    public ColorBookPagerAdapter(FragmentManager fm, Context context) {
+    public ColorBookPagerAdapter(FragmentManager fm, Context context, ColorBookPageFragment.BookCallbacks callbacks) {
         super(fm);
         this.context = context;
         screenDims = calcScreenDims(context);
         pagesCache = new LruCache<>(4);
-        count = GenderedConstants.COLORBOOK_SIZE;
+        count = ColorbookConstants.COLORBOOK_SIZE;
+        this.callbacks = callbacks;
 
     }
 
@@ -59,9 +57,9 @@ public class ColorBookPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if (pagesCache.get(position) != null) {
-            return ColorBookPageFragment.newInstance(position, pagesCache.get(position));
+            return ColorBookPageFragment.newInstance(position, pagesCache.get(position), callbacks);
         } else {
-            ColorBookPageFragment fragment = ColorBookPageFragment.newInstance(position, null);
+            ColorBookPageFragment fragment = ColorBookPageFragment.newInstance(position, null, callbacks);
             new ImageviewLoader(fragment).execute(position);
             return fragment;
         }
