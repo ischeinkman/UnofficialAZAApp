@@ -34,7 +34,7 @@ public class ColorbookTableOfContentsDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Table of Contents"); //TODO: Extract to string resrc file
+        builder.setTitle(R.string.TableOfContentsMenuButton);
         builder.setItems(R.array.TableOfContents, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
