@@ -11,7 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import org.ramonaza.unofficialazaapp.R;
-import org.ramonaza.unofficialazaapp.colorbook.fragments.ColorBookPagesFragment;
+import org.ramonaza.unofficialazaapp.colorbook.ui.fragments.ColorBookFragment;
 import org.ramonaza.unofficialazaapp.events.ui.fragments.EventListFragment;
 import org.ramonaza.unofficialazaapp.frontpage.ui.fragments.NavigationDrawerFragment;
 import org.ramonaza.unofficialazaapp.helpers.ui.activities.BaseActivity;
@@ -21,14 +21,15 @@ import org.ramonaza.unofficialazaapp.songs.ui.fragments.SongListFragment;
 
 
 public class FrontalActivity extends BaseActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks,
+        ColorBookFragment.ColorBookCallbacks {
 
     public static final String EXTRA_OPENEDPAGE = "org.ramonaza.unofficialazaapp.OPENED_PAGE";
     private static final int EVENTS_PAGE_INDEX = 0;
     private static final int SONGS_PAGE_INDEX = 1;
-    private static final int BLUEBOOK_PAGE_INDEX = -2;
-    private static final int CONTACTS_PAGE_INDEX = 2;
-    private static final int RIDES_LINK_INDEX = 3;
+    private static final int BLUEBOOK_PAGE_INDEX = 2;
+    private static final int CONTACTS_PAGE_INDEX = 3;
+    private static final int RIDES_LINK_INDEX = 4;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -72,7 +73,7 @@ public class FrontalActivity extends BaseActivity
                 getFragmentManager().beginTransaction().replace(R.id.container, SongListFragment.newInstance(1)).commit();
                 break;
             case BLUEBOOK_PAGE_INDEX:
-                getFragmentManager().beginTransaction().replace(R.id.container, ColorBookPagesFragment.newInstance()).commit();
+                getFragmentManager().beginTransaction().replace(R.id.container, ColorBookFragment.newInstance()).commit();
                 break;
             case CONTACTS_PAGE_INDEX:
                 getFragmentManager().beginTransaction().replace(R.id.container, ContactListFragment.newInstance(2)).commit();
@@ -88,13 +89,19 @@ public class FrontalActivity extends BaseActivity
         mTitle = getActionBarTitle(fragSwitch);
         switch (fragSwitch) {
             case EVENTS_PAGE_INDEX:
-                getFragmentManager().beginTransaction().replace(R.id.container, EventListFragment.newInstance(0)).commit();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.container, EventListFragment.newInstance(0))
+                        .commit();
                 break;
             case SONGS_PAGE_INDEX:
-                getFragmentManager().beginTransaction().replace(R.id.container, SongListFragment.newInstance(1)).commit();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.container, SongListFragment.newInstance(1))
+                        .commit();
                 break;
             case BLUEBOOK_PAGE_INDEX:
-                getFragmentManager().beginTransaction().replace(R.id.container, ColorBookPagesFragment.newInstance()).commit();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.container, ColorBookFragment.newInstance())
+                        .commit();
                 break;
             case CONTACTS_PAGE_INDEX:
                 getFragmentManager().beginTransaction().replace(R.id.container, ContactListFragment.newInstance(2)).commit();
@@ -134,7 +141,7 @@ public class FrontalActivity extends BaseActivity
             fragSwitch = SONGS_PAGE_INDEX;
         } else if (position == BLUEBOOK_PAGE_INDEX) {
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, ColorBookPagesFragment.newInstance())
+                    .replace(R.id.container, ColorBookFragment.newInstance())
                     .commit();
             fragSwitch = BLUEBOOK_PAGE_INDEX;
         } else if (position == CONTACTS_PAGE_INDEX) {
@@ -147,6 +154,11 @@ public class FrontalActivity extends BaseActivity
             startActivity(ridesIntent);
         }
         mTitle = getActionBarTitle(fragSwitch);
+    }
+
+    @Override
+    public void setDrawerLockMode(int mode) {
+        mNavigationDrawerFragment.setDrawerLockMode(mode);
     }
 
     public void onSectionAttached(int number) {
@@ -201,5 +213,15 @@ public class FrontalActivity extends BaseActivity
             default:
                 return getTitle();
         }
+    }
+
+    public void onUiHide() {
+        if (!(getActionBar() == null)) getActionBar().hide();
+        setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+    }
+
+    public void onUiShow() {
+        if (!(getActionBar() == null)) getActionBar().show();
+        setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
     }
 }

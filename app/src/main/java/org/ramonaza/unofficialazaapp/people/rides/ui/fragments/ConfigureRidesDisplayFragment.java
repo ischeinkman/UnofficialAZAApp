@@ -52,7 +52,7 @@ public class ConfigureRidesDisplayFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Spinner alSpinner = (Spinner) rootView.findViewById(R.id.AlgorithmSelection);
-                int algorithm = alSpinner.getSelectedItemPosition() - 1;
+                int algorithm = alSpinner.getSelectedItemPosition();
                 Spinner clustSpinner = (Spinner) rootView.findViewById(R.id.ClusterSelection);
                 int clusterIndex = clustSpinner.getSelectedItemPosition();
                 CheckBox retainBox = (CheckBox) rootView.findViewById(R.id.RetainRides);

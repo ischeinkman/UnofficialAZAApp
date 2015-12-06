@@ -1,13 +1,13 @@
 package org.ramonazaapi.contacts;
 
-import org.ramonazaapi.interfaces.InfoWrapper;
+import org.ramonazaapi.rides.PersonInfoWrapper;
 
 import java.util.Calendar;
 
 /**
  * Created by Ilan Scheinkman on 1/12/15.
  */
-public class ContactInfoWrapper implements InfoWrapper {
+public class ContactInfoWrapper implements PersonInfoWrapper {
     private String name;
     private String email;
     private String school;
@@ -136,6 +136,10 @@ public class ContactInfoWrapper implements InfoWrapper {
         if (this.email == null) this.email = email;
     }
 
+    public boolean emailIsValid() {
+        return email.contains("@") && email.contains(".com") && email.length() >= 5;
+    }
+
     public String getSchool() {
         return this.school;
     }
@@ -150,6 +154,12 @@ public class ContactInfoWrapper implements InfoWrapper {
 
     public void setPhoneNumber(String phoneNumber) {
         if (this.phoneNumber == null) this.phoneNumber = phoneNumber;
+    }
+
+    public boolean phoneNumberIsValid() {
+        return phoneNumber != null && //has a phone number
+                (phoneNumber.length() == 7 || phoneNumber.length() == 9 || phoneNumber.length() == 10) && //valid length
+                phoneNumber.matches("\\d");
     }
 
     public String getAddress() {

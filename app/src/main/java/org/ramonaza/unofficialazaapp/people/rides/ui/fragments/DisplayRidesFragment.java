@@ -1,29 +1,39 @@
 package org.ramonaza.unofficialazaapp.people.rides.ui.fragments;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.ramonaza.unofficialazaapp.R;
-import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
-import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
-import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHelper;
+import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
+import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
 import org.ramonazaapi.rides.DriverInfoWrapper;
 import org.ramonazaapi.rides.RidesOptimizer;
-import org.ramonazaapi.rides.optimizationsupport.clusters.ExpansionistCluster;
-import org.ramonazaapi.rides.optimizationsupport.clusters.HungryCluster;
-import org.ramonazaapi.rides.optimizationsupport.clusters.LazyCluster;
-import org.ramonazaapi.rides.optimizationsupport.clusters.RidesCluster;
-import org.ramonazaapi.rides.optimizationsupport.clusters.SnakeCluster;
+import org.ramonazaapi.rides.algorithms.ClusterMatch;
+import org.ramonazaapi.rides.algorithms.FlamboyantElephant;
+import org.ramonazaapi.rides.algorithms.NaiveHungarian;
+import org.ramonazaapi.rides.algorithms.SerialArson;
+import org.ramonazaapi.rides.clusters.ExpansionistCluster;
+import org.ramonazaapi.rides.clusters.HungryCluster;
+import org.ramonazaapi.rides.clusters.LazyCluster;
+import org.ramonazaapi.rides.clusters.RidesCluster;
+import org.ramonazaapi.rides.clusters.SnakeCluster;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,7 +49,11 @@ public class DisplayRidesFragment extends Fragment {
     private TextView ridesDisplay;
     private ProgressBar mBar;
 
-    private int optimizationAlgorithm;
+    private DriverInfoWrapper[] rides;
+    private ContactInfoWrapper[] driverless;
+    private boolean ridesLoaded;
+
+    private int algorithmIndex;
     private int clusterIndex;
     private boolean retainRides;
 
@@ -106,21 +120,119 @@ public class DisplayRidesFragment extends Fragment {
         }
     }
 
+    private static RidesOptimizer.RidesAlgorithm[] getAlgorithmsByIndex(int index) {
+        switch (index) {
+            case 0:
+                return null;
+            case 1:
+                return new RidesOptimizer.RidesAlgorithm[]{new SerialArson()};
+            case 2:
+                return new RidesOptimizer.RidesAlgorithm[]{new FlamboyantElephant()};
+            case 3:
+                return new RidesOptimizer.RidesAlgorithm[]{new NaiveHungarian()};
+            case 4:
+                return new RidesOptimizer.RidesAlgorithm[]{new ClusterMatch()};
+            default:
+                return null;
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ridesLoaded = false;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_display_rides, container, false);
-        ridesDisplay = (TextView) rootView.findViewById(R.id.RidesTextList);
-        mBar = (ProgressBar) rootView.findViewById(R.id.cProgressBar);
-        optimizationAlgorithm = getArguments().getInt(EXTRA_ALGORITHM);
+
+        algorithmIndex = getArguments().getInt(EXTRA_ALGORITHM);
         clusterIndex = getArguments().getInt(EXTRA_CLUSTER_TYPE);
         retainRides = getArguments().getBoolean(EXTRA_RETAIN_RIDES);
+
+        // Inflate the layout for this fragment
+        View rootView = inflater.inflate(R.layout.fragment_display_rides, container, false);
+
+        ridesDisplay = (TextView) rootView.findViewById(R.id.RidesTextList);
+        mBar = (ProgressBar) rootView.findViewById(R.id.cProgressBar);
+
+        Button textButton = (Button) rootView.findViewById(R.id.TextRidesButton);
+        textButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (ridesLoaded) {
+                    String driverMsg = getString(R.string.rides_driver_text_send_format);
+                    String passengerMsg = getString(R.string.rides_passenger_text_send_format);
+                    String driverlessMsg = getString(R.string.rides_driverless_text_send_format);
+                    SmsManager smsManager = SmsManager.getDefault();
+                    for (DriverInfoWrapper toText : rides) {
+                        String passengerlist = "";
+                        for (ContactInfoWrapper passenger : toText.getPassengersInCar()) {
+                            passengerlist += "\n-" + passenger.getName() + "\tPhone: " + passenger.getPhoneNumber();
+                            if (passenger.phoneNumberIsValid()) {
+                                String firstName = passenger.getName().split(" ")[0];
+                                String msg = String.format(passengerMsg, firstName, toText.getName(), toText.getContactInfo().getPhoneNumber());
+                                smsManager.sendTextMessage(passenger.getPhoneNumber(), null, msg, null, null);
+                            }
+                        }
+                        if (toText.isContactable() && toText.getContactInfo().phoneNumberIsValid()) {
+                            String firstName = toText.getName().split(" ")[0];
+                            String msg = String.format(driverMsg, firstName, passengerlist);
+                            smsManager.sendTextMessage(toText.getContactInfo().getPhoneNumber(), null, msg, null, null);
+                        }
+                    }
+                    for (ContactInfoWrapper walker : driverless) {
+                        if (walker.phoneNumberIsValid()) {
+                            String firstName = walker.getName().split(" ")[0];
+                            String msg = String.format(driverlessMsg, firstName);
+                            smsManager.sendTextMessage(walker.getPhoneNumber(), null, msg, null, null);
+                        }
+                    }
+                    Toast.makeText(getActivity(), "Text Messages Sent.", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getActivity(), "No contactable drivers found.", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        Button emailButton = (Button) rootView.findViewById(R.id.EmailRidesButton);
+        emailButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (ridesLoaded) {
+                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                    emailIntent.setType("message/rfc822");
+
+                    List<String> emailAddresses = new ArrayList<String>();
+                    for (DriverInfoWrapper driver : rides) {
+                        if (driver.isContactable() && driver.getContactInfo().emailIsValid())
+                            emailAddresses.add(driver.getContactInfo().getEmail());
+                    }
+                    for (ContactInfoWrapper walker : driverless) {
+                        if (walker.emailIsValid()) emailAddresses.add(walker.getEmail());
+                    }
+                    emailIntent.putExtra(Intent.EXTRA_EMAIL, emailAddresses.toArray(new String[emailAddresses.size()]));
+
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Current Rides List");
+
+                    String msg = getString(R.string.rides_email_send_format);
+                    String ridesBody = createRidesList(rides, driverless);
+                    String fullBody = String.format(msg, ridesBody);
+                    emailIntent.putExtra(Intent.EXTRA_TEXT, fullBody);
+
+                    try {
+                        startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+                    } catch (android.content.ActivityNotFoundException ex) {
+                        Toast.makeText(DisplayRidesFragment.this.getActivity(), "Cannot send email.", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getActivity(), "No contactable drivers found.", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
         new CreateRidesText().execute();
         return rootView;
     }
@@ -132,8 +244,6 @@ public class DisplayRidesFragment extends Fragment {
 
     private class CreateRidesText extends AsyncTask<Void, Void, String> {
 
-        DriverInfoWrapper[] rides;
-        ContactInfoWrapper[] driverless;
         private RidesDatabaseHandler rhandler;
 
         @Override
@@ -142,7 +252,7 @@ public class DisplayRidesFragment extends Fragment {
             RidesOptimizer optimizer = new RidesOptimizer();
             optimizer.loadDriver(rides);
             optimizer.loadPassengers(driverless);
-            optimizer.setAlgorithm(optimizationAlgorithm, retainRides, getClusterByIndex(clusterIndex));
+            optimizer.setUpAlgorithms(getAlgorithmsByIndex(algorithmIndex), retainRides, getClusterByIndex(clusterIndex));
             optimizer.optimize();
             RidesDatabaseHandler ridesDatabaseHandler = new RidesDatabaseHandler(getActivity());
             ridesDatabaseHandler.updateRides(optimizer.getDrivers(), optimizer.getDriverless());
@@ -156,20 +266,20 @@ public class DisplayRidesFragment extends Fragment {
             super.onPostExecute(s);
             mBar.setVisibility(View.GONE);
             ridesDisplay.setText(Html.fromHtml(s));
+            ridesLoaded = true;
         }
 
         private void createRides() {
-            SQLiteDatabase db = new ContactDatabaseHelper(getActivity()).getWritableDatabase();
+            SQLiteDatabase db = new AppDatabaseHelper(getActivity()).getWritableDatabase();
             rhandler = new RidesDatabaseHandler(db);
-            rides = rhandler.getDrivers(null, ContactDatabaseContract.DriverListTable.COLUMN_NAME + " ASC");
-            ContactDatabaseHandler chandler = new ContactDatabaseHandler(db);
+            rides = rhandler.getDrivers(null, AppDatabaseContract.DriverListTable.COLUMN_NAME + " ASC");
             String[] whereclause;
             whereclause = new String[]{
-                    String.format("%s = %d", ContactDatabaseContract.ContactListTable.COLUMN_PRESENT, 1),
-                    String.format("not %s in (SELECT %s FROM %s)", ContactDatabaseContract.ContactListTable._ID,
-                            ContactDatabaseContract.RidesListTable.COLUMN_PASSENGER, ContactDatabaseContract.RidesListTable.TABLE_NAME)
+                    String.format("%s = %d", AppDatabaseContract.ContactListTable.COLUMN_PRESENT, 1),
+                    String.format("not %s in (SELECT %s FROM %s)", AppDatabaseContract.ContactListTable._ID,
+                            AppDatabaseContract.RidesListTable.COLUMN_PASSENGER, AppDatabaseContract.RidesListTable.TABLE_NAME)
             };
-            driverless = chandler.getContacts(whereclause, null);
+            driverless = rhandler.getContacts(whereclause, null);
         }
     }
 

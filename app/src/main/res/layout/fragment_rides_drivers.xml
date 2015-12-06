@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,43 +7,48 @@
 
 
     <ProgressBar
+        android:id="@+id/cProgressBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/cProgressBar"/>
+        android:layout_height="wrap_content" />
 
     <ListView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
         android:id="@+id/infowrapperadapterlist"
-        android:layout_weight="1"></ListView>
-
-    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="58dp"></ListView>
+
+    <LinearLayout
         android:id="@+id/listfooter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
+        android:layout_marginBottom="8dp"
         android:layout_weight="0"
-        android:layout_marginBottom="8dp">
+        android:orientation="horizontal">
         <Button
-            android:layout_weight="1"
-            android:background="@drawable/textbutton_with_outline"
-            android:text="@string/AddDriverButton"
             android:id="@+id/AddPresetDriverButton"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginLeft="8dp"
             android:layout_marginRight="4dp"
-            android:layout_marginLeft="8dp"/>
-        <Button
             android:layout_weight="1"
             android:background="@drawable/textbutton_with_outline"
-            android:text="@string/AddCustomDriverButton"
+            android:text="@string/AddDriverButton" />
+
+        <Button
             android:id="@+id/AddCustomDriverButton"
-            android:layout_height="match_parent"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginLeft="4dp"
-            android:layout_marginRight="8dp"/>
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/textbutton_with_outline"
+            android:text="@string/AddCustomDriverButton" />
     </LinearLayout>
 
 
-</LinearLayout>
+</RelativeLayout>

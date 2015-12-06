@@ -1,4 +1,4 @@
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,6 +7,7 @@
     tools:context="org.ramonaza.unofficialazaapp.people.rides.ui.fragments.RidesDriverManipFragment">
     <TableLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/DriverManipInfoTable"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0"
@@ -68,14 +69,18 @@
     <ListView
         android:id="@+id/Passengers"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/DriverManipInfoTable"
         android:layout_weight="1"
+        android:clipToPadding="true"
+        android:paddingBottom="8dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"></ListView>
     <LinearLayout
         android:id="@+id/listfooter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
         android:layout_marginBottom="8dp"
         android:layout_weight="0"
@@ -92,4 +97,4 @@
             android:gravity="center"
             android:text="@string/AddCustomContactMenuButton" />
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

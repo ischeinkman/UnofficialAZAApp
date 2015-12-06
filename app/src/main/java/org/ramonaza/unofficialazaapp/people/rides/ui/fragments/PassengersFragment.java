@@ -11,10 +11,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import org.ramonaza.unofficialazaapp.R;
+import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
+import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
+import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextWithButtonFragment;
-import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
-import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHelper;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.PresentListedContactActivity;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesContactManipActivity;
@@ -51,7 +52,7 @@ public class PassengersFragment extends InfoWrapperTextWithButtonFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ContactDatabaseHelper dbh = new ContactDatabaseHelper(getActivity());
+        AppDatabaseHelper dbh = new AppDatabaseHelper(getActivity());
         this.db = dbh.getWritableDatabase();
     }
 
@@ -96,10 +97,10 @@ public class PassengersFragment extends InfoWrapperTextWithButtonFragment {
 
     @Override
     public InfoWrapper[] generateInfo() {
-        ContactDatabaseHandler handler = new ContactDatabaseHandler(db);
+        ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(getActivity());
         return handler.getContacts(new String[]{
-                ContactDatabaseContract.ContactListTable.COLUMN_PRESENT + "=1",
-        }, ContactDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
+                AppDatabaseContract.ContactListTable.COLUMN_PRESENT + "=1",
+        }, AppDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
     }
 
     @Override
@@ -110,7 +111,7 @@ public class PassengersFragment extends InfoWrapperTextWithButtonFragment {
 
     @Override
     public void onResume() {
-        ContactDatabaseHelper databaseHelper = new ContactDatabaseHelper(getActivity());
+        AppDatabaseHelper databaseHelper = new AppDatabaseHelper(getActivity());
         db = databaseHelper.getWritableDatabase();
         super.onResume();
     }

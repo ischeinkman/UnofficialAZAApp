@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 
-import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseContract;
+import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.backend.LocationSupport;
 import org.ramonazaapi.chapterpacks.ChapterPackHandler;
@@ -69,8 +69,12 @@ public class ChapterPackHandlerSupport {
      * @return the currently loaded Chapter Pack, or null
      */
     public static ChapterPackHandler getChapterPackHandler(Context context) {
-        if (getOptions().length > 0) return getChapterPackHandler(context, getOptions()[0]);
-        else if (currentHandler != null) return currentHandler;
+        /*if (getOptions().length > 0) {
+            contactsLoaded = false;
+            return getChapterPackHandler(context, getOptions()[0]);
+        }
+        else*/
+        if (currentHandler != null) return currentHandler;
         else return null;
     }
 
@@ -87,7 +91,8 @@ public class ChapterPackHandlerSupport {
             return currentHandler;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         preferences.edit().putString(PREF_CHAPTERPACK, pack.getName());
-        currentHandler = new ChapterPackHandler(moveChapterPack(context, pack));
+        currentHandler = new ChapterPackHandler(pack);
+        contactsLoaded = false;
         return currentHandler;
     }
 
@@ -186,7 +191,7 @@ public class ChapterPackHandlerSupport {
         if (packName == null || url == null || packName.equals("") || url.equals("")) return false;
         ContactDatabaseHandler handler = getContactHandler(context);
         if (handler == null) return false;
-        ContactInfoWrapper[] allContacts = handler.getContacts(null, ContactDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
+        ContactInfoWrapper[] allContacts = handler.getContacts(null, AppDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
 
         //Corrects any location errors
         for (ContactInfoWrapper contact : allContacts) {
