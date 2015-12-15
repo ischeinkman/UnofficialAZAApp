@@ -45,7 +45,7 @@ public class ContactDataActivity extends BaseActivity {
         switch (id) {
             case android.R.id.home:
                 Intent bacIntent = NavUtils.getParentActivityIntent(this);
-                bacIntent.putExtra(FrontalActivity.EXTRA_OPENEDPAGE, 2);
+                bacIntent.putExtra(FrontalActivity.EXTRA_OPENEDPAGE, FrontalActivity.CONTACTS_PAGE_INDEX);
                 startActivity(bacIntent);
                 return true;
         }

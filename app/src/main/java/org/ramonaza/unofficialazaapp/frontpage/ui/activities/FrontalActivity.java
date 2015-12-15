@@ -25,11 +25,11 @@ public class FrontalActivity extends BaseActivity
         ColorBookFragment.ColorBookCallbacks {
 
     public static final String EXTRA_OPENEDPAGE = "org.ramonaza.unofficialazaapp.OPENED_PAGE";
-    private static final int EVENTS_PAGE_INDEX = 0;
-    private static final int SONGS_PAGE_INDEX = 1;
-    private static final int BLUEBOOK_PAGE_INDEX = 2;
-    private static final int CONTACTS_PAGE_INDEX = 3;
-    private static final int RIDES_LINK_INDEX = 4;
+    public static final int EVENTS_PAGE_INDEX = 0;
+    public static final int SONGS_PAGE_INDEX = 1;
+    public static final int BLUEBOOK_PAGE_INDEX = 2;
+    public static final int CONTACTS_PAGE_INDEX = 3;
+    public static final int RIDES_LINK_INDEX = 4;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
