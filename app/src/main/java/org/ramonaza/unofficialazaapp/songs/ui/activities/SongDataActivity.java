@@ -10,7 +10,7 @@ import android.view.MenuItem;
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.frontpage.ui.activities.FrontalActivity;
 import org.ramonaza.unofficialazaapp.helpers.ui.activities.BaseActivity;
-import org.ramonaza.unofficialazaapp.songs.backend.SongInfoWrapperGenerator;
+import org.ramonaza.unofficialazaapp.songs.backend.SongGenderedConstants;
 import org.ramonaza.unofficialazaapp.songs.ui.fragments.GeneralSongFragment;
 
 public class SongDataActivity extends BaseActivity {
@@ -25,7 +25,8 @@ public class SongDataActivity extends BaseActivity {
         Intent intent = getIntent();
         String songName = intent.getStringExtra(EXTRA_CONTRUCTION_INFO);
         FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction().replace(R.id.container, GeneralSongFragment.newInstance(SongInfoWrapperGenerator.fromName(songName, this)));
+        FragmentTransaction transaction = fragmentManager.beginTransaction()
+                .replace(R.id.container, GeneralSongFragment.newInstance(SongGenderedConstants.SONG_LIST.getSong(songName)));
         transaction.commit();
     }
 
@@ -38,7 +39,7 @@ public class SongDataActivity extends BaseActivity {
         switch (id) {
             case android.R.id.home:
                 Intent bacIntent = NavUtils.getParentActivityIntent(this);
-                bacIntent.putExtra(FrontalActivity.EXTRA_OPENEDPAGE, 2);
+                bacIntent.putExtra(FrontalActivity.EXTRA_OPENEDPAGE, FrontalActivity.SONGS_PAGE_INDEX);
                 startActivity(bacIntent);
                 return true;
         }
