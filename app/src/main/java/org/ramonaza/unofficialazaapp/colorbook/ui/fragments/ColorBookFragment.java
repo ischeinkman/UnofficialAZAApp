@@ -121,8 +121,10 @@ public class ColorBookFragment extends Fragment
     @Override
     public void onPause() {
         super.onPause();
-        actionbarHiderHandler.removeCallbacksAndMessages(null);
-        actionbarHiderHandler = null;
+        if (actionbarHiderHandler != null) {
+            actionbarHiderHandler.removeCallbacksAndMessages(null);
+            actionbarHiderHandler = null;
+        }
     }
 
     public interface ColorBookCallbacks {

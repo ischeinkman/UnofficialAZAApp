@@ -1,7 +1,6 @@
 package org.ramonaza.unofficialazaapp.songs.ui.fragments;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.ramonaza.unofficialazaapp.R;
+import org.ramonaza.unofficialazaapp.songs.backend.SongGenderedConstants;
 import org.ramonazaapi.songs.SongInfoWrapper;
 
 /**
@@ -18,6 +18,7 @@ import org.ramonazaapi.songs.SongInfoWrapper;
  */
 public class GeneralSongFragment extends Fragment {
 
+    private static final String SONG_TITLE = "songtitle";
     private SongInfoWrapper mySong;
 
     public GeneralSongFragment() {
@@ -26,13 +27,9 @@ public class GeneralSongFragment extends Fragment {
     public static GeneralSongFragment newInstance(SongInfoWrapper song) {
         GeneralSongFragment fragment = new GeneralSongFragment();
         Bundle args = new Bundle();
-        fragment.setSong(song);
+        args.putString(SONG_TITLE, song.getName());
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public void setSong(SongInfoWrapper songInfoWrapper) {
-        this.mySong = songInfoWrapper;
     }
 
     @Override
@@ -46,11 +43,19 @@ public class GeneralSongFragment extends Fragment {
         return rootView;
     }
 
-
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            mySong = SongGenderedConstants.SONG_LIST.getSong(savedInstanceState.getString(SONG_TITLE));
+        } else {
+            mySong = SongGenderedConstants.SONG_LIST.getSong(getArguments().getString(SONG_TITLE));
+        }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(SONG_TITLE, mySong.getName());
+    }
 }

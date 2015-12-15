@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 import org.ramonaza.unofficialazaapp.frontpage.ui.activities.FrontalActivity;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextListFragment;
-import org.ramonaza.unofficialazaapp.songs.backend.SongInfoWrapperGenerator;
+import org.ramonaza.unofficialazaapp.songs.backend.SongGenderedConstants;
 import org.ramonaza.unofficialazaapp.songs.ui.activities.SongDataActivity;
 import org.ramonazaapi.interfaces.InfoWrapper;
 
@@ -58,7 +58,7 @@ public class SongListFragment extends InfoWrapperTextListFragment {
 
     @Override
     public InfoWrapper[] generateInfo() {
-        return SongInfoWrapperGenerator.allSongs(getActivity());
+        return SongGenderedConstants.SONG_LIST.getAllSongs();
     }
 
 
