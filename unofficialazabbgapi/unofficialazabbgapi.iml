@@ -29,6 +29,8 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="opencsv-3.5" level="project" />
     <orderEntry type="library" exported="" name="org.jbundle.util.osgi.wrapped.org.apache.http.client-4.1.2" level="project" />
+    <orderEntry type="library" exported="" name="json-20151123" level="project" />
+    <orderEntry type="library" exported="" name="commons-logging-1.2" level="project" />
     <orderEntry type="library" exported="" name="commons-lang3-3.3.2" level="project" />
     <orderEntry type="library" exported="" name="unofficialazabbgapi.unofficialazabbgapi" level="project" />
   </component>
