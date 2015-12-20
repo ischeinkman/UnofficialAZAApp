@@ -75,7 +75,7 @@ public class EventInfoWrapper implements InfoWrapper {
 
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return name.hashCode() * date.hashCode() + desc.hashCode() - planner.hashCode();
     }
 
     @Override
@@ -85,5 +85,11 @@ public class EventInfoWrapper implements InfoWrapper {
 
     public void setId(int id) {
         Id = id;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj == this ||
+                (obj instanceof EventInfoWrapper && hashCode() == obj.hashCode());
     }
 }

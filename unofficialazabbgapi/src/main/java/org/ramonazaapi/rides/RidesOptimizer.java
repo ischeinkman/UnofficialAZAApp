@@ -1,6 +1,7 @@
 package org.ramonazaapi.rides;
 
 import org.ramonazaapi.contacts.ContactInfoWrapper;
+import org.ramonazaapi.interfaces.PersonInfoWrapper;
 import org.ramonazaapi.rides.clusters.RidesCluster;
 
 import java.util.ArrayList;

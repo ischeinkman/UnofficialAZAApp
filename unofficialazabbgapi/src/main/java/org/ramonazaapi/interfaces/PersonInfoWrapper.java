@@ -1,6 +1,4 @@
-package org.ramonazaapi.rides;
-
-import org.ramonazaapi.interfaces.InfoWrapper;
+package org.ramonazaapi.interfaces;
 
 /**
  * Created by ilan on 10/20/15.
