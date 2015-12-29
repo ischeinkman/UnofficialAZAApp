@@ -30,6 +30,7 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(AppDatabaseContract.DriverListTable.CREATE_TABLE);
         db.execSQL(AppDatabaseContract.ContactListTable.CREATE_TABLE);
         db.execSQL(AppDatabaseContract.RidesListTable.CREATE_TABLE);
+        db.execSQL(AppDatabaseContract.EventListTable.CREATE_TABLE);
         try {
             genDatabaseFromCSV(db);
         } catch (ContactCSVReadError contactCSVReadError) {
@@ -41,6 +42,7 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(AppDatabaseContract.DriverListTable.DELETE_TABLE);
         db.execSQL(AppDatabaseContract.ContactListTable.DELETE_TABLE);
         db.execSQL(AppDatabaseContract.RidesListTable.DELETE_TABLE);
+        db.execSQL(AppDatabaseContract.EventListTable.DELETE_TABLE);
     }
 
     @Override
@@ -56,6 +58,7 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
             db.execSQL(AppDatabaseContract.DELETE_TABLES);
             db.execSQL(AppDatabaseContract.DriverListTable.CREATE_TABLE);
             db.execSQL(AppDatabaseContract.ContactListTable.CREATE_TABLE);
+            db.execSQL(AppDatabaseContract.RidesListTable.CREATE_TABLE);
             db.execSQL(AppDatabaseContract.RidesListTable.CREATE_TABLE);
             try {
                 genDatabaseFromCSV(db);
