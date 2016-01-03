@@ -60,6 +60,8 @@ public class EventDatabaseHandler {
         value.put(AppDatabaseContract.EventListTable.COLUMN_MEET, toAdd.getMeet());
         value.put(AppDatabaseContract.EventListTable.COLUMN_LOCATION, toAdd.getMapsLocation());
         value.put(AppDatabaseContract.EventListTable.COLUMN_BRING, toAdd.getBring());
+        value.put(AppDatabaseContract.EventListTable.COLUMN_DATE, toAdd.getDate());
+
         long rowId = db.insert(AppDatabaseContract.EventListTable.TABLE_NAME, null, value);
         if (rowId == -1l) throw new EventCSVReadError("Null Event Read", toAdd);
         else toAdd.setId((int) rowId);
@@ -73,6 +75,7 @@ public class EventDatabaseHandler {
         value.put(AppDatabaseContract.EventListTable.COLUMN_MEET, toUpdate.getMeet());
         value.put(AppDatabaseContract.EventListTable.COLUMN_LOCATION, toUpdate.getMapsLocation());
         value.put(AppDatabaseContract.EventListTable.COLUMN_BRING, toUpdate.getBring());
+        value.put(AppDatabaseContract.EventListTable.COLUMN_DATE, toUpdate.getDate());
 
         long rowId = db.update(AppDatabaseContract.EventListTable.TABLE_NAME, value,
                 AppDatabaseContract.EventListTable._ID + "=?", new String[]{"" + toUpdate.getId()});
