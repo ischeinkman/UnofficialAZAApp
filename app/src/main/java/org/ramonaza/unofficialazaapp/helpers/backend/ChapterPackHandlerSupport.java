@@ -133,7 +133,10 @@ public class ChapterPackHandlerSupport {
      */
     public static EventRSSHandler getEventHandler(Context context) {
         if (currentHandler != null || getChapterPackHandler(context) != null) {
-            PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_EVENT_FEED, currentHandler.getEventUrl());
+            SharedPreferences.Editor editor = context.getSharedPreferences("APP_PREFS", Context.MODE_PRIVATE).edit();
+            editor.putString("PREF_EVENT_FEED", currentHandler.getEventUrl());
+            editor.commit();
+            //PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_EVENT_FEED, currentHandler.getEventUrl());
             return currentHandler.getEventRSSHandler();
         }
         String url = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_EVENT_FEED, null);
