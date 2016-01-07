@@ -3,6 +3,7 @@ package org.ramonazaapi.events;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.CoreConnectionPNames;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -15,6 +16,7 @@ public class EventRSSHandler {
 
     private static final String ITEM_SPLITTER = "<item>";
     private static final String ATTRIBUTE_SPLITTER = " <br/> ";
+    private static final int TIMEOUT = 2000;
     private String rawRSS;
 
     public EventRSSHandler(String rssSource, boolean isStream) {
@@ -32,6 +34,8 @@ public class EventRSSHandler {
         StringBuilder builder = new StringBuilder(100000);
 
         DefaultHttpClient client = new DefaultHttpClient();
+        client.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, TIMEOUT);
+        client.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, TIMEOUT);
         HttpGet httpGet = new HttpGet(url);
         try {
             HttpResponse execute = client.execute(httpGet);
