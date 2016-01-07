@@ -65,13 +65,13 @@ public class EventRSSHandler {
         for (int i = 0; i < itemmedRSS.length; i++) {
             String[] splitFeed = itemmedRSS[i].split(ATTRIBUTE_SPLITTER);
             EventInfoWrapper currentEvent = new EventInfoWrapper();
+            currentEvent.setDate(splitFeed[1]);
             currentEvent.setName(splitFeed[2]);
             currentEvent.setDesc(splitFeed[3]);
-            currentEvent.setPlanner(splitFeed[7]);
             currentEvent.setMeet(splitFeed[5] + " @ " + splitFeed[4]);
-            currentEvent.setMapsLocation(splitFeed[8]);
             currentEvent.setBring(splitFeed[6]);
-            currentEvent.setDate(splitFeed[1]);
+            currentEvent.setPlanner(splitFeed[7]);
+            currentEvent.setMapsLocation(splitFeed[8]);
             currentEvent.setId(i);
             events[i] = currentEvent;
         }
