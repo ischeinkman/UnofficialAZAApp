@@ -38,7 +38,9 @@ import java.util.Arrays;
 public class EventNotificationService extends Service {
 
     private static final String TAG = "EventNotifService";
+    private static final int NOTIFICATION_ID = 8888;
     private static boolean isRepeating = false;
+    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(EventNotificationService.this);
     private boolean isRunning  = false;
     private Thread updateThread;
     private MyBinder binder = new MyBinder();
@@ -48,7 +50,7 @@ public class EventNotificationService extends Service {
         AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(context, EventNotificationService.class);
         PendingIntent pi = PendingIntent.getService(context, 0, i, 0);
-        mgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 1000, 1000, pi);
+        mgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, AlarmManager.INTERVAL_HALF_HOUR, AlarmManager.INTERVAL_HALF_HOUR, pi);
         isRepeating = true;
     }
 
@@ -74,6 +76,8 @@ public class EventNotificationService extends Service {
     public void onDestroy() {
         isRunning = false;
         updateThread.interrupt();
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.cancel(NOTIFICATION_ID);
         Log.i(TAG, "Service onDestroy");
     }
 
@@ -84,6 +88,8 @@ public class EventNotificationService extends Service {
     public void updateEventsSync() {
         if (isRunning) {
             updateThread.interrupt();
+            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.cancel(NOTIFICATION_ID);
         }
         updateEvents();
     }
@@ -91,6 +97,13 @@ public class EventNotificationService extends Service {
     private void updateEvents() {
         Log.v(TAG, "Service Started");
         isRunning = true;
+        mBuilder.setSmallIcon(R.drawable.ic_launcher)
+                .setAutoCancel(false)
+                .setContentTitle("Updating Events")
+                .setContentText("Now downloading events from the event feed...")
+                .setProgress(0, 0, true);
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
         AppDatabaseHelper ap = new AppDatabaseHelper(EventNotificationService.this);
         SQLiteDatabase myDB = ap.getWritableDatabase();
         SharedPreferences prefs = getSharedPreferences("APP_PREFS", MODE_PRIVATE);
@@ -111,10 +124,9 @@ public class EventNotificationService extends Service {
             if (db.size() > 0) {
                 rss.removeAll(db);
                 if (rss.size() > 1) {
-                    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(EventNotificationService.this)
-                            .setSmallIcon(R.drawable.ic_launcher)
-                            .setContentTitle("You have " + rss.size() + " new events!")
-                            .setContentText("Tap to see details.").setAutoCancel(true);
+                    mBuilder.setContentTitle("You have " + rss.size() + " new events!")
+                            .setContentText("Tap to see details.").setAutoCancel(true)
+                            .setProgress(0, 0, false);
                     mBuilder.setDefaults(Notification.DEFAULT_ALL);
 
                     Intent resultIntent = new Intent(EventNotificationService.this, FrontalActivity.class);
@@ -123,15 +135,13 @@ public class EventNotificationService extends Service {
                     stackBuilder.addNextIntent(resultIntent);
                     PendingIntent resultPendingIntent = PendingIntent.getActivity(EventNotificationService.this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                     mBuilder.setContentIntent(resultPendingIntent);
-                    NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                    mNotificationManager.notify(1336, mBuilder.build());
+                    mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 
 
                 } else if (rss.size() == 1) {
-                    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(EventNotificationService.this)
-                            .setSmallIcon(R.drawable.ic_launcher)
-                            .setContentTitle("You have 1 new event!")
-                            .setContentText(rss.get(0).getName()).setAutoCancel(true);
+                    mBuilder.setContentTitle("You have 1 new event!")
+                            .setContentText(rss.get(0).getName()).setAutoCancel(true)
+                            .setProgress(0, 0, false);
                     mBuilder.setDefaults(Notification.DEFAULT_ALL);
 
                     Intent resultIntent = new Intent(EventNotificationService.this, FrontalActivity.class);
@@ -140,17 +150,17 @@ public class EventNotificationService extends Service {
                     stackBuilder.addNextIntent(resultIntent);
                     PendingIntent resultPendingIntent = PendingIntent.getActivity(EventNotificationService.this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                     mBuilder.setContentIntent(resultPendingIntent);
-                    NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                    mNotificationManager.notify(1337, mBuilder.build());
+                    mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 
+                } else {
+                    mNotificationManager.cancel(NOTIFICATION_ID);
                 }
 
             } else {
                 if (rss.size() > 1) {
-                    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(EventNotificationService.this)
-                            .setSmallIcon(R.drawable.ic_launcher)
-                            .setContentTitle("You have " + rss.size() + " new events!")
-                            .setContentText("Tap to see details.").setAutoCancel(true);
+                    mBuilder.setContentTitle("You have " + rss.size() + " new events!")
+                            .setContentText("Tap to see details.").setAutoCancel(true)
+                            .setProgress(0, 0, false);
                     mBuilder.setDefaults(Notification.DEFAULT_ALL);
 
                     mBuilder.setDefaults(Notification.DEFAULT_ALL);
@@ -160,15 +170,13 @@ public class EventNotificationService extends Service {
                     stackBuilder.addNextIntent(resultIntent);
                     PendingIntent resultPendingIntent = PendingIntent.getActivity(EventNotificationService.this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                     mBuilder.setContentIntent(resultPendingIntent);
-                    NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                    mNotificationManager.notify(1338, mBuilder.build());
+                    mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 
 
                 } else if (rss.size() == 1) {
-                    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(EventNotificationService.this)
-                            .setSmallIcon(R.drawable.ic_launcher)
-                            .setContentTitle("You have 1 new event!")
-                            .setContentText(rss.get(0).getName()).setAutoCancel(true);
+                    mBuilder.setContentTitle("You have 1 new event!")
+                            .setContentText(rss.get(0).getName()).setAutoCancel(true)
+                            .setProgress(0, 0, false);
                     mBuilder.setDefaults(Notification.DEFAULT_ALL);
 
                     Intent resultIntent = new Intent(EventNotificationService.this, FrontalActivity.class);
@@ -177,9 +185,10 @@ public class EventNotificationService extends Service {
                     stackBuilder.addNextIntent(resultIntent);
                     PendingIntent resultPendingIntent = PendingIntent.getActivity(EventNotificationService.this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                     mBuilder.setContentIntent(resultPendingIntent);
-                    NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                    mNotificationManager.notify(1339, mBuilder.build());
+                    mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 
+                } else {
+                    mNotificationManager.cancel(NOTIFICATION_ID);
                 }
             }
 
@@ -214,6 +223,8 @@ public class EventNotificationService extends Service {
         if (isRunning) {
             updateThread.interrupt();
             isRunning = false;
+            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.cancel(NOTIFICATION_ID);
         }
         createNewUpdateThread().start();
     }
