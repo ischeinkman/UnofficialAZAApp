@@ -16,8 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.ramonaza.unofficialazaapp.R;
+import org.ramonaza.unofficialazaapp.people.backend.EventDatabaseHandler;
 import org.ramonazaapi.events.EventInfoWrapper;
-import org.ramonazaapi.events.EventRSSHandler;
 
 /**
  * Created by ilanscheinkman on 1/29/15.
@@ -25,14 +25,15 @@ import org.ramonazaapi.events.EventRSSHandler;
 public class GeneralEventFragment extends Fragment {
 
     private static final String EVENT_DATA = "org.ramonaza.unofficialazaapp.EVENT_DATA";
+    int eventID;
 
     public GeneralEventFragment() {
     }
 
-    public static GeneralEventFragment newInstance(String eventRss) {
+    public static GeneralEventFragment newInstance(int eventID) {
         GeneralEventFragment fragment = new GeneralEventFragment();
         Bundle args = new Bundle();
-        args.putString(EVENT_DATA, eventRss);
+        args.putInt(EVENT_DATA, eventID);
         fragment.setArguments(args);
         return fragment;
     }
@@ -45,8 +46,8 @@ public class GeneralEventFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_event_data, container, false);
         TextView tView = (TextView) rootView.findViewById(R.id.EventPageTextView);
         LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.EventPageScrollLayout);
-        String myEventRss = getArguments().getString(EVENT_DATA);
-        final EventInfoWrapper myEvent = new EventRSSHandler(myEventRss, false).getEvent(0);
+        eventID = getArguments().getInt(EVENT_DATA);
+        final EventInfoWrapper myEvent = new EventDatabaseHandler(getActivity()).getEvent(eventID);
         actionBar.setTitle(myEvent.getName());
         String displayText = String.format(
                 "<b><u>%s</u></b><br><br>Description: %s<br>Bring: %s<br>Meet: %s<br>Planned By: %s<br>",
