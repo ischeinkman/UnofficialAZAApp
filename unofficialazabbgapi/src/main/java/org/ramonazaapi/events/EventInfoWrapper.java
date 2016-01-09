@@ -90,6 +90,14 @@ public class EventInfoWrapper implements InfoWrapper {
     @Override
     public boolean equals(Object obj) {
         return obj == this ||
-                (obj instanceof EventInfoWrapper && hashCode() == obj.hashCode());
+                (obj instanceof EventInfoWrapper
+                        && hashCode() == obj.hashCode()
+                        && getName().equals(((EventInfoWrapper) obj).getName())
+                        && getDesc().equals(((EventInfoWrapper) obj).getDesc())
+                        && getDate().equals(((EventInfoWrapper) obj).getDate())
+                        && getPlanner().equals(((EventInfoWrapper) obj).getPlanner())
+                        && getMeet().equals(((EventInfoWrapper) obj).getMeet())
+                        && getMapsLocation().equals(((EventInfoWrapper) obj).getMapsLocation())
+                );
     }
 }
