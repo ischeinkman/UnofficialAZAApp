@@ -8,6 +8,11 @@ import org.apache.http.params.CoreConnectionPNames;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by ilan on 9/8/15.
@@ -66,6 +71,7 @@ public class EventRSSHandler {
         if (rawRSS == null) return new EventInfoWrapper[0];
         String[] itemmedRSS = rawRSS.split(ITEM_SPLITTER);
         EventInfoWrapper[] events = new EventInfoWrapper[itemmedRSS.length];
+        DateFormat df = new SimpleDateFormat("EEEE, MMMM dd");
         for (int i = 0; i < itemmedRSS.length; i++) {
             String[] splitFeed = itemmedRSS[i].split(ATTRIBUTE_SPLITTER);
             EventInfoWrapper currentEvent = new EventInfoWrapper();
@@ -77,6 +83,12 @@ public class EventRSSHandler {
             currentEvent.setPlanner(splitFeed[7]);
             currentEvent.setMapsLocation(splitFeed[8]);
             currentEvent.setId(i);
+            try {
+                Date eventDate = df.parse(currentEvent.getDate());
+                currentEvent.setDate(currentEvent.getDate() + " " + Calendar.getInstance().get(Calendar.YEAR));
+            } catch (ParseException e) {
+                //We basically use the try/catch as an if else
+            }
             events[i] = currentEvent;
         }
         return events;
