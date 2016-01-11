@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.ramonaza.unofficialazaapp.events.ui.activities.EventPageActivity;
+import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.unofficialazaapp.helpers.backend.EventNotificationService;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextListFragment;
 import org.ramonaza.unofficialazaapp.people.backend.EventDatabaseHandler;
@@ -87,12 +89,20 @@ public class EventListFragment extends InfoWrapperTextListFragment {
 
     @Override
     public InfoWrapper[] generateInfo() {
+        SharedPreferences prefs = getActivity().getSharedPreferences("APP_PREFS", Context.MODE_PRIVATE);
+        String eventFeed = prefs.getString(ChapterPackHandlerSupport.PREF_EVENT_FEED, "");
+        if (eventFeed == null || eventFeed.length() == 0) {
+            EventInfoWrapper noFeed = new EventInfoWrapper();
+            noFeed.setName("Please download a Chapter Pack to access this feature.");
+            noFeed.setId(-1);
+            return new EventInfoWrapper[]{noFeed};
+        }
         while (!serviceBound) ;
         updateService.updateEventsSync();
         handler = new EventDatabaseHandler(getActivity());
         //TODO: Store event dates as MYSQL Date objects to allow for WHERE clause filtering
         EventInfoWrapper[] allEvents = handler.getEvents(null, null);
-        DateFormat df = new SimpleDateFormat("E, M d");
+        DateFormat df = new SimpleDateFormat("EEEE, MMMM dd yyyy");
         Date current = Calendar.getInstance().getTime();
         ArrayList futureEvents = new ArrayList();
         for (EventInfoWrapper wrapper : allEvents) {
@@ -103,6 +113,12 @@ public class EventListFragment extends InfoWrapperTextListFragment {
                 e.printStackTrace();
                 futureEvents.add(wrapper); //Just in case someone's date format is off
             }
+        }
+        if (futureEvents.isEmpty()) {
+            EventInfoWrapper noEvent = new EventInfoWrapper();
+            noEvent.setName("No events found.");
+            noEvent.setId(-1);
+            return new EventInfoWrapper[]{noEvent};
         }
         return (EventInfoWrapper[]) futureEvents.toArray(new EventInfoWrapper[futureEvents.size()]);
     }
