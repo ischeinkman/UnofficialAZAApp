@@ -62,6 +62,12 @@ public abstract class InfoWrapperListFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        if (currentAsync != null) currentAsync.cancel(true);
+        super.onPause();
+    }
+
+    @Override
     public void onDetach() {
         if (currentAsync != null) currentAsync.cancel(true);
         super.onDetach();
