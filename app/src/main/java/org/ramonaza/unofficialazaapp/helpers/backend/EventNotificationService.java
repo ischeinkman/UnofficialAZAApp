@@ -22,8 +22,9 @@ import org.ramonaza.unofficialazaapp.people.backend.EventDatabaseHandler;
 import org.ramonazaapi.events.EventInfoWrapper;
 import org.ramonazaapi.events.EventRSSHandler;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Yuval Zach aka kingi2001 on 12/29/2015.
@@ -54,6 +55,15 @@ public class EventNotificationService extends Service {
         isRepeating = true;
     }
 
+    public static void cancelRepeater(Context context) {
+        if (!isRepeating) return;
+        AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent i = new Intent(context, EventNotificationService.class);
+        PendingIntent pi = PendingIntent.getService(context, 0, i, 0);
+        mgr.cancel(pi);
+        isRepeating = false;
+    }
+
     public void onCreate() {
         Log.i(TAG, "Service onCreate");
 
@@ -75,7 +85,8 @@ public class EventNotificationService extends Service {
     @Override
     public void onDestroy() {
         isRunning = false;
-        updateThread.interrupt();
+        if (updateThread != null) updateThread.interrupt();
+        updateThread = null;
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.cancel(NOTIFICATION_ID);
         Log.i(TAG, "Service onDestroy");
@@ -97,115 +108,73 @@ public class EventNotificationService extends Service {
     private void updateEvents() {
         Log.v(TAG, "Service Started");
         isRunning = true;
-        mBuilder.setSmallIcon(R.drawable.ic_launcher)
-                .setAutoCancel(false)
-                .setContentTitle("Updating Events")
-                .setContentText("Now downloading events from the event feed...")
-                .setProgress(0, 0, true);
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
         AppDatabaseHelper ap = new AppDatabaseHelper(EventNotificationService.this);
         SQLiteDatabase myDB = ap.getWritableDatabase();
         SharedPreferences prefs = getSharedPreferences("APP_PREFS", MODE_PRIVATE);
         String eventFeed = prefs.getString(ChapterPackHandlerSupport.PREF_EVENT_FEED, "");
 
-        // Avoid NullPointerException in case eventFeed is not found.
-        if (eventFeed != null && eventFeed.length() > 0) {
-            EventRSSHandler rssHandler = new EventRSSHandler(eventFeed, true);
-            EventDatabaseHandler dbHandler = new EventDatabaseHandler(myDB);
+        if (eventFeed == null || eventFeed.length() == 0) {
+            mNotificationManager.cancel(NOTIFICATION_ID);
+            isRunning = false;
+            return;
+        }
+        EventRSSHandler rssHandler = new EventRSSHandler(eventFeed, true);
+        EventDatabaseHandler dbHandler = new EventDatabaseHandler(myDB);
 
-            //Retrieve events from RSS and Database.
-            EventInfoWrapper[] dbEvents = dbHandler.getEvents(null, null);
-            EventInfoWrapper[] rssEvents = rssHandler.getEventsFromRss();
+        mBuilder.setSmallIcon(R.drawable.ic_launcher)
+                .setAutoCancel(false)
+                .setContentTitle("Updating Events")
+                .setContentText("Now downloading events from the event feed...")
+                .setProgress(0, 0, true);
+        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 
-            // Send notification
-            ArrayList<EventInfoWrapper> rss = new ArrayList<EventInfoWrapper>(Arrays.asList(rssEvents));
-            ArrayList<EventInfoWrapper> db = new ArrayList<EventInfoWrapper>(Arrays.asList(dbEvents));
-            if (db.size() > 0) {
-                rss.removeAll(db);
-                if (rss.size() > 1) {
-                    mBuilder.setContentTitle("You have " + rss.size() + " new events!")
-                            .setContentText("Tap to see details.").setAutoCancel(true)
-                            .setProgress(0, 0, false);
-                    mBuilder.setDefaults(Notification.DEFAULT_ALL);
+        //Retrieve events from RSS and Database.
+        EventInfoWrapper[] rssEvents = rssHandler.getEventsFromRss();
+        if (rssEvents.length == 0) {
+            mBuilder.setContentTitle("No new events found.")
+                    .setContentText("")
+                    .setAutoCancel(true)
+                    .setProgress(0, 0, false);
+            mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+            isRunning = false;
+            return;
+        }
 
-                    Intent resultIntent = new Intent(EventNotificationService.this, FrontalActivity.class);
-                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(EventNotificationService.this);
-                    stackBuilder.addParentStack(FrontalActivity.class);
-                    stackBuilder.addNextIntent(resultIntent);
-                    PendingIntent resultPendingIntent = PendingIntent.getActivity(EventNotificationService.this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                    mBuilder.setContentIntent(resultPendingIntent);
-                    mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+        EventInfoWrapper[] dbEvents = dbHandler.getEvents(null, null);
+        // Send notification
+        Set<EventInfoWrapper> rss = new HashSet<>(Arrays.asList(rssEvents));
+        Set<EventInfoWrapper> db = new HashSet<>(Arrays.asList(dbEvents));
 
+        if (db.size() > 0) {
+            rss.removeAll(db);
+        }
 
-                } else if (rss.size() == 1) {
-                    mBuilder.setContentTitle("You have 1 new event!")
-                            .setContentText(rss.get(0).getName()).setAutoCancel(true)
-                            .setProgress(0, 0, false);
-                    mBuilder.setDefaults(Notification.DEFAULT_ALL);
+        if (rss.size() > 0) {
+            String title = (rss.size() == 1) ? "You have 1 new event!" : "You have " + rss.size() + " new events!";
+            mBuilder.setContentTitle(title)
+                    .setContentText("Tap to see details.").setAutoCancel(true)
+                    .setProgress(0, 0, false);
+            mBuilder.setDefaults(Notification.DEFAULT_ALL);
 
-                    Intent resultIntent = new Intent(EventNotificationService.this, FrontalActivity.class);
-                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(EventNotificationService.this);
-                    stackBuilder.addParentStack(FrontalActivity.class);
-                    stackBuilder.addNextIntent(resultIntent);
-                    PendingIntent resultPendingIntent = PendingIntent.getActivity(EventNotificationService.this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                    mBuilder.setContentIntent(resultPendingIntent);
-                    mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+            Intent resultIntent = new Intent(EventNotificationService.this, FrontalActivity.class);
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(EventNotificationService.this);
+            stackBuilder.addParentStack(FrontalActivity.class);
+            stackBuilder.addNextIntent(resultIntent);
+            PendingIntent resultPendingIntent = PendingIntent.getActivity(EventNotificationService.this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            mBuilder.setContentIntent(resultPendingIntent);
+            mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+        }
 
-                } else {
-                    mNotificationManager.cancel(NOTIFICATION_ID);
-                }
-
-            } else {
-                if (rss.size() > 1) {
-                    mBuilder.setContentTitle("You have " + rss.size() + " new events!")
-                            .setContentText("Tap to see details.").setAutoCancel(true)
-                            .setProgress(0, 0, false);
-                    mBuilder.setDefaults(Notification.DEFAULT_ALL);
-
-                    mBuilder.setDefaults(Notification.DEFAULT_ALL);
-                    Intent resultIntent = new Intent(EventNotificationService.this, FrontalActivity.class);
-                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(EventNotificationService.this);
-                    stackBuilder.addParentStack(FrontalActivity.class);
-                    stackBuilder.addNextIntent(resultIntent);
-                    PendingIntent resultPendingIntent = PendingIntent.getActivity(EventNotificationService.this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                    mBuilder.setContentIntent(resultPendingIntent);
-                    mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-
-
-                } else if (rss.size() == 1) {
-                    mBuilder.setContentTitle("You have 1 new event!")
-                            .setContentText(rss.get(0).getName()).setAutoCancel(true)
-                            .setProgress(0, 0, false);
-                    mBuilder.setDefaults(Notification.DEFAULT_ALL);
-
-                    Intent resultIntent = new Intent(EventNotificationService.this, FrontalActivity.class);
-                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(EventNotificationService.this);
-                    stackBuilder.addParentStack(FrontalActivity.class);
-                    stackBuilder.addNextIntent(resultIntent);
-                    PendingIntent resultPendingIntent = PendingIntent.getActivity(EventNotificationService.this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                    mBuilder.setContentIntent(resultPendingIntent);
-                    mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-
-                } else {
-                    mNotificationManager.cancel(NOTIFICATION_ID);
-                }
-            }
-
-
-            // Override local database and put in RSS events.
-            int i = 0;
-            dbHandler.deleteEvents(null, null);
-            while (i < rssEvents.length) {
-                EventInfoWrapper event = rssEvents[i];
-                try {
-                    dbHandler.addEvent(event);
-                } catch (EventDatabaseHandler.EventCSVReadError e) {
-                    e.printStackTrace();
-                }
-                i++;
+        dbHandler.deleteEvents(null, null);
+        for (EventInfoWrapper e : rssEvents) {
+            try {
+                dbHandler.addEvent(e);
+            } catch (EventDatabaseHandler.EventCSVReadError eventCSVReadError) {
+                eventCSVReadError.printStackTrace();
             }
         }
+
         myDB.close();
         isRunning = false;
     }
@@ -214,6 +183,7 @@ public class EventNotificationService extends Service {
         updateThread = new Thread(new Runnable() {
             public void run() {
                 updateEvents();
+                stopSelf();
             }
         });
         return updateThread;
@@ -228,6 +198,7 @@ public class EventNotificationService extends Service {
         }
         createNewUpdateThread().start();
     }
+
 
     public class MyBinder extends Binder {
         public EventNotificationService getService() {
