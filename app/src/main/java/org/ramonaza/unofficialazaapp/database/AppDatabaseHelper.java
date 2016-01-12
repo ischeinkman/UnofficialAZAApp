@@ -54,17 +54,6 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
             String setDefault = "UPDATE " + AppDatabaseContract.DriverListTable.TABLE_NAME +
                     " SET " + AppDatabaseContract.DriverListTable.COLUMN_CONTACT_INFO + " =-1 ";
             db.execSQL(setDefault);
-        } else {
-            db.execSQL(AppDatabaseContract.DELETE_TABLES);
-            db.execSQL(AppDatabaseContract.DriverListTable.CREATE_TABLE);
-            db.execSQL(AppDatabaseContract.ContactListTable.CREATE_TABLE);
-            db.execSQL(AppDatabaseContract.RidesListTable.CREATE_TABLE);
-            db.execSQL(AppDatabaseContract.RidesListTable.CREATE_TABLE);
-            try {
-                genDatabaseFromCSV(db);
-            } catch (ContactCSVReadError contactCSVReadError) {
-                contactCSVReadError.printStackTrace();
-            }
         }
     }
 
