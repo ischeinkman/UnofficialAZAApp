@@ -47,7 +47,7 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion == 4 && newVersion == 5) {
+        if (oldVersion <= 4 && newVersion >= 5) {
             String addTableStatement = "ALTER TABLE " + AppDatabaseContract.DriverListTable.TABLE_NAME +
                     " ADD " + AppDatabaseContract.DriverListTable.COLUMN_CONTACT_INFO + " " + AppDatabaseContract.VTYPE_INT;
             db.execSQL(addTableStatement);
