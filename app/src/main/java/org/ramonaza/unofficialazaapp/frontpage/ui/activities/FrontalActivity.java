@@ -14,7 +14,6 @@ import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.colorbook.ui.fragments.ColorBookFragment;
 import org.ramonaza.unofficialazaapp.events.ui.fragments.EventListFragment;
 import org.ramonaza.unofficialazaapp.frontpage.ui.fragments.NavigationDrawerFragment;
-import org.ramonaza.unofficialazaapp.helpers.backend.EventNotificationService;
 import org.ramonaza.unofficialazaapp.helpers.ui.activities.BaseActivity;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesActivity;
 import org.ramonaza.unofficialazaapp.people.ui.fragments.ContactListFragment;
@@ -48,8 +47,6 @@ public class FrontalActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         setContentView(R.layout.activity_front_page);
-        Intent msgIntent = new Intent(FrontalActivity.this, EventNotificationService.class);
-        startService(msgIntent);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);

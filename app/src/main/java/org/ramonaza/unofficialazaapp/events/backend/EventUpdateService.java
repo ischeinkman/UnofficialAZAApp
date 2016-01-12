@@ -1,4 +1,4 @@
-package org.ramonaza.unofficialazaapp.helpers.backend;
+package org.ramonaza.unofficialazaapp.events.backend;
 
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -18,6 +18,7 @@ import android.util.Log;
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
 import org.ramonaza.unofficialazaapp.frontpage.ui.activities.FrontalActivity;
+import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.unofficialazaapp.people.backend.EventDatabaseHandler;
 import org.ramonazaapi.events.EventInfoWrapper;
 import org.ramonazaapi.events.EventRSSHandler;
@@ -32,16 +33,14 @@ import java.util.Set;
 
 /**
  * This class is meant to retrieve events from the Chapter's website and store them in a local database.
- * Additionally, this class will send notifications in case there is a new event on the website, and will
- * send notifications a certain time before the event.
  */
 
-public class EventNotificationService extends Service {
+public class EventUpdateService extends Service {
 
-    private static final String TAG = "EventNotifService";
+    private static final String TAG = "EventUpdateService";
     private static final int NOTIFICATION_ID = 8888;
     private static boolean isRepeating = false;
-    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(EventNotificationService.this);
+    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(EventUpdateService.this);
     private boolean isRunning  = false;
     private Thread updateThread;
     private MyBinder binder = new MyBinder();
@@ -49,7 +48,7 @@ public class EventNotificationService extends Service {
     public static void startRepeater(Context context) {
         if (isRepeating) return;
         AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent i = new Intent(context, EventNotificationService.class);
+        Intent i = new Intent(context, EventUpdateService.class);
         PendingIntent pi = PendingIntent.getService(context, 0, i, 0);
         mgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, AlarmManager.INTERVAL_HALF_HOUR, AlarmManager.INTERVAL_HALF_HOUR, pi);
         isRepeating = true;
@@ -58,7 +57,7 @@ public class EventNotificationService extends Service {
     public static void cancelRepeater(Context context) {
         if (!isRepeating) return;
         AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent i = new Intent(context, EventNotificationService.class);
+        Intent i = new Intent(context, EventUpdateService.class);
         PendingIntent pi = PendingIntent.getService(context, 0, i, 0);
         mgr.cancel(pi);
         isRepeating = false;
@@ -109,7 +108,7 @@ public class EventNotificationService extends Service {
         Log.v(TAG, "Service Started");
         isRunning = true;
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        AppDatabaseHelper ap = new AppDatabaseHelper(EventNotificationService.this);
+        AppDatabaseHelper ap = new AppDatabaseHelper(EventUpdateService.this);
         SQLiteDatabase myDB = ap.getWritableDatabase();
         SharedPreferences prefs = getSharedPreferences("APP_PREFS", MODE_PRIVATE);
         String eventFeed = prefs.getString(ChapterPackHandlerSupport.PREF_EVENT_FEED, "");
@@ -157,11 +156,11 @@ public class EventNotificationService extends Service {
                     .setProgress(0, 0, false);
             mBuilder.setDefaults(Notification.DEFAULT_ALL);
 
-            Intent resultIntent = new Intent(EventNotificationService.this, FrontalActivity.class);
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(EventNotificationService.this);
+            Intent resultIntent = new Intent(EventUpdateService.this, FrontalActivity.class);
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(EventUpdateService.this);
             stackBuilder.addParentStack(FrontalActivity.class);
             stackBuilder.addNextIntent(resultIntent);
-            PendingIntent resultPendingIntent = PendingIntent.getActivity(EventNotificationService.this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent resultPendingIntent = PendingIntent.getActivity(EventUpdateService.this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             mBuilder.setContentIntent(resultPendingIntent);
             mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
         }
@@ -176,6 +175,7 @@ public class EventNotificationService extends Service {
         }
 
         myDB.close();
+        EventNotificationService.setUpNotifications(this);
         isRunning = false;
     }
 
@@ -201,8 +201,8 @@ public class EventNotificationService extends Service {
 
 
     public class MyBinder extends Binder {
-        public EventNotificationService getService() {
-            return EventNotificationService.this;
+        public EventUpdateService getService() {
+            return EventUpdateService.this;
         }
     }
 }

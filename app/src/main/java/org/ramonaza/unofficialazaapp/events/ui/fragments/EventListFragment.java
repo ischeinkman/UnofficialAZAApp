@@ -11,9 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.ramonaza.unofficialazaapp.events.backend.EventUpdateService;
 import org.ramonaza.unofficialazaapp.events.ui.activities.EventPageActivity;
 import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
-import org.ramonaza.unofficialazaapp.helpers.backend.EventNotificationService;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextListFragment;
 import org.ramonaza.unofficialazaapp.people.backend.EventDatabaseHandler;
 import org.ramonazaapi.events.EventInfoWrapper;
@@ -34,12 +34,12 @@ public class EventListFragment extends InfoWrapperTextListFragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
 
     private EventDatabaseHandler handler;
-    private EventNotificationService updateService;
+    private EventUpdateService updateService;
     private boolean serviceBound;
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            updateService = ((EventNotificationService.MyBinder) iBinder).getService();
+            updateService = ((EventUpdateService.MyBinder) iBinder).getService();
             serviceBound = true;
         }
 
@@ -60,7 +60,7 @@ public class EventListFragment extends InfoWrapperTextListFragment {
     @Override
     public void onResume() {
         super.onResume();
-        Intent intent = new Intent(getActivity(), EventNotificationService.class);
+        Intent intent = new Intent(getActivity(), EventUpdateService.class);
         getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
