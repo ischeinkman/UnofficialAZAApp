@@ -5,7 +5,6 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -23,6 +22,7 @@ import android.widget.Toast;
 
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
+import org.ramonaza.unofficialazaapp.helpers.backend.PreferenceHelper;
 import org.ramonaza.unofficialazaapp.settings.ui.fragments.ChapterPackSelectorFragment;
 
 import java.util.List;
@@ -176,9 +176,7 @@ public class SettingsActivity extends PreferenceActivity {
             });
         }
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean isDebug = preferences.getBoolean("admin", false);
-        if (isDebug) {
+        if (new PreferenceHelper(this).isDebugMode()) {
             Button chapterPackButton = new Button(this);
             chapterPackButton.setText(getString(R.string.pref_title_create_pack_button));
             chapterPackButton.setBackgroundResource(R.drawable.general_textbutton_layout);

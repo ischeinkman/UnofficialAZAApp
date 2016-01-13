@@ -4,7 +4,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.LayoutInflater;
@@ -13,7 +12,7 @@ import android.view.ViewGroup;
 
 import org.ramonaza.unofficialazaapp.events.backend.EventUpdateService;
 import org.ramonaza.unofficialazaapp.events.ui.activities.EventPageActivity;
-import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
+import org.ramonaza.unofficialazaapp.helpers.backend.PreferenceHelper;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextListFragment;
 import org.ramonaza.unofficialazaapp.people.backend.EventDatabaseHandler;
 import org.ramonazaapi.events.EventInfoWrapper;
@@ -89,8 +88,7 @@ public class EventListFragment extends InfoWrapperTextListFragment {
 
     @Override
     public InfoWrapper[] generateInfo() {
-        SharedPreferences prefs = getActivity().getSharedPreferences("APP_PREFS", Context.MODE_PRIVATE);
-        String eventFeed = prefs.getString(ChapterPackHandlerSupport.PREF_EVENT_FEED, "");
+        String eventFeed = new PreferenceHelper(getActivity()).getEventFeed();
         if (eventFeed == null || eventFeed.length() == 0) {
             EventInfoWrapper noFeed = new EventInfoWrapper();
             noFeed.setName("Please download a Chapter Pack to access this feature.");

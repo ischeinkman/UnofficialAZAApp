@@ -2,9 +2,7 @@ package org.ramonaza.unofficialazaapp.helpers.backend;
 
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 
 import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
@@ -26,8 +24,6 @@ import java.util.Calendar;
 public class ChapterPackHandlerSupport {
 
     public static final String NEW_PACK_DIRECTORY = "Generated Packs/";
-    public static final String PREF_CHAPTERPACK = "Cpack";
-    public static final String PREF_EVENT_FEED = "EventFeed";
     private static ChapterPackHandler currentHandler;
     private static boolean contactsLoaded = false;
 
@@ -82,12 +78,13 @@ public class ChapterPackHandlerSupport {
     public static ChapterPackHandler getChapterPackHandler(Context context, File pack) {
         if (currentHandler != null && currentHandler.getPackName().equals(pack.getName()))
             return currentHandler;
-        SharedPreferences preferences = context.getSharedPreferences("APP_PREFS", Context.MODE_PRIVATE);
+        /*SharedPreferences preferences = context.getSharedPreferences("APP_PREFS", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(PREF_CHAPTERPACK, pack.getName());
+        editor.putString(PreferenceHelper.PREF_CHAPTERPACK, pack.getName());*/
         currentHandler = new ChapterPackHandler(pack);
-        editor.putString(PREF_EVENT_FEED, currentHandler.getEventUrl());
-        editor.commit();
+        PreferenceHelper prefs = new PreferenceHelper(context);
+        prefs.putChapterPackName(pack.getName());
+        prefs.putEventFeed(currentHandler.getEventUrl());
         contactsLoaded = false;
         return currentHandler;
     }
@@ -136,9 +133,10 @@ public class ChapterPackHandlerSupport {
     public static boolean createChapterPack(Context context) {
 
         //Build the chapter packs data
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String packName = preferences.getString(PREF_CHAPTERPACK, "Chapter Pack :");
-        String url = preferences.getString(PREF_EVENT_FEED, "");
+        PreferenceHelper prefs = new PreferenceHelper(context);
+        String packName = (!prefs.getChapterPackName().equals("")) ? prefs.getChapterPackName() : "Chapter Pack :";
+        String url = prefs.getEventFeed();
+
         if (packName == null || url == null || packName.equals("") || url.equals("")) return false;
         ContactDatabaseHandler handler = getContactHandler(context);
         if (handler == null) return false;

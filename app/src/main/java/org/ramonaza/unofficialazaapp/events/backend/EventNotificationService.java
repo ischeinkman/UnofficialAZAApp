@@ -8,13 +8,13 @@ import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
 import org.ramonaza.unofficialazaapp.events.ui.activities.EventPageActivity;
 import org.ramonaza.unofficialazaapp.frontpage.ui.activities.FrontalActivity;
+import org.ramonaza.unofficialazaapp.helpers.backend.PreferenceHelper;
 import org.ramonaza.unofficialazaapp.people.backend.EventDatabaseHandler;
 import org.ramonazaapi.events.EventInfoWrapper;
 
@@ -30,11 +30,10 @@ import java.util.Date;
 public class EventNotificationService extends Service {
 
     public static final String EVENT_DB_ID = "org.ramonaza.unofficialazaapp.eventdbid";
-    private static final String PREF_NOTIFY_BEFORE_TIME = "notifiybeforetime";
     NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
 
     public static void setUpNotifications(Context context) {
-        long notifiyBeforeEvent = getNotifyBeforeTime(context);
+        long notifiyBeforeEvent = new PreferenceHelper(context).getNotifyBeforeTime();
         EventDatabaseHandler dbHandler = new EventDatabaseHandler(context);
         EventInfoWrapper[] allEvents = dbHandler.getEvents(null, null);
         AlarmManager mgr = (AlarmManager) context.getSystemService(ALARM_SERVICE);
@@ -56,20 +55,8 @@ public class EventNotificationService extends Service {
         }
     }
 
-    public static long getNotifyBeforeTime(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences("APP_PREFS", MODE_PRIVATE);
-        return prefs.getLong(PREF_NOTIFY_BEFORE_TIME, 1000 * 60 * 30);
-    }
-
-    public static void setNotifyBeforeTime(long newTime, Context context) {
-        cancelNotifications(context);
-        SharedPreferences prefs = context.getSharedPreferences("APP_PREFS", MODE_PRIVATE);
-        prefs.edit().putLong(PREF_NOTIFY_BEFORE_TIME, newTime).commit();
-        setUpNotifications(context);
-    }
-
     public static void cancelNotifications(Context context) {
-        long notifiyBeforeEvent = getNotifyBeforeTime(context);
+        long notifiyBeforeEvent = new PreferenceHelper(context).getNotifyBeforeTime();
         EventDatabaseHandler dbHandler = new EventDatabaseHandler(context);
         EventInfoWrapper[] allEvents = dbHandler.getEvents(null, null);
         AlarmManager mgr = (AlarmManager) context.getSystemService(ALARM_SERVICE);
@@ -127,7 +114,7 @@ public class EventNotificationService extends Service {
         }
 
         //Make sure we are using the correct time
-        long notifyBeforeEvent = getNotifyBeforeTime(this);
+        long notifyBeforeEvent = new PreferenceHelper(this).getNotifyBeforeTime();
         if (!(Calendar.getInstance().getTimeInMillis() >= eventDate.getTime() - notifyBeforeEvent)) {
             stopSelf();
             return START_NOT_STICKY;
