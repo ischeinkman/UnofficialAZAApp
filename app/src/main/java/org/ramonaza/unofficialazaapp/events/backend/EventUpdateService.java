@@ -8,7 +8,6 @@ import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Binder;
 import android.os.IBinder;
@@ -18,7 +17,7 @@ import android.util.Log;
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
 import org.ramonaza.unofficialazaapp.frontpage.ui.activities.FrontalActivity;
-import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
+import org.ramonaza.unofficialazaapp.helpers.backend.PreferenceHelper;
 import org.ramonaza.unofficialazaapp.people.backend.EventDatabaseHandler;
 import org.ramonazaapi.events.EventInfoWrapper;
 import org.ramonazaapi.events.EventRSSHandler;
@@ -110,8 +109,7 @@ public class EventUpdateService extends Service {
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         AppDatabaseHelper ap = new AppDatabaseHelper(EventUpdateService.this);
         SQLiteDatabase myDB = ap.getWritableDatabase();
-        SharedPreferences prefs = getSharedPreferences("APP_PREFS", MODE_PRIVATE);
-        String eventFeed = prefs.getString(ChapterPackHandlerSupport.PREF_EVENT_FEED, "");
+        String eventFeed = new PreferenceHelper(this).getEventFeed();
 
         if (eventFeed == null || eventFeed.length() == 0) {
             mNotificationManager.cancel(NOTIFICATION_ID);

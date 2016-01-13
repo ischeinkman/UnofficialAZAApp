@@ -6,11 +6,9 @@ import android.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +22,7 @@ import android.widget.Toast;
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
 import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
+import org.ramonaza.unofficialazaapp.helpers.backend.PreferenceHelper;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
 
 /**
@@ -32,8 +31,8 @@ import org.ramonazaapi.contacts.ContactInfoWrapper;
 public class GeneralContactFragment extends Fragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
+    PreferenceHelper prefs;
     private ContactInfoWrapper mContact;
-    private SharedPreferences sp;
 
     public static GeneralContactFragment newInstance(int sectionNumber, ContactInfoWrapper contact) {
         GeneralContactFragment fragment = new GeneralContactFragment();
@@ -49,10 +48,17 @@ public class GeneralContactFragment extends Fragment {
     }
 
     protected void refreshInfoView(TextView inView) {
-        String infoDump = String.format("N" +
-                "ame:   %s\nGrade:   %s\nSchool:  %s\nAddress:   %s\nEmail:  %s\nPhone:   %s\n", mContact.getName(), mContact.getYear(), mContact.getSchool(), mContact.getAddress(), mContact.getEmail(), mContact.getPhoneNumber());
+        String infoDump = String.format(
+                "Name:   %s" +
+                        "\nGrade:   %s" +
+                        "\nSchool:  %s" +
+                        "\nAddress:   %s" +
+                        "\nEmail:  %s" +
+                        "\nPhone:   %s" +
+                        "\n", mContact.getName(), mContact.getYear(), mContact.getSchool(), mContact.getAddress(), mContact.getEmail(), mContact.getPhoneNumber()
+        );
 
-        if (sp.getBoolean("admin", false)) {
+        if (prefs.isDebugMode()) {
             infoDump += "ID: " + mContact.getId() + "\n";
             infoDump += "Lat: " + mContact.getLatitude() + "\n";
             infoDump += "Long: " + mContact.getLongitude() + "\n";
@@ -74,7 +80,7 @@ public class GeneralContactFragment extends Fragment {
         LinearLayout rootLayout = (LinearLayout) rootView.findViewById(R.id.cPageLayout);
         final TextView information = (TextView) rootView.findViewById(R.id.ContactInfoView);
         information.setTextSize(22);
-        sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        prefs = new PreferenceHelper(getActivity());
         refreshInfoView(information);
 
 
@@ -93,7 +99,7 @@ public class GeneralContactFragment extends Fragment {
         Button navButton = (Button) rootView.findViewById(R.id.ContactDirButton);
         navButton.setOnClickListener(new NavigatorButtonListener(this.mContact));
 
-        if (sp.getBoolean("admin", false)) {
+        if (prefs.isDebugMode()) {
             Button presentSwitch = new Button(getActivity());
             presentSwitch.setText("Set Present");
             presentSwitch.setOnClickListener(new View.OnClickListener() {

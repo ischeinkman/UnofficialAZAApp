@@ -3,9 +3,7 @@ package org.ramonaza.unofficialazaapp.frontpage.ui.activities;
 import android.app.ActionBar;
 import android.app.FragmentManager;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,6 +12,7 @@ import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.colorbook.ui.fragments.ColorBookFragment;
 import org.ramonaza.unofficialazaapp.events.ui.fragments.EventListFragment;
 import org.ramonaza.unofficialazaapp.frontpage.ui.fragments.NavigationDrawerFragment;
+import org.ramonaza.unofficialazaapp.helpers.backend.PreferenceHelper;
 import org.ramonaza.unofficialazaapp.helpers.ui.activities.BaseActivity;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesActivity;
 import org.ramonaza.unofficialazaapp.people.ui.fragments.ContactListFragment;
@@ -39,13 +38,11 @@ public class FrontalActivity extends BaseActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
-    private SharedPreferences sharedPrefs;
     private int fragSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         setContentView(R.layout.activity_front_page);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
@@ -148,7 +145,7 @@ public class FrontalActivity extends BaseActivity
                     .replace(R.id.container, ContactListFragment.newInstance(position + 1))
                     .commit();
             fragSwitch = CONTACTS_PAGE_INDEX;
-        } else if (position == RIDES_LINK_INDEX && sharedPrefs.getBoolean("rides", false)) {
+        } else if (position == RIDES_LINK_INDEX && new PreferenceHelper(this).isRidesMode()) {
             Intent ridesIntent = new Intent(this, RidesActivity.class);
             startActivity(ridesIntent);
         }
