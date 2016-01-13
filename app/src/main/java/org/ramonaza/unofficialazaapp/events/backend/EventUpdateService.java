@@ -163,6 +163,9 @@ public class EventUpdateService extends Service {
             PendingIntent resultPendingIntent = PendingIntent.getActivity(EventUpdateService.this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             mBuilder.setContentIntent(resultPendingIntent);
             mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+        } else {
+            mNotificationManager.cancel(NOTIFICATION_ID);
+            return;
         }
 
         dbHandler.deleteEvents(null, null);
