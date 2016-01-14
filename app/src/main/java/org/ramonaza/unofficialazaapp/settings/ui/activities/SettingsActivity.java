@@ -122,6 +122,7 @@ public class SettingsActivity extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        getPreferenceManager().setSharedPreferencesName(PreferenceHelper.PREF_FILE_TITLE);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -176,7 +177,7 @@ public class SettingsActivity extends PreferenceActivity {
             });
         }
 
-        if (new PreferenceHelper(this).isDebugMode()) {
+        if (PreferenceHelper.getPreferences(this).isDebugMode()) {
             Button chapterPackButton = new Button(this);
             chapterPackButton.setText(getString(R.string.pref_title_create_pack_button));
             chapterPackButton.setBackgroundResource(R.drawable.general_textbutton_layout);

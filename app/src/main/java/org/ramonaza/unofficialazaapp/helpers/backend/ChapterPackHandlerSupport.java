@@ -82,9 +82,7 @@ public class ChapterPackHandlerSupport {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(PreferenceHelper.PREF_CHAPTERPACK, pack.getName());*/
         currentHandler = new ChapterPackHandler(pack);
-        PreferenceHelper prefs = new PreferenceHelper(context);
-        prefs.putChapterPackName(pack.getName());
-        prefs.putEventFeed(currentHandler.getEventUrl());
+        PreferenceHelper.getPreferences(context).putChapterPackName(pack.getName()).putEventFeed(currentHandler.getEventUrl());
         contactsLoaded = false;
         return currentHandler;
     }
@@ -133,9 +131,10 @@ public class ChapterPackHandlerSupport {
     public static boolean createChapterPack(Context context) {
 
         //Build the chapter packs data
-        PreferenceHelper prefs = new PreferenceHelper(context);
-        String packName = (!prefs.getChapterPackName().equals("")) ? prefs.getChapterPackName() : "Chapter Pack :";
-        String url = prefs.getEventFeed();
+        String packName = (!PreferenceHelper.getPreferences(context).getChapterPackName().equals(""))
+                ? PreferenceHelper.getPreferences(context).getChapterPackName()
+                : "Chapter Pack :";
+        String url = PreferenceHelper.getPreferences(context).getEventFeed();
 
         if (packName == null || url == null || packName.equals("") || url.equals("")) return false;
         ContactDatabaseHandler handler = getContactHandler(context);

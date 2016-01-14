@@ -65,11 +65,11 @@ public class EventListFragment extends InfoWrapperTextListFragment {
 
     @Override
     public void onPause() {
-        super.onPause();
         if (serviceBound) {
             getActivity().unbindService(mConnection);
         }
         serviceBound = false;
+        super.onPause();
     }
 
     @Override
@@ -88,7 +88,7 @@ public class EventListFragment extends InfoWrapperTextListFragment {
 
     @Override
     public InfoWrapper[] generateInfo() {
-        String eventFeed = new PreferenceHelper(getActivity()).getEventFeed();
+        String eventFeed = PreferenceHelper.getPreferences(getActivity()).getEventFeed();
         if (eventFeed == null || eventFeed.length() == 0) {
             EventInfoWrapper noFeed = new EventInfoWrapper();
             noFeed.setName("Please download a Chapter Pack to access this feature.");

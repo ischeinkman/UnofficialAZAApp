@@ -43,6 +43,7 @@ public class EventUpdateService extends Service {
     private boolean isRunning  = false;
     private Thread updateThread;
     private MyBinder binder = new MyBinder();
+    private boolean isBound = false;
 
     public static void startRepeater(Context context) {
         if (isRepeating) return;
@@ -77,17 +78,25 @@ public class EventUpdateService extends Service {
     public IBinder onBind(Intent arg0) {
         Log.i(TAG, "Service onBind");
         startRepeater(this);
+        isBound = true;
+        stopRunning();
         return binder;
     }
 
     @Override
     public void onDestroy() {
-        isRunning = false;
+        stopRunning();
+        Log.i(TAG, "Service onDestroy");
+    }
+
+    public void stopRunning() {
         if (updateThread != null) updateThread.interrupt();
         updateThread = null;
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.cancel(NOTIFICATION_ID);
-        Log.i(TAG, "Service onDestroy");
+        if (isRunning) {
+            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.cancel(NOTIFICATION_ID);
+        }
+        isRunning = false;
     }
 
     /**
@@ -95,11 +104,7 @@ public class EventUpdateService extends Service {
      * to update events in the background the previous thread is interrupted.
      */
     public void updateEventsSync() {
-        if (isRunning) {
-            updateThread.interrupt();
-            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotificationManager.cancel(NOTIFICATION_ID);
-        }
+        if (isRunning) stopRunning();
         updateEvents();
     }
 
@@ -109,7 +114,7 @@ public class EventUpdateService extends Service {
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         AppDatabaseHelper ap = new AppDatabaseHelper(EventUpdateService.this);
         SQLiteDatabase myDB = ap.getWritableDatabase();
-        String eventFeed = new PreferenceHelper(this).getEventFeed();
+        String eventFeed = PreferenceHelper.getPreferences(this).getEventFeed();
 
         if (eventFeed == null || eventFeed.length() == 0) {
             mNotificationManager.cancel(NOTIFICATION_ID);
@@ -192,7 +197,7 @@ public class EventUpdateService extends Service {
 
     public void restartService() {
         if (isRunning) {
-            updateThread.interrupt();
+            if (updateThread != null) updateThread.interrupt();
             isRunning = false;
             NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             mNotificationManager.cancel(NOTIFICATION_ID);

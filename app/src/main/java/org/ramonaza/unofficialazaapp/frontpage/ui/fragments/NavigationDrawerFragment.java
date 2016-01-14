@@ -40,8 +40,6 @@ public class NavigationDrawerFragment extends Fragment {
      */
     private NavigationDrawerCallbacks mCallbacks;
 
-    private PreferenceHelper prefs;
-
     /**
      * Helper component that ties the action bar to the navigation drawer.
      */
@@ -63,8 +61,7 @@ public class NavigationDrawerFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // Read in the flag indicating whether or not the user has demonstrated awareness of the
         // drawer. See PREF_USER_LEARNED_DRAWER for details.
-        prefs = new PreferenceHelper(getActivity());
-        mUserLearnedDrawer = prefs.hasUserLearnedDrawer();
+        mUserLearnedDrawer = PreferenceHelper.getPreferences(getActivity()).hasUserLearnedDrawer();
 
         if (savedInstanceState != null) {
             mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
@@ -124,7 +121,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     public String[] getDrawerTitles() {
         String[] drawerlist;
-        if (!prefs.isRidesMode()) {
+        if (!PreferenceHelper.getPreferences(getActivity()).isRidesMode()) {
             drawerlist = new String[]{
                     getString(R.string.title_section1), //Strings n main/res/values/strings.xml
                     getString(R.string.title_section2),
@@ -192,7 +189,7 @@ public class NavigationDrawerFragment extends Fragment {
                     // The user manually opened the drawer; store this flag to prevent auto-showing
                     // the navigation drawer automatically in the future.
                     mUserLearnedDrawer = true;
-                    prefs.setUserLearnedDrawer(true);
+                    PreferenceHelper.getPreferences(getActivity()).setUserLearnedDrawer(true);
                 }
 
                 getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()

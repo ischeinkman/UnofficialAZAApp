@@ -145,7 +145,7 @@ public class FrontalActivity extends BaseActivity
                     .replace(R.id.container, ContactListFragment.newInstance(position + 1))
                     .commit();
             fragSwitch = CONTACTS_PAGE_INDEX;
-        } else if (position == RIDES_LINK_INDEX && new PreferenceHelper(this).isRidesMode()) {
+        } else if (position == RIDES_LINK_INDEX && PreferenceHelper.getPreferences(this).isRidesMode()) {
             Intent ridesIntent = new Intent(this, RidesActivity.class);
             startActivity(ridesIntent);
         }

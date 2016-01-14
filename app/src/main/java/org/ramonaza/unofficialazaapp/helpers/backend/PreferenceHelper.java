@@ -8,18 +8,29 @@ import android.content.SharedPreferences;
  */
 public class PreferenceHelper {
 
-    private static final String PREF_TITLE = "APP_PREFS";
-    private static final String PREF_CHAPTERPACK = "Cpack";
-    private static final String PREF_EVENT_FEED = "EventFeed";
-    private static final String PREF_RIDES_MODE = "rides";
-    private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
-    private static final String PREF_DEBUG_MODE = "admin";
-    private static final String PREF_NOTIFY_BEFORE_TIME = "notifiybeforetime";
+    public static final String PREF_FILE_TITLE = "APP_PREFS";
+    public static final String PREF_CHAPTERPACK = "Cpack";
+    public static final String PREF_EVENT_FEED = "EventFeed";
+    public static final String PREF_RIDES_MODE = "rides";
+    public static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
+    public static final String PREF_DEBUG_MODE = "admin";
+    public static final String PREF_NOTIFY_BEFORE_TIME = "notifiybeforetime";
+
+    private static PreferenceHelper mHelper;
 
     private SharedPreferences prefs;
+    private SharedPreferences.Editor editor;
 
-    public PreferenceHelper(Context context) {
-        prefs = context.getSharedPreferences(PREF_TITLE, Context.MODE_PRIVATE);
+    private PreferenceHelper(Context context) {
+        prefs = context.getSharedPreferences(PREF_FILE_TITLE, Context.MODE_PRIVATE);
+        editor = prefs.edit();
+    }
+
+    public static PreferenceHelper getPreferences(Context context) {
+        if (mHelper == null) {
+            mHelper = new PreferenceHelper(context.getApplicationContext());
+        }
+        return mHelper;
     }
 
     public String getEventFeed() {
