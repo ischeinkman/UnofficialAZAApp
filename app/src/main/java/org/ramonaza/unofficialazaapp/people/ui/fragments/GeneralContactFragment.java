@@ -31,7 +31,6 @@ import org.ramonazaapi.contacts.ContactInfoWrapper;
 public class GeneralContactFragment extends Fragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
-    PreferenceHelper prefs;
     private ContactInfoWrapper mContact;
 
     public static GeneralContactFragment newInstance(int sectionNumber, ContactInfoWrapper contact) {
@@ -58,7 +57,7 @@ public class GeneralContactFragment extends Fragment {
                         "\n", mContact.getName(), mContact.getYear(), mContact.getSchool(), mContact.getAddress(), mContact.getEmail(), mContact.getPhoneNumber()
         );
 
-        if (prefs.isDebugMode()) {
+        if (PreferenceHelper.getPreferences(getActivity()).isDebugMode()) {
             infoDump += "ID: " + mContact.getId() + "\n";
             infoDump += "Lat: " + mContact.getLatitude() + "\n";
             infoDump += "Long: " + mContact.getLongitude() + "\n";
@@ -80,7 +79,6 @@ public class GeneralContactFragment extends Fragment {
         LinearLayout rootLayout = (LinearLayout) rootView.findViewById(R.id.cPageLayout);
         final TextView information = (TextView) rootView.findViewById(R.id.ContactInfoView);
         information.setTextSize(22);
-        prefs = new PreferenceHelper(getActivity());
         refreshInfoView(information);
 
 
@@ -99,7 +97,7 @@ public class GeneralContactFragment extends Fragment {
         Button navButton = (Button) rootView.findViewById(R.id.ContactDirButton);
         navButton.setOnClickListener(new NavigatorButtonListener(this.mContact));
 
-        if (prefs.isDebugMode()) {
+        if (PreferenceHelper.getPreferences(getActivity()).isDebugMode()) {
             Button presentSwitch = new Button(getActivity());
             presentSwitch.setText("Set Present");
             presentSwitch.setOnClickListener(new View.OnClickListener() {

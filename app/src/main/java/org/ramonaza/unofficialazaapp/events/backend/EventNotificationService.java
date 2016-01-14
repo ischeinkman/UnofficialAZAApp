@@ -33,7 +33,7 @@ public class EventNotificationService extends Service {
     NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
 
     public static void setUpNotifications(Context context) {
-        long notifiyBeforeEvent = new PreferenceHelper(context).getNotifyBeforeTime();
+        long notifiyBeforeEvent = PreferenceHelper.getPreferences(context).getNotifyBeforeTime();
         EventDatabaseHandler dbHandler = new EventDatabaseHandler(context);
         EventInfoWrapper[] allEvents = dbHandler.getEvents(null, null);
         AlarmManager mgr = (AlarmManager) context.getSystemService(ALARM_SERVICE);
@@ -56,7 +56,7 @@ public class EventNotificationService extends Service {
     }
 
     public static void cancelNotifications(Context context) {
-        long notifiyBeforeEvent = new PreferenceHelper(context).getNotifyBeforeTime();
+        long notifiyBeforeEvent = PreferenceHelper.getPreferences(context).getNotifyBeforeTime();
         EventDatabaseHandler dbHandler = new EventDatabaseHandler(context);
         EventInfoWrapper[] allEvents = dbHandler.getEvents(null, null);
         AlarmManager mgr = (AlarmManager) context.getSystemService(ALARM_SERVICE);
@@ -114,7 +114,7 @@ public class EventNotificationService extends Service {
         }
 
         //Make sure we are using the correct time
-        long notifyBeforeEvent = new PreferenceHelper(this).getNotifyBeforeTime();
+        long notifyBeforeEvent = PreferenceHelper.getPreferences(this).getNotifyBeforeTime();
         if (!(Calendar.getInstance().getTimeInMillis() >= eventDate.getTime() - notifyBeforeEvent)) {
             stopSelf();
             return START_NOT_STICKY;
