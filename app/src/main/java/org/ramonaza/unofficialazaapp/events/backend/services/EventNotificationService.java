@@ -1,4 +1,4 @@
-package org.ramonaza.unofficialazaapp.events.backend;
+package org.ramonaza.unofficialazaapp.events.backend.services;
 
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -8,10 +8,13 @@ import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
+import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.events.ui.activities.EventPageActivity;
 import org.ramonaza.unofficialazaapp.frontpage.ui.activities.FrontalActivity;
 import org.ramonaza.unofficialazaapp.helpers.backend.PreferenceHelper;
@@ -30,10 +33,15 @@ import java.util.Date;
 public class EventNotificationService extends Service {
 
     public static final String EVENT_DB_ID = "org.ramonaza.unofficialazaapp.eventdbid";
+    private static final long TIME_MULTIPLIER = 1000 * 60;
     NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
 
     public static void setUpNotifications(Context context) {
-        long notifiyBeforeEvent = PreferenceHelper.getPreferences(context).getNotifyBeforeTime();
+        long notifiyBeforeEvent = PreferenceHelper.getPreferences(context).getNotifyBeforeTime() * TIME_MULTIPLIER;
+        if (notifiyBeforeEvent < 0l) {
+            cancelNotifications(context);
+            return;
+        }
         EventDatabaseHandler dbHandler = new EventDatabaseHandler(context);
         EventInfoWrapper[] allEvents = dbHandler.getEvents(null, null);
         AlarmManager mgr = (AlarmManager) context.getSystemService(ALARM_SERVICE);
@@ -56,7 +64,6 @@ public class EventNotificationService extends Service {
     }
 
     public static void cancelNotifications(Context context) {
-        long notifiyBeforeEvent = PreferenceHelper.getPreferences(context).getNotifyBeforeTime();
         EventDatabaseHandler dbHandler = new EventDatabaseHandler(context);
         EventInfoWrapper[] allEvents = dbHandler.getEvents(null, null);
         AlarmManager mgr = (AlarmManager) context.getSystemService(ALARM_SERVICE);
@@ -70,7 +77,6 @@ public class EventNotificationService extends Service {
                 continue;
             }
             if (eventDate.before(current)) continue;
-            eventDate.setTime(eventDate.getTime() - notifiyBeforeEvent);
             Intent notificationIntent = new Intent(context, EventNotificationService.class);
             notificationIntent.putExtra(EVENT_DB_ID, event.getId());
             PendingIntent pendingNotifIntent = PendingIntent.getService(context, 0, notificationIntent, 0);
@@ -136,7 +142,10 @@ public class EventNotificationService extends Service {
         }
         DateFormat timeDf = new SimpleDateFormat("hh:mm aa");
         String title = String.format("%s starts at %s!", event.getName(), timeDf.format(eventDate));
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
         mBuilder.setContentTitle(title)
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setLargeIcon(largeIcon)
                 .setContentText("Tap to see details.").setAutoCancel(true)
                 .setProgress(0, 0, false);
         mBuilder.setDefaults(Notification.DEFAULT_ALL);

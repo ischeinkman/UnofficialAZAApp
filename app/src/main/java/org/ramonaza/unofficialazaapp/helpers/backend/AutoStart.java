@@ -4,8 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import org.ramonaza.unofficialazaapp.events.backend.EventNotificationService;
-import org.ramonaza.unofficialazaapp.events.backend.EventUpdateService;
+import org.ramonaza.unofficialazaapp.events.backend.services.EventNotificationService;
+import org.ramonaza.unofficialazaapp.events.backend.services.EventUpdateService;
 
 /**
  * Created by Yuval Zach aka kingi2001 on 1/1/2016.

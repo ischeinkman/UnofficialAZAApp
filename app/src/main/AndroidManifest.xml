@@ -17,10 +17,10 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <service
-            android:name=".events.backend.EventUpdateService"
+            android:name=".events.backend.services.EventUpdateService"
             android:enabled="true" />
         <service
-            android:name=".events.backend.EventNotificationService"
+            android:name=".events.backend.services.EventNotificationService"
             android:enabled="true" />
         <receiver android:name=".helpers.backend.AutoStart"
             android:enabled="true">

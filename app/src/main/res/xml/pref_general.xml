@@ -11,6 +11,20 @@
         android:defaultValue="false"
         android:key="admin"
         android:title="@string/pref_title_dev" />
+    <ListPreference
+        android:defaultValue="360"
+        android:entries="@array/notificationTimeOptions"
+        android:entryValues="@array/notificationTimeValues"
+        android:key="eventupdatetime"
+        android:summary="%s"
+        android:title="Event Update Interval" />
+    <ListPreference
+        android:defaultValue="360"
+        android:entries="@array/notificationTimeOptions"
+        android:entryValues="@array/notificationTimeValues"
+        android:key="notifiybeforetime"
+        android:summary="%s"
+        android:title="Notify Before Event" />
     <Preference
         android:key="loadpackbutton"
         android:summary="Opens a new dialog"

@@ -1,4 +1,4 @@
-package org.ramonaza.unofficialazaapp.events.backend;
+package org.ramonaza.unofficialazaapp.events.backend.services;
 
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -9,6 +9,8 @@ import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
@@ -38,6 +40,7 @@ public class EventUpdateService extends Service {
 
     private static final String TAG = "EventUpdateService";
     private static final int NOTIFICATION_ID = 8888;
+    private static final long TIME_MULTIPLIER = 1000 * 60;
     private static boolean isRepeating = false;
     NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(EventUpdateService.this);
     private boolean isRunning  = false;
@@ -46,11 +49,16 @@ public class EventUpdateService extends Service {
     private boolean isBound = false;
 
     public static void startRepeater(Context context) {
+        long interval = PreferenceHelper.getPreferences(context).getEventUpdateTime() * TIME_MULTIPLIER;
+        if (interval < 0l) {
+            cancelRepeater(context);
+            return;
+        }
         if (isRepeating) return;
         AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(context, EventUpdateService.class);
         PendingIntent pi = PendingIntent.getService(context, 0, i, 0);
-        mgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, AlarmManager.INTERVAL_HALF_HOUR, AlarmManager.INTERVAL_HALF_HOUR, pi);
+        mgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, interval, interval, pi);
         isRepeating = true;
     }
 
@@ -65,7 +73,6 @@ public class EventUpdateService extends Service {
 
     public void onCreate() {
         Log.i(TAG, "Service onCreate");
-
     }
 
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -124,7 +131,9 @@ public class EventUpdateService extends Service {
         EventRSSHandler rssHandler = new EventRSSHandler(eventFeed, true);
         EventDatabaseHandler dbHandler = new EventDatabaseHandler(myDB);
 
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
         mBuilder.setSmallIcon(R.drawable.ic_launcher)
+                .setLargeIcon(largeIcon)
                 .setAutoCancel(false)
                 .setContentTitle("Updating Events")
                 .setContentText("Now downloading events from the event feed...")
@@ -134,11 +143,7 @@ public class EventUpdateService extends Service {
         //Retrieve events from RSS and Database.
         EventInfoWrapper[] rssEvents = rssHandler.getEventsFromRss();
         if (rssEvents.length == 0) {
-            mBuilder.setContentTitle("No new events found.")
-                    .setContentText("")
-                    .setAutoCancel(true)
-                    .setProgress(0, 0, false);
-            mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+            mNotificationManager.cancel(NOTIFICATION_ID);
             isRunning = false;
             return;
         }

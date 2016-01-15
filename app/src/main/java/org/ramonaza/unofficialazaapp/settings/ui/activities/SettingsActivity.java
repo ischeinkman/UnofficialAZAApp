@@ -21,6 +21,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import org.ramonaza.unofficialazaapp.R;
+import org.ramonaza.unofficialazaapp.events.backend.services.EventNotificationService;
+import org.ramonaza.unofficialazaapp.events.backend.services.EventUpdateService;
 import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.unofficialazaapp.helpers.backend.PreferenceHelper;
 import org.ramonaza.unofficialazaapp.settings.ui.fragments.ChapterPackSelectorFragment;
@@ -211,6 +213,15 @@ public class SettingsActivity extends PreferenceActivity {
         if (!isSimplePreferences(this)) {
             loadHeadersFromResource(R.xml.pref_headers, target);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        EventUpdateService.cancelRepeater(this);
+        EventNotificationService.cancelNotifications(this);
+        EventUpdateService.startRepeater(this);
+        EventNotificationService.setUpNotifications(this);
+        super.onPause();
     }
 
     /**
