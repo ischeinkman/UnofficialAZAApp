@@ -12,6 +12,7 @@ public class DisplayRidesActivity extends BaseActivity {
     public static final String EXTRA_ALGORITHM = "org.ramonaza.unofficialazaapp.algorithm";
     public static final String EXTRA_RETAIN_RIDES = "org.ramonaza.unofficialazaapp.retainrides";
     public static final String EXTRA_CLUSTER_TYPE = "org.ramonaza.unofficialazaapp.clusterType";
+    public static final String EXTRA_OPTIMIZE = "org.ramonaza.unofficialazaapp.optomizeRides";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,9 +22,10 @@ public class DisplayRidesActivity extends BaseActivity {
         int algorithm = callingIntent.getIntExtra(EXTRA_ALGORITHM, -1);
         int clusterIndex = callingIntent.getIntExtra(EXTRA_CLUSTER_TYPE, 0);
         boolean retainRides = callingIntent.getBooleanExtra(EXTRA_RETAIN_RIDES, true);
+        boolean optomize = callingIntent.getBooleanExtra(EXTRA_OPTIMIZE, false);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, DisplayRidesFragment.newInstance(algorithm, clusterIndex, retainRides))
+                    .add(R.id.container, DisplayRidesFragment.newInstance(optomize, algorithm, clusterIndex, retainRides))
                     .commit();
         }
     }

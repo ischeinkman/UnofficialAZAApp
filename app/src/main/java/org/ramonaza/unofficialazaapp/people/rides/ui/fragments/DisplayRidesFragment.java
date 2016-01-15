@@ -45,6 +45,7 @@ public class DisplayRidesFragment extends Fragment {
     private static final String EXTRA_ALGORITHM = "org.ramonaza.unofficialazaapp.algorithm";
     private static final String EXTRA_RETAIN_RIDES = "org.ramonaza.unofficialazaapp.retainrides";
     private static final String EXTRA_CLUSTER_TYPE = "org.ramonaza.unofficialazaapp.clusterType";
+    private static final String EXTRA_OPTIMIZE = "org.ramonaza.unofficialazaapp.optomizeRides";
 
     private TextView ridesDisplay;
     private ProgressBar mBar;
@@ -56,6 +57,7 @@ public class DisplayRidesFragment extends Fragment {
     private int algorithmIndex;
     private int clusterIndex;
     private boolean retainRides;
+    private boolean optimize;
 
     public DisplayRidesFragment() {
         // Required empty public constructor
@@ -67,12 +69,13 @@ public class DisplayRidesFragment extends Fragment {
      *
      * @return A new instance of fragment DisplayRidesFragment.
      */
-    public static DisplayRidesFragment newInstance(int algorithm, int clusterIndex, boolean retain) {
+    public static DisplayRidesFragment newInstance(boolean optimize, int algorithm, int clusterIndex, boolean retain) {
         DisplayRidesFragment fragment = new DisplayRidesFragment();
         Bundle args = new Bundle();
         args.putInt(EXTRA_ALGORITHM, algorithm);
         args.putBoolean(EXTRA_RETAIN_RIDES, retain);
         args.putInt(EXTRA_CLUSTER_TYPE, clusterIndex);
+        args.putBoolean(EXTRA_OPTIMIZE, optimize);
         fragment.setArguments(args);
         return fragment;
     }
@@ -116,7 +119,7 @@ public class DisplayRidesFragment extends Fragment {
             case 4:
                 return HungryCluster.class;
             default:
-                return null;
+                return SnakeCluster.class; //Snake is currently the best cluster type
         }
     }
 
@@ -133,7 +136,7 @@ public class DisplayRidesFragment extends Fragment {
             case 4:
                 return new RidesOptimizer.RidesAlgorithm[]{new ClusterMatch()};
             default:
-                return null;
+                return new RidesOptimizer.RidesAlgorithm[]{new NaiveHungarian()}; //Naive Hungarian is currently the best algorithm
         }
     }
 
@@ -150,6 +153,7 @@ public class DisplayRidesFragment extends Fragment {
         algorithmIndex = getArguments().getInt(EXTRA_ALGORITHM);
         clusterIndex = getArguments().getInt(EXTRA_CLUSTER_TYPE);
         retainRides = getArguments().getBoolean(EXTRA_RETAIN_RIDES);
+        optimize = getArguments().getBoolean(EXTRA_OPTIMIZE);
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_display_rides, container, false);
@@ -249,10 +253,17 @@ public class DisplayRidesFragment extends Fragment {
         @Override
         protected String doInBackground(Void... params) {
             createRides();
+            if (retainRides && !optimize) {
+                return createRidesList(rides, driverless);
+            }
             RidesOptimizer optimizer = new RidesOptimizer();
             optimizer.loadDriver(rides);
             optimizer.loadPassengers(driverless);
-            optimizer.setUpAlgorithms(getAlgorithmsByIndex(algorithmIndex), retainRides, getClusterByIndex(clusterIndex));
+            if (optimize) {
+                optimizer.setUpAlgorithms(getAlgorithmsByIndex(algorithmIndex), retainRides, getClusterByIndex(clusterIndex));
+            } else {
+                optimizer.setUpAlgorithms(null, retainRides, null);
+            }
             optimizer.optimize();
             RidesDatabaseHandler ridesDatabaseHandler = new RidesDatabaseHandler(getActivity());
             ridesDatabaseHandler.updateRides(optimizer.getDrivers(), optimizer.getDriverless());
