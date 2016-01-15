@@ -1,5 +1,6 @@
 package org.ramonaza.unofficialazaapp.helpers.backend;
 
+import android.app.AlarmManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -15,6 +16,7 @@ public class PreferenceHelper {
     public static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
     public static final String PREF_DEBUG_MODE = "admin";
     public static final String PREF_NOTIFY_BEFORE_TIME = "notifiybeforetime";
+    public static final String PREF_EVENT_UPDATE_TIME = "eventupdatetime";
 
     private static PreferenceHelper mHelper;
 
@@ -79,11 +81,20 @@ public class PreferenceHelper {
     }
 
     public long getNotifyBeforeTime() {
-        return prefs.getLong(PreferenceHelper.PREF_NOTIFY_BEFORE_TIME, 1000 * 60 * 30);
+        return Long.getLong(prefs.getString(PREF_NOTIFY_BEFORE_TIME, ""), AlarmManager.INTERVAL_HOUR);
     }
 
     public PreferenceHelper setNotifyBeforeTime(long newTime) {
-        prefs.edit().putLong(PreferenceHelper.PREF_NOTIFY_BEFORE_TIME, newTime).commit();
+        prefs.edit().putString(PreferenceHelper.PREF_NOTIFY_BEFORE_TIME, "" + newTime).commit();
+        return this;
+    }
+
+    public long getEventUpdateTime() {
+        return Long.getLong(prefs.getString(PREF_EVENT_UPDATE_TIME, ""), AlarmManager.INTERVAL_HOUR);
+    }
+
+    public PreferenceHelper setEventUpdateTime(long updateTime) {
+        prefs.edit().putString(PREF_EVENT_UPDATE_TIME, "" + updateTime);
         return this;
     }
 }

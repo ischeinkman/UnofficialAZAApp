@@ -81,7 +81,7 @@ public class EventRSSHandler {
             String curDateString = currentEvent.getDate();
             for (int ind = curDateString.length() - 4; ind < curDateString.length(); ind++) {
                 if (!Character.isDigit(curDateString.charAt(ind))) {
-                    currentEvent.setDate(curDateString + Calendar.getInstance().get(Calendar.YEAR));
+                    currentEvent.setDate(curDateString + " " + Calendar.getInstance().get(Calendar.YEAR));
                     break;
                 }
             }
