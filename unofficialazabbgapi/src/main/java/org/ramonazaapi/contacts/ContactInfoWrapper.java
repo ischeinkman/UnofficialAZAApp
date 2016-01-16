@@ -1,6 +1,6 @@
 package org.ramonazaapi.contacts;
 
-import org.ramonazaapi.rides.PersonInfoWrapper;
+import org.ramonazaapi.interfaces.PersonInfoWrapper;
 
 import java.util.Calendar;
 
@@ -84,24 +84,24 @@ public class ContactInfoWrapper implements PersonInfoWrapper {
         return latitude;
     }
 
-    public void setLatitude(String latitude) {
-        this.latitude = Double.valueOf(latitude);
-    }
-
     public void setLatitude(double latitude) {
         this.latitude = latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = Double.valueOf(latitude);
     }
 
     public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(String longitude) {
-        this.longitude = Double.valueOf(longitude);
-    }
-
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = Double.valueOf(longitude);
     }
 
     public boolean isPresent() {
@@ -235,7 +235,7 @@ public class ContactInfoWrapper implements PersonInfoWrapper {
 
     @Override
     public int hashCode() {
-        return idNum * name.hashCode() + idNum;
+        return (int) ((idNum + 1) * name.hashCode() + (idNum + 1) * (latitude) * (longitude));
     }
 }
         

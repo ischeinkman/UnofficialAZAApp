@@ -2,9 +2,7 @@ package org.ramonaza.unofficialazaapp.helpers.backend;
 
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 
 import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
@@ -12,7 +10,6 @@ import org.ramonaza.unofficialazaapp.people.backend.LocationSupport;
 import org.ramonazaapi.chapterpacks.ChapterPackHandler;
 import org.ramonazaapi.contacts.ContactCSVHandler;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
-import org.ramonazaapi.events.EventRSSHandler;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -27,8 +24,6 @@ import java.util.Calendar;
 public class ChapterPackHandlerSupport {
 
     public static final String NEW_PACK_DIRECTORY = "Generated Packs/";
-    public static final String PREF_CHAPTERPACK = "Cpack";
-    public static final String PREF_EVENT_FEED = "EventFeed";
     private static ChapterPackHandler currentHandler;
     private static boolean contactsLoaded = false;
 
@@ -69,13 +64,7 @@ public class ChapterPackHandlerSupport {
      * @return the currently loaded Chapter Pack, or null
      */
     public static ChapterPackHandler getChapterPackHandler(Context context) {
-        /*if (getOptions().length > 0) {
-            contactsLoaded = false;
-            return getChapterPackHandler(context, getOptions()[0]);
-        }
-        else*/
-        if (currentHandler != null) return currentHandler;
-        else return null;
+        return currentHandler;
     }
 
     /**
@@ -89,56 +78,13 @@ public class ChapterPackHandlerSupport {
     public static ChapterPackHandler getChapterPackHandler(Context context, File pack) {
         if (currentHandler != null && currentHandler.getPackName().equals(pack.getName()))
             return currentHandler;
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        preferences.edit().putString(PREF_CHAPTERPACK, pack.getName());
+        /*SharedPreferences preferences = context.getSharedPreferences("APP_PREFS", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(PreferenceHelper.PREF_CHAPTERPACK, pack.getName());*/
         currentHandler = new ChapterPackHandler(pack);
+        PreferenceHelper.getPreferences(context).putChapterPackName(pack.getName()).putEventFeed(currentHandler.getEventUrl());
         contactsLoaded = false;
         return currentHandler;
-    }
-
-    private static File moveChapterPack(Context context, File pack) {
-        File dataDir = context.getExternalFilesDir(null);
-        File newFile;
-        if (pack.getName().contains(".zip")) {
-            newFile = new File(dataDir, "lastloadedpack.zip");
-            if (newFile.exists()) newFile.delete();
-            boolean renamed = pack.renameTo(newFile);
-            if (!renamed) return null;
-            return newFile;
-        } else {
-            newFile = new File(dataDir, "lastloadedpack");
-            if (!newFile.exists() || newFile.list().length == 0) {
-                boolean mkdired = newFile.mkdirs();
-                boolean deleted = newFile.delete();
-            } else {
-                for (File prevPack : newFile.listFiles()) {
-                    boolean deleted = prevPack.delete();
-                }
-            }
-            boolean renamed = pack.renameTo(newFile);
-            if (!(renamed)) return null;
-            return newFile;
-        }
-    }
-
-    /**
-     * Gets the current EventRSSHandler from the environment.
-     * First checks if we have a newly loaded Chapter Pack, and if we
-     * do return the pack's event handler. If we have no pack, we attempt
-     * to retrieve a previous pack's feed from the app's preferences.
-     * Failing that we return null.
-     *
-     * @param context the context to use
-     * @return the currently loaded event handler, or null
-     */
-    public static EventRSSHandler getEventHandler(Context context) {
-        if (currentHandler != null || getChapterPackHandler(context) != null) {
-            PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_EVENT_FEED, currentHandler.getEventUrl());
-            return currentHandler.getEventRSSHandler();
-        }
-        String url = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_EVENT_FEED, null);
-        if (url == null) return null;
-        return new EventRSSHandler(url, true);
     }
 
     /**
@@ -185,9 +131,11 @@ public class ChapterPackHandlerSupport {
     public static boolean createChapterPack(Context context) {
 
         //Build the chapter packs data
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String packName = preferences.getString(PREF_CHAPTERPACK, "Chapter Pack :");
-        String url = preferences.getString(PREF_EVENT_FEED, "");
+        String packName = (!PreferenceHelper.getPreferences(context).getChapterPackName().equals(""))
+                ? PreferenceHelper.getPreferences(context).getChapterPackName()
+                : "Chapter Pack :";
+        String url = PreferenceHelper.getPreferences(context).getEventFeed();
+
         if (packName == null || url == null || packName.equals("") || url.equals("")) return false;
         ContactDatabaseHandler handler = getContactHandler(context);
         if (handler == null) return false;

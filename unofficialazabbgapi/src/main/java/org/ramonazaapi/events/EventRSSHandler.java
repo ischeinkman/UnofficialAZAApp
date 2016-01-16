@@ -3,10 +3,12 @@ package org.ramonazaapi.events;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.CoreConnectionPNames;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Calendar;
 
 /**
  * Created by ilan on 9/8/15.
@@ -15,6 +17,7 @@ public class EventRSSHandler {
 
     private static final String ITEM_SPLITTER = "<item>";
     private static final String ATTRIBUTE_SPLITTER = " <br/> ";
+    private static final int TIMEOUT = 2000;
     private String rawRSS;
 
     public EventRSSHandler(String rssSource, boolean isStream) {
@@ -32,6 +35,8 @@ public class EventRSSHandler {
         StringBuilder builder = new StringBuilder(100000);
 
         DefaultHttpClient client = new DefaultHttpClient();
+        client.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, TIMEOUT);
+        client.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, TIMEOUT);
         HttpGet httpGet = new HttpGet(url);
         try {
             HttpResponse execute = client.execute(httpGet);
@@ -65,14 +70,21 @@ public class EventRSSHandler {
         for (int i = 0; i < itemmedRSS.length; i++) {
             String[] splitFeed = itemmedRSS[i].split(ATTRIBUTE_SPLITTER);
             EventInfoWrapper currentEvent = new EventInfoWrapper();
+            currentEvent.setDate(splitFeed[1]);
             currentEvent.setName(splitFeed[2]);
             currentEvent.setDesc(splitFeed[3]);
-            currentEvent.setPlanner(splitFeed[7]);
             currentEvent.setMeet(splitFeed[5] + " @ " + splitFeed[4]);
-            currentEvent.setMapsLocation(splitFeed[8]);
             currentEvent.setBring(splitFeed[6]);
-            currentEvent.setDate(splitFeed[1]);
+            currentEvent.setPlanner(splitFeed[7]);
+            currentEvent.setMapsLocation(splitFeed[8]);
             currentEvent.setId(i);
+            String curDateString = currentEvent.getDate();
+            for (int ind = curDateString.length() - 4; ind < curDateString.length(); ind++) {
+                if (!Character.isDigit(curDateString.charAt(ind))) {
+                    currentEvent.setDate(curDateString + " " + Calendar.getInstance().get(Calendar.YEAR));
+                    break;
+                }
+            }
             events[i] = currentEvent;
         }
         return events;

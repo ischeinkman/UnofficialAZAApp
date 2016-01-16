@@ -7,17 +7,23 @@ import org.ramonazaapi.interfaces.InfoWrapper;
  */
 public class SongInfoWrapper implements InfoWrapper {
 
-    private String name;
-    private String lyrics;
+    private final String name;
+    private final String lyrics;
+    private final int id;
 
     public SongInfoWrapper(String name, String lyrics) {
+        this(-1, name, lyrics);
+    }
+
+    public SongInfoWrapper(int id, String name, String lyrics) {
+        this.id = id;
         this.name = name;
         this.lyrics = lyrics;
     }
 
     @Override
     public int getId() {
-        return name.hashCode() * lyrics.hashCode();
+        return id;
     }
 
     @Override
@@ -29,5 +35,8 @@ public class SongInfoWrapper implements InfoWrapper {
         return lyrics;
     }
 
-
+    @Override
+    public int hashCode() {
+        return name.hashCode() * lyrics.hashCode();
+    }
 }

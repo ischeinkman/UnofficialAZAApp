@@ -9,8 +9,8 @@ public final class AppDatabaseContract {
 
     public static final String VTYPE_TEXT = "TEXT";
     public static final String VTYPE_INT = "INTEGER";
-    public static final String CREATE_TABLES = ContactListTable.CREATE_TABLE + "; " + DriverListTable.CREATE_TABLE + "; " + RidesListTable.CREATE_TABLE;
-    public static final String DELETE_TABLES = ContactListTable.DELETE_TABLE + "; " + DriverListTable.DELETE_TABLE + "; " + RidesListTable.DELETE_TABLE;
+    public static final String CREATE_TABLES = ContactListTable.CREATE_TABLE + "; " + DriverListTable.CREATE_TABLE + "; " + RidesListTable.CREATE_TABLE + "; " + EventListTable.CREATE_TABLE;
+    public static final String DELETE_TABLES = ContactListTable.DELETE_TABLE + "; " + DriverListTable.DELETE_TABLE + "; " + RidesListTable.DELETE_TABLE + "; " + EventListTable.DELETE_TABLE;
 
     public static abstract class ContactListTable implements BaseColumns {
         public static final String TABLE_NAME = "alephs";
@@ -36,6 +36,30 @@ public final class AppDatabaseContract {
                 COLUMN_LONGITUDE + " " + VTYPE_TEXT + "," +
                 COLUMN_AREA + " " + VTYPE_INT + "," +
                 COLUMN_PRESENT + " " + VTYPE_INT + ")";
+        public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
+    }
+
+
+    public static abstract class EventListTable implements BaseColumns {
+        public static final String TABLE_NAME = "events";
+        public static final String COLUMN_NAME= "eventname";
+        public static final String COLUMN_DESC = "eventdesc";
+        public static final String COLUMN_PLANNER = "eventplanner";
+        public static final String COLUMN_MEET = "eventmeet";
+        public static final String COLUMN_LOCATION = "eventlocation";
+        public static final String COLUMN_BRING = "eventbring";
+        public static final String COLUMN_DATE = "eventdate";
+        public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" +
+                EventListTable._ID + " INTEGER PRIMARY KEY, " +
+                COLUMN_NAME + " " + VTYPE_TEXT + "," +
+                COLUMN_DESC + " " + VTYPE_TEXT + "," +
+                COLUMN_PLANNER + " " + VTYPE_TEXT + "," +
+                COLUMN_MEET + " " + VTYPE_TEXT + "," +
+                COLUMN_LOCATION + " " + VTYPE_TEXT + "," +
+                COLUMN_BRING + " " + VTYPE_TEXT + "," +
+                COLUMN_DATE + " " + VTYPE_TEXT +
+
+                ")";
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
 

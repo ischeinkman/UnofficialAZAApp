@@ -3,9 +3,7 @@ package org.ramonaza.unofficialazaapp.frontpage.ui.activities;
 import android.app.ActionBar;
 import android.app.FragmentManager;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,6 +12,7 @@ import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.colorbook.ui.fragments.ColorBookFragment;
 import org.ramonaza.unofficialazaapp.events.ui.fragments.EventListFragment;
 import org.ramonaza.unofficialazaapp.frontpage.ui.fragments.NavigationDrawerFragment;
+import org.ramonaza.unofficialazaapp.helpers.backend.PreferenceHelper;
 import org.ramonaza.unofficialazaapp.helpers.ui.activities.BaseActivity;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesActivity;
 import org.ramonaza.unofficialazaapp.people.ui.fragments.ContactListFragment;
@@ -25,11 +24,11 @@ public class FrontalActivity extends BaseActivity
         ColorBookFragment.ColorBookCallbacks {
 
     public static final String EXTRA_OPENEDPAGE = "org.ramonaza.unofficialazaapp.OPENED_PAGE";
-    private static final int EVENTS_PAGE_INDEX = 0;
-    private static final int SONGS_PAGE_INDEX = 1;
-    private static final int BLUEBOOK_PAGE_INDEX = 2;
-    private static final int CONTACTS_PAGE_INDEX = 3;
-    private static final int RIDES_LINK_INDEX = 4;
+    public static final int EVENTS_PAGE_INDEX = 0;
+    public static final int SONGS_PAGE_INDEX = 1;
+    public static final int BLUEBOOK_PAGE_INDEX = 2;
+    public static final int CONTACTS_PAGE_INDEX = 3;
+    public static final int RIDES_LINK_INDEX = 4;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -39,18 +38,15 @@ public class FrontalActivity extends BaseActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
-    private SharedPreferences sharedPrefs;
     private int fragSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         setContentView(R.layout.activity_front_page);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
-
         Intent intent = getIntent();
         int pgVal = intent.getIntExtra(EXTRA_OPENEDPAGE, 0);
         if (pgVal == 0 && savedInstanceState != null) {
@@ -149,7 +145,7 @@ public class FrontalActivity extends BaseActivity
                     .replace(R.id.container, ContactListFragment.newInstance(position + 1))
                     .commit();
             fragSwitch = CONTACTS_PAGE_INDEX;
-        } else if (position == RIDES_LINK_INDEX && sharedPrefs.getBoolean("rides", false)) {
+        } else if (position == RIDES_LINK_INDEX && PreferenceHelper.getPreferences(this).isRidesMode()) {
             Intent ridesIntent = new Intent(this, RidesActivity.class);
             startActivity(ridesIntent);
         }

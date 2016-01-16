@@ -5,7 +5,6 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -22,7 +21,10 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import org.ramonaza.unofficialazaapp.R;
+import org.ramonaza.unofficialazaapp.events.backend.services.EventNotificationService;
+import org.ramonaza.unofficialazaapp.events.backend.services.EventUpdateService;
 import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
+import org.ramonaza.unofficialazaapp.helpers.backend.PreferenceHelper;
 import org.ramonaza.unofficialazaapp.settings.ui.fragments.ChapterPackSelectorFragment;
 
 import java.util.List;
@@ -122,6 +124,7 @@ public class SettingsActivity extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        getPreferenceManager().setSharedPreferencesName(PreferenceHelper.PREF_FILE_TITLE);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -176,9 +179,7 @@ public class SettingsActivity extends PreferenceActivity {
             });
         }
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean isDebug = preferences.getBoolean("admin", false);
-        if (isDebug) {
+        if (PreferenceHelper.getPreferences(this).isDebugMode()) {
             Button chapterPackButton = new Button(this);
             chapterPackButton.setText(getString(R.string.pref_title_create_pack_button));
             chapterPackButton.setBackgroundResource(R.drawable.general_textbutton_layout);
@@ -212,6 +213,15 @@ public class SettingsActivity extends PreferenceActivity {
         if (!isSimplePreferences(this)) {
             loadHeadersFromResource(R.xml.pref_headers, target);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        EventUpdateService.cancelRepeater(this);
+        EventNotificationService.cancelNotifications(this);
+        EventUpdateService.startRepeater(this);
+        EventNotificationService.setUpNotifications(this);
+        super.onPause();
     }
 
     /**

@@ -1,6 +1,7 @@
 package org.ramonazaapi.rides;
 
 import org.ramonazaapi.contacts.ContactInfoWrapper;
+import org.ramonazaapi.interfaces.PersonInfoWrapper;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -113,6 +114,6 @@ public class DriverInfoWrapper implements PersonInfoWrapper {
 
     @Override
     public int hashCode() {
-        return id * name.hashCode() + id;
+        return (id + 1) * name.hashCode() + (id + 1) * spots;
     }
 }

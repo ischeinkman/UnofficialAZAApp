@@ -17,10 +17,10 @@ public class EventPageActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_fragment);
         Intent rIntent = getIntent();
-        String eventRss = rIntent.getStringExtra(EVENT_DATA);
+        int eventID = rIntent.getIntExtra(EVENT_DATA, -1);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, GeneralEventFragment.newInstance(eventRss))
+                    .add(R.id.container, GeneralEventFragment.newInstance(eventID))
                     .commit();
         }
     }

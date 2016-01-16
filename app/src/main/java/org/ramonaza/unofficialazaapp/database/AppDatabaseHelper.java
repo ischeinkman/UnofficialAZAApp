@@ -30,6 +30,7 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(AppDatabaseContract.DriverListTable.CREATE_TABLE);
         db.execSQL(AppDatabaseContract.ContactListTable.CREATE_TABLE);
         db.execSQL(AppDatabaseContract.RidesListTable.CREATE_TABLE);
+        db.execSQL(AppDatabaseContract.EventListTable.CREATE_TABLE);
         try {
             genDatabaseFromCSV(db);
         } catch (ContactCSVReadError contactCSVReadError) {
@@ -41,27 +42,18 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(AppDatabaseContract.DriverListTable.DELETE_TABLE);
         db.execSQL(AppDatabaseContract.ContactListTable.DELETE_TABLE);
         db.execSQL(AppDatabaseContract.RidesListTable.DELETE_TABLE);
+        db.execSQL(AppDatabaseContract.EventListTable.DELETE_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion == 4 && newVersion == 5) {
+        if (oldVersion <= 4 && newVersion >= 5) {
             String addTableStatement = "ALTER TABLE " + AppDatabaseContract.DriverListTable.TABLE_NAME +
                     " ADD " + AppDatabaseContract.DriverListTable.COLUMN_CONTACT_INFO + " " + AppDatabaseContract.VTYPE_INT;
             db.execSQL(addTableStatement);
             String setDefault = "UPDATE " + AppDatabaseContract.DriverListTable.TABLE_NAME +
                     " SET " + AppDatabaseContract.DriverListTable.COLUMN_CONTACT_INFO + " =-1 ";
             db.execSQL(setDefault);
-        } else {
-            db.execSQL(AppDatabaseContract.DELETE_TABLES);
-            db.execSQL(AppDatabaseContract.DriverListTable.CREATE_TABLE);
-            db.execSQL(AppDatabaseContract.ContactListTable.CREATE_TABLE);
-            db.execSQL(AppDatabaseContract.RidesListTable.CREATE_TABLE);
-            try {
-                genDatabaseFromCSV(db);
-            } catch (ContactCSVReadError contactCSVReadError) {
-                contactCSVReadError.printStackTrace();
-            }
         }
     }
 
