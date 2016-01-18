@@ -111,7 +111,7 @@ public class AzaSongs extends SongList {
 
         SONGDATA.put("AZA All The Way",
                 "Aleph brothers of the order!\n" +
-                        "We're all jewish boys, some young and some older.\n" +
+                        "We're all Jewish boys, some young and some older.\n" +
                         "Life is great here, greater than NIFTY!\n" +
                         "We support each other, we're a fraternity.\n" +
                         "\n" +
@@ -130,7 +130,7 @@ public class AzaSongs extends SongList {
                         "For the chapter, and what we're after\n" +
                         "AZA all the way\n" +
                         "\n" +
-                        "I hear the prayers in the evening at havdallah;\n" +
+                        "I hear the prayers in the evening at Havdalah;\n" +
                         "Traditions remind me that I'm in AZA.\n" +
                         "And as we sing Air Force Ranger our bonds grow stronger each and every single day, and we say\n" +
                         "\n" +
@@ -165,7 +165,7 @@ public class AzaSongs extends SongList {
                         "Ba gdi (hold)\n" +
                         "(The group not chanting counts to 7 at the hold in \"Ba gdi\", then say \"Katan\")\n" +
                         "\n" +
-                        "(The song now has 3 different pathes to take. This page will present the most common order, though that may be subject to change. In addition, the \"India\" paragraph is sometimes omitted.)\n" +
+                        "(The song now has 3 different paths to take. This page will present the most common order, though that may be subject to change. In addition, the \"India\" paragraph is sometimes omitted.)\n" +
                         "\n" +
                         "Once there was a wizard\n" +
                         "Who went to Africa\n" +
