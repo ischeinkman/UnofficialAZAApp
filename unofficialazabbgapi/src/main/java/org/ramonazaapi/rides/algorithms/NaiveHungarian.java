@@ -1,6 +1,7 @@
 package org.ramonazaapi.rides.algorithms;
 
 import org.ramonazaapi.contacts.ContactInfoWrapper;
+import org.ramonazaapi.interfaces.LocationPoint;
 import org.ramonazaapi.rides.DriverInfoWrapper;
 import org.ramonazaapi.rides.RidesOptimizer;
 import org.ramonazaapi.rides.clusters.RidesCluster;
@@ -12,9 +13,22 @@ import java.util.List;
 
 public class NaiveHungarian implements RidesOptimizer.RidesAlgorithm {
 
+    /**
+     * Get the cost for the driver to drive the passenger home.
+     * Different versions of the algorithm can have different cost calculations.
+     *
+     * @param startx    the x position of the starting place of the event
+     * @param starty    the y position of the starting place of the event
+     * @param driver    the driver of the car
+     * @param passenger the passenger or cluster
+     * @return the cost value
+     */
+    public double getCost(double startx, double starty, DriverInfoWrapper driver, LocationPoint passenger) {
+        return RidesOptimizer.distBetweenHouses(driver, passenger);
+    }
 
     @Override
-    public void optimize(Collection<ContactInfoWrapper> allPassengers, Collection<DriverInfoWrapper> allDrivers) {
+    public void optimize(double startx, double starty, Collection<ContactInfoWrapper> allPassengers, Collection<DriverInfoWrapper> allDrivers) {
         List<DriverInfoWrapper> driversList = new ArrayList<>(allDrivers);
         List<Integer> driverIndicies = new ArrayList<Integer>();
         List<ContactInfoWrapper> indexedPassengers = new ArrayList<ContactInfoWrapper>(allPassengers);
@@ -28,7 +42,7 @@ public class NaiveHungarian implements RidesOptimizer.RidesAlgorithm {
             DriverInfoWrapper driver = driversList.get(driverIndicies.get(r));
             for (int c = 0; c < indexedPassengers.size(); c++) {
                 ContactInfoWrapper passenger = indexedPassengers.get(c);
-                costs[r][c] = RidesOptimizer.distBetweenHouses(driver, passenger);
+                costs[r][c] = getCost(startx, starty, driver, passenger);
             }
         }
 
@@ -43,7 +57,7 @@ public class NaiveHungarian implements RidesOptimizer.RidesAlgorithm {
     }
 
     @Override
-    public void optimize(Collection<ContactInfoWrapper> allPassengers, Collection<DriverInfoWrapper> allDrivers, Class<? extends RidesCluster> clusterType) {
+    public void optimize(double startx, double starty, Collection<ContactInfoWrapper> allPassengers, Collection<DriverInfoWrapper> allDrivers, Class<? extends RidesCluster> clusterType) {
         List<DriverInfoWrapper> driversList = new ArrayList<>(allDrivers);
         List<Integer> driverIndicies = new ArrayList<Integer>();
         for (DriverInfoWrapper driver : driversList) {

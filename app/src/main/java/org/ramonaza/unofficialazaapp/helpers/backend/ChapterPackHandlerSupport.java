@@ -143,7 +143,7 @@ public class ChapterPackHandlerSupport {
 
         //Corrects any location errors
         for (ContactInfoWrapper contact : allContacts) {
-            if (contact.getLatitude() == 0 && contact.getLongitude() == 0) {
+            if (contact.getX() == 0 && contact.getY() == 0) {
                 double[] coords = LocationSupport.getCoordsFromAddress(contact.getAddress(), context);
                 contact.setLatitude(coords[0]);
                 contact.setLongitude(coords[1]);

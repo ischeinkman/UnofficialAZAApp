@@ -1,7 +1,7 @@
 package org.ramonazaapi.rides;
 
 import org.ramonazaapi.contacts.ContactInfoWrapper;
-import org.ramonazaapi.interfaces.PersonInfoWrapper;
+import org.ramonazaapi.interfaces.LocationPoint;
 import org.ramonazaapi.rides.clusters.RidesCluster;
 
 import java.util.ArrayList;
@@ -20,26 +20,34 @@ public class RidesOptimizer {
     private RidesAlgorithm[] algorithmChain;
     private Class<? extends RidesCluster> clusterType;
     private boolean retainPreexisting;
+    private double startx = Double.POSITIVE_INFINITY;
+    private double starty = Double.POSITIVE_INFINITY;
 
     public RidesOptimizer() {
         this.passengersToOptimize = new HashSet<>();
         this.driversToOptimize = new ArrayList<>();
     }
 
-    public static double distBetweenHouses(PersonInfoWrapper person1, PersonInfoWrapper person2) {
+    public static double distBetweenHouses(LocationPoint person1, LocationPoint person2) {
         return Math.sqrt((
-                person2.getLatitude() - person1.getLatitude())
-                * (person2.getLatitude() - person1.getLatitude())
-                + (person2.getLongitude() - person1.getLongitude())
-                * (person2.getLongitude() - person1.getLongitude()));
+                person2.getX() - person1.getX())
+                * (person2.getX() - person1.getX())
+                + (person2.getY() - person1.getY())
+                * (person2.getY() - person1.getY()));
     }
 
-    public static double distBetweenHouses(PersonInfoWrapper person, double[] coords) {
+    public static double distBetweenHouses(LocationPoint person, double[] coords) {
         return Math.sqrt((
-                person.getLatitude() - coords[0])
-                * (person.getLatitude() - coords[0])
-                + (person.getLongitude() - coords[1])
-                * (person.getLongitude() - coords[1]));
+                person.getX() - coords[0])
+                * (person.getX() - coords[0])
+                + (person.getY() - coords[1])
+                * (person.getY() - coords[1]));
+    }
+
+    public RidesOptimizer setStart(double startx, double starty) {
+        this.startx = startx;
+        this.starty = starty;
+        return this;
     }
 
     /**
@@ -132,8 +140,10 @@ public class RidesOptimizer {
         for (RidesAlgorithm algorithm : algorithmChain) {
             if (algorithm == null) continue;
             cleanDriverless();
-            if (clusterType == null) algorithm.optimize(passengersToOptimize, driversToOptimize);
-            else algorithm.optimize(passengersToOptimize, driversToOptimize, clusterType);
+            if (clusterType == null)
+                algorithm.optimize(startx, starty, passengersToOptimize, driversToOptimize);
+            else
+                algorithm.optimize(startx, starty, passengersToOptimize, driversToOptimize, clusterType);
         }
     }
 
@@ -146,9 +156,9 @@ public class RidesOptimizer {
     }
 
     public interface RidesAlgorithm {
-        void optimize(Collection<ContactInfoWrapper> allPassengers, Collection<DriverInfoWrapper> allDrivers);
+        void optimize(double startx, double starty, Collection<ContactInfoWrapper> allPassengers, Collection<DriverInfoWrapper> allDrivers);
 
-        void optimize(Collection<ContactInfoWrapper> allPassengers, Collection<DriverInfoWrapper> allDrivers, Class<? extends RidesCluster> clusterType);
+        void optimize(double startx, double starty, Collection<ContactInfoWrapper> allPassengers, Collection<DriverInfoWrapper> allDrivers, Class<? extends RidesCluster> clusterType);
     }
 }
 

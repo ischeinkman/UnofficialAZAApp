@@ -22,12 +22,12 @@ public class ClusterMatch implements RidesOptimizer.RidesAlgorithm {
     private Set<ContactInfoWrapper> passengersToOptimize;
 
     @Override
-    public void optimize(Collection<ContactInfoWrapper> allPassengers, Collection<DriverInfoWrapper> allDrivers) {
+    public void optimize(double startx, double starty, Collection<ContactInfoWrapper> allPassengers, Collection<DriverInfoWrapper> allDrivers) {
         return;
     }
 
     @Override
-    public void optimize(Collection<ContactInfoWrapper> allPassengers, Collection<DriverInfoWrapper> allDrivers, Class<? extends RidesCluster> clusterType) {
+    public void optimize(double startx, double starty, Collection<ContactInfoWrapper> allPassengers, Collection<DriverInfoWrapper> allDrivers, Class<? extends RidesCluster> clusterType) {
 
         driversToOptimize = new HashSet<>(allDrivers);
         passengersToOptimize = new HashSet<>(allPassengers);

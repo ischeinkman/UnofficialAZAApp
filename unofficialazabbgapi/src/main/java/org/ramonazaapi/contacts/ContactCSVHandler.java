@@ -58,7 +58,7 @@ public class ContactCSVHandler {
         String dataToWrite = "";
         for (ContactInfoWrapper contact : toSave) {
             dataToWrite += contact.getName() + "," + contact.getSchool() + "," + contact.getGradYear() + ",\"" + contact.getAddress() + "\","
-                    + contact.getLatitude() + "," + contact.getLongitude() + "," + contact.getEmail() + "," + contact.getPhoneNumber() + "\n";
+                    + contact.getX() + "," + contact.getY() + "," + contact.getEmail() + "," + contact.getPhoneNumber() + "\n";
         }
         try {
             FileOutputStream outputStream = new FileOutputStream(file, append);

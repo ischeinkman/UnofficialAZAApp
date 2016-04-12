@@ -96,8 +96,8 @@ public class ContactDatabaseHandler {
         value.put(AppDatabaseContract.ContactListTable.COLUMN_PHONE, toAdd.getPhoneNumber());
         value.put(AppDatabaseContract.ContactListTable.COLUMN_SCHOOL, toAdd.getSchool());
         value.put(AppDatabaseContract.ContactListTable.COLUMN_PRESENT, toAdd.isPresent());
-        value.put(AppDatabaseContract.ContactListTable.COLUMN_LATITUDE, toAdd.getLatitude());
-        value.put(AppDatabaseContract.ContactListTable.COLUMN_LONGITUDE, toAdd.getLongitude());
+        value.put(AppDatabaseContract.ContactListTable.COLUMN_LATITUDE, toAdd.getX());
+        value.put(AppDatabaseContract.ContactListTable.COLUMN_LONGITUDE, toAdd.getY());
         long rowId = db.insert(AppDatabaseContract.ContactListTable.TABLE_NAME, null, value);
         if (rowId == -1l) throw new ContactCSVReadError("Null Contact Read", toAdd);
         else toAdd.setId((int) rowId);
@@ -117,8 +117,8 @@ public class ContactDatabaseHandler {
         value.put(AppDatabaseContract.ContactListTable.COLUMN_GRADYEAR, toUpdate.getGradYear());
         value.put(AppDatabaseContract.ContactListTable.COLUMN_PHONE, toUpdate.getPhoneNumber());
         value.put(AppDatabaseContract.ContactListTable.COLUMN_SCHOOL, toUpdate.getSchool());
-        value.put(AppDatabaseContract.ContactListTable.COLUMN_LATITUDE, toUpdate.getLatitude());
-        value.put(AppDatabaseContract.ContactListTable.COLUMN_LONGITUDE, toUpdate.getLongitude());
+        value.put(AppDatabaseContract.ContactListTable.COLUMN_LATITUDE, toUpdate.getX());
+        value.put(AppDatabaseContract.ContactListTable.COLUMN_LONGITUDE, toUpdate.getY());
         value.put(AppDatabaseContract.ContactListTable.COLUMN_PRESENT, toUpdate.isPresent());
         long rowId = db.update(AppDatabaseContract.ContactListTable.TABLE_NAME, value,
                 AppDatabaseContract.ContactListTable._ID + "=?", new String[]{"" + toUpdate.getId()});

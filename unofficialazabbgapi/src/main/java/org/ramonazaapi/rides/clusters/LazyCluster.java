@@ -15,7 +15,7 @@ public class LazyCluster extends RidesCluster {
 
     public LazyCluster(ContactInfoWrapper firstContact) {
         super(firstContact);
-        center = new double[]{firstContact.getLatitude(), firstContact.getLongitude()};
+        center = new double[]{firstContact.getX(), firstContact.getY()};
     }
 
     @Override

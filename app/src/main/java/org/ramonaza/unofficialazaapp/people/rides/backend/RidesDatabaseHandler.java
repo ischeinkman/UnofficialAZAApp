@@ -118,8 +118,8 @@ public class RidesDatabaseHandler extends ContactDatabaseHandler {
         value.put(AppDatabaseContract.DriverListTable.COLUMN_NAME, toAdd.getName());
         value.put(AppDatabaseContract.DriverListTable.COLUMN_SPACE, toAdd.getSpots());
         value.put(AppDatabaseContract.DriverListTable.COLUMN_ADDRESS, toAdd.getAddress());
-        value.put(AppDatabaseContract.DriverListTable.COLUMN_LATITUDE, toAdd.getLatitude());
-        value.put(AppDatabaseContract.DriverListTable.COLUMN_LONGITUDE, toAdd.getLongitude());
+        value.put(AppDatabaseContract.DriverListTable.COLUMN_LATITUDE, toAdd.getX());
+        value.put(AppDatabaseContract.DriverListTable.COLUMN_LONGITUDE, toAdd.getY());
         if (toAdd.getContactInfo() != null) {
             value.put(AppDatabaseContract.DriverListTable.COLUMN_CONTACT_INFO, toAdd.getContactInfo().getId());
         } else {
@@ -155,8 +155,8 @@ public class RidesDatabaseHandler extends ContactDatabaseHandler {
         value.put(AppDatabaseContract.DriverListTable.COLUMN_NAME, toUpdate.getName());
         value.put(AppDatabaseContract.DriverListTable.COLUMN_SPACE, toUpdate.getSpots());
         value.put(AppDatabaseContract.DriverListTable.COLUMN_ADDRESS, toUpdate.getAddress());
-        value.put(AppDatabaseContract.DriverListTable.COLUMN_LATITUDE, toUpdate.getLatitude());
-        value.put(AppDatabaseContract.DriverListTable.COLUMN_LONGITUDE, toUpdate.getLongitude());
+        value.put(AppDatabaseContract.DriverListTable.COLUMN_LATITUDE, toUpdate.getX());
+        value.put(AppDatabaseContract.DriverListTable.COLUMN_LONGITUDE, toUpdate.getY());
         if (toUpdate.getContactInfo() != null) {
             value.put(AppDatabaseContract.DriverListTable.COLUMN_CONTACT_INFO, toUpdate.getContactInfo().getId());
         } else {

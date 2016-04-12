@@ -1,6 +1,7 @@
 package org.ramonazaapi.rides.clusters;
 
 import org.ramonazaapi.contacts.ContactInfoWrapper;
+import org.ramonazaapi.interfaces.LocationPoint;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.Set;
  * to be treated as a single unit for rides purposes.
  * Created by ilan on 10/2/15.
  */
-public abstract class RidesCluster {
+public abstract class RidesCluster implements LocationPoint {
 
     protected Set<ContactInfoWrapper> contactsInCluster;
 
@@ -125,6 +126,15 @@ public abstract class RidesCluster {
      */
     public abstract double[] getCenter();
 
+    @Override
+    public double getX() {
+        return getCenter()[0];
+    }
+
+    @Override
+    public double getY() {
+        return getCenter()[1];
+    }
 
     public boolean containsContact(ContactInfoWrapper contact) {
         return contactsInCluster.contains(contact);

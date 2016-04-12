@@ -150,8 +150,8 @@ public class AddCustomDriverFragment extends Fragment {
 
             mDriver.setAddress(driverAddress);
             if (mDriver.getAddress().equals(presContact.getAddress())) {
-                mDriver.setLongitude("" + presContact.getLongitude());
-                mDriver.setLatitude("" + presContact.getLatitude());
+                mDriver.setLongitude("" + presContact.getY());
+                mDriver.setLatitude("" + presContact.getX());
             }
 
             if (mDriver.getName().equals(presContact.getName())) mDriver.setSpots(inpSpots + 1);

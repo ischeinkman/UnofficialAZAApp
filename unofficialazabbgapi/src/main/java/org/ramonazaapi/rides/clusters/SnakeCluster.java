@@ -34,8 +34,8 @@ public class SnakeCluster extends RidesCluster {
         double[] center = new double[]{0.0, 0.0};
         int total = 0;
         for (ContactInfoWrapper contact : contactsInCluster) {
-            center[0] += contact.getLatitude();
-            center[1] += contact.getLongitude();
+            center[0] += contact.getX();
+            center[1] += contact.getY();
             total += 1;
         }
         center[0] /= total;

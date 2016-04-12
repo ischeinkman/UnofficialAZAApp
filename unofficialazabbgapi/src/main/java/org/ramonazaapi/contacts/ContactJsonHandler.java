@@ -19,8 +19,8 @@ public class ContactJsonHandler extends InfoWrapperJsonHandler<ContactInfoWrappe
         attrs.put("school", toGet.getSchool());
         attrs.put("graduationyear", toGet.getGradYear());
         attrs.put("address", toGet.getAddress());
-        attrs.put("addresslat", "" + toGet.getLatitude());
-        attrs.put("addresslong", "" + toGet.getLongitude());
+        attrs.put("addresslat", "" + toGet.getX());
+        attrs.put("addresslong", "" + toGet.getY());
         attrs.put("atevent", (toGet.isPresent()) ? "1" : "0");
         attrs.put("areanumber", "" + toGet.getArea());
         return attrs;

@@ -24,8 +24,8 @@ public class HungryCluster extends RidesCluster {
         int lSize = contactsInCluster.size();
         center = new double[]{0.0, 0.0};
         for (ContactInfoWrapper inCluster : contactsInCluster) {
-            center[0] += inCluster.getLatitude();
-            center[1] += inCluster.getLongitude();
+            center[0] += inCluster.getX();
+            center[1] += inCluster.getY();
         }
         center[0] /= lSize;
         center[1] /= lSize;
@@ -41,7 +41,7 @@ public class HungryCluster extends RidesCluster {
 
     @Override
     public boolean passengerLiesInCluster(ContactInfoWrapper toCheck) {
-        if (toCheck.getLatitude() == 0.0 && toCheck.getLongitude() == 0.0) return false;
+        if (toCheck.getX() == 0.0 && toCheck.getY() == 0.0) return false;
         double distToCenter = RidesOptimizer.distBetweenHouses(toCheck, center);
         double outerRadius = innerRadius + RADIUS_ADDITION;
         return (distToCenter <= outerRadius);

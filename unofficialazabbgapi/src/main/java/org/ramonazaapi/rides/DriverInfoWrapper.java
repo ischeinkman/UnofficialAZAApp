@@ -1,7 +1,8 @@
 package org.ramonazaapi.rides;
 
 import org.ramonazaapi.contacts.ContactInfoWrapper;
-import org.ramonazaapi.interfaces.PersonInfoWrapper;
+import org.ramonazaapi.interfaces.InfoWrapper;
+import org.ramonazaapi.interfaces.LocationPoint;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,7 +12,7 @@ import java.util.Set;
 /**
  * Created by ilanscheinkman on 3/14/15.
  */
-public class DriverInfoWrapper implements PersonInfoWrapper {
+public class DriverInfoWrapper implements LocationPoint, InfoWrapper {
     private int spots;
     private String name;
     private String address;
@@ -41,7 +42,7 @@ public class DriverInfoWrapper implements PersonInfoWrapper {
         return contactInfo != null;
     }
 
-    public double getLatitude() {
+    public double getX() {
         return latitude;
     }
 
@@ -49,7 +50,7 @@ public class DriverInfoWrapper implements PersonInfoWrapper {
         this.latitude = Double.valueOf(latitude);
     }
 
-    public double getLongitude() {
+    public double getY() {
         return longitude;
     }
 
@@ -91,6 +92,14 @@ public class DriverInfoWrapper implements PersonInfoWrapper {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     public void addPassengerToCar(ContactInfoWrapper passenger) {

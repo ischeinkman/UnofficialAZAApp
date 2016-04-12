@@ -15,7 +15,7 @@ import java.util.List;
 public class SerialArson implements RidesOptimizer.RidesAlgorithm {
 
     @Override
-    public void optimize(Collection<ContactInfoWrapper> allPassengers, Collection<DriverInfoWrapper> allDrivers) {
+    public void optimize(double startx, double starty, Collection<ContactInfoWrapper> allPassengers, Collection<DriverInfoWrapper> allDrivers) {
 
         List<ContactInfoWrapper> allContacts = new ArrayList<ContactInfoWrapper>(allPassengers);
         for (ContactInfoWrapper toOptimize : allContacts) {
@@ -40,7 +40,7 @@ public class SerialArson implements RidesOptimizer.RidesAlgorithm {
     }
 
     @Override
-    public void optimize(Collection<ContactInfoWrapper> allPassengers, Collection<DriverInfoWrapper> allDrivers, Class<? extends RidesCluster> clusterType) {
+    public void optimize(double startx, double starty, Collection<ContactInfoWrapper> allPassengers, Collection<DriverInfoWrapper> allDrivers, Class<? extends RidesCluster> clusterType) {
         List<RidesCluster> clusters = RidesCluster.clusterPassengers(clusterType, allPassengers);
         for (RidesCluster cluster : clusters) {
             while (cluster.getSize() > 0) {

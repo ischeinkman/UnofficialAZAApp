@@ -18,7 +18,7 @@ public class FlamboyantElephant implements RidesOptimizer.RidesAlgorithm {
     Set<DriverInfoWrapper> optimizedDrivers;
 
     @Override
-    public void optimize(Collection<ContactInfoWrapper> allPassengers, Collection<DriverInfoWrapper> allDrivers) {
+    public void optimize(double startx, double starty, Collection<ContactInfoWrapper> allPassengers, Collection<DriverInfoWrapper> allDrivers) {
         optimizedDrivers = new HashSet<>();
         optimizedPassengers = new HashSet<>();
         boolean allFull = false;
@@ -44,6 +44,7 @@ public class FlamboyantElephant implements RidesOptimizer.RidesAlgorithm {
         double minDist = Double.MAX_VALUE;
         ContactInfoWrapper rPassenger = null;
         for (ContactInfoWrapper passenger : passengersToOptimize) {
+            if (optimizedPassengers.contains(passenger)) continue;
             double curDist = RidesOptimizer.distBetweenHouses(driver, passenger);
             if (curDist < minDist) {
                 minDist = curDist;
@@ -54,7 +55,7 @@ public class FlamboyantElephant implements RidesOptimizer.RidesAlgorithm {
     }
 
     @Override
-    public void optimize(Collection<ContactInfoWrapper> allPassengers, Collection<DriverInfoWrapper> allDrivers, Class<? extends RidesCluster> clusterType) {
+    public void optimize(double startx, double starty, Collection<ContactInfoWrapper> allPassengers, Collection<DriverInfoWrapper> allDrivers, Class<? extends RidesCluster> clusterType) {
         optimizedDrivers = new HashSet<>();
         optimizedPassengers = new HashSet<>();
         Set<RidesCluster> clusters = new HashSet<RidesCluster>(RidesCluster.clusterPassengers(clusterType, allPassengers));

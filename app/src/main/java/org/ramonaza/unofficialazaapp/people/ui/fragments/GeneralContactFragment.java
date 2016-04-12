@@ -59,8 +59,8 @@ public class GeneralContactFragment extends Fragment {
 
         if (PreferenceHelper.getPreferences(getActivity()).isDebugMode()) {
             infoDump += "ID: " + mContact.getId() + "\n";
-            infoDump += "Lat: " + mContact.getLatitude() + "\n";
-            infoDump += "Long: " + mContact.getLongitude() + "\n";
+            infoDump += "Lat: " + mContact.getX() + "\n";
+            infoDump += "Long: " + mContact.getY() + "\n";
             if (mContact.isPresent()) {
                 infoDump += "RIDES: PRESENT";
             } else {
