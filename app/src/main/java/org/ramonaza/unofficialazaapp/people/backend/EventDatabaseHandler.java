@@ -7,22 +7,24 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 
 import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
-import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
+import org.ramonaza.unofficialazaapp.helpers.backend.BaseDatabaseHandler;
 import org.ramonazaapi.events.EventInfoWrapper;
 
 /**
  * Created by Yuval Zach aka kingi2001 on 12/28/2015.
  */
-public class EventDatabaseHandler {
-    protected SQLiteDatabase db;
+public class EventDatabaseHandler extends BaseDatabaseHandler<EventInfoWrapper> {
 
     public EventDatabaseHandler(Context context) {
-        AppDatabaseHelper dbHelper = new AppDatabaseHelper(context);
-        db = dbHelper.getWritableDatabase();
+        super(context);
     }
 
     public EventDatabaseHandler(SQLiteDatabase db) {
-        this.db = db;
+        super(db);
+    }
+
+    public EventDatabaseHandler(BaseDatabaseHandler other) {
+        super(other);
     }
 
     public static EventInfoWrapper[] getEventsFromCursor(Cursor queryResults) {

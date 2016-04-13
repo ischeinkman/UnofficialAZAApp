@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 
 import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
-import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
+import org.ramonaza.unofficialazaapp.helpers.backend.BaseDatabaseHandler;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
 
 
@@ -15,27 +15,18 @@ import org.ramonazaapi.contacts.ContactInfoWrapper;
  * An object for easily manipulating the Contact-Rides database.
  * Created by ilanscheinkman on 7/16/15.
  */
-public class ContactDatabaseHandler {
+public class ContactDatabaseHandler extends BaseDatabaseHandler<ContactInfoWrapper> {
 
-    protected SQLiteDatabase db;
-
-    /**
-     * Creates a handler based on a context.
-     *
-     * @param context the context to retrieve the database from
-     */
     public ContactDatabaseHandler(Context context) {
-        AppDatabaseHelper dbHelper = new AppDatabaseHelper(context);
-        db = dbHelper.getWritableDatabase();
+        super(context);
     }
 
-    /**
-     * Creates a handler based on a preexisting database.
-     *
-     * @param db the database to use
-     */
     public ContactDatabaseHandler(SQLiteDatabase db) {
-        this.db = db;
+        super(db);
+    }
+
+    public ContactDatabaseHandler(BaseDatabaseHandler other) {
+        super(other);
     }
 
     /**
@@ -159,7 +150,7 @@ public class ContactDatabaseHandler {
                 AppDatabaseContract.ContactListTable._ID,
                 id
         );
-        Cursor cursor = db.rawQuery(query, null);
+        Cursor cursor = query(query);
         ContactInfoWrapper[] contactArray = getContactsFromCursor(cursor);
         return contactArray[0];
     }
@@ -236,7 +227,7 @@ public class ContactDatabaseHandler {
             query = query.substring(0, query.length() - 3);
         }
         if (orderBy != null) query += "ORDER BY " + orderBy;
-        Cursor queryResults = db.rawQuery(query, null);
+        Cursor queryResults = query(query);
         queryResults.moveToFirst();
         return getContactsFromCursor(queryResults);
     }
