@@ -73,6 +73,12 @@ public class GeneralContactFragment extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
+
+        if (mContact == null) {
+            Toast.makeText(getActivity(), "WARNING: Contact is null.", Toast.LENGTH_LONG).show();
+            mContact = new ContactInfoWrapper();
+            mContact.setName("Null Contact");
+        }
         ActionBar actionBar = getActivity().getActionBar();
         actionBar.setTitle(this.mContact.getName());
         View rootView = inflater.inflate(R.layout.fragment_contact_data, container, false);
