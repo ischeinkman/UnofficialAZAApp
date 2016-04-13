@@ -25,8 +25,6 @@ public class ChapterPackHandlerSupport {
 
     public static final String NEW_PACK_DIRECTORY = "Generated Packs/";
     private static ChapterPackHandler currentHandler;
-    private static boolean contactsLoaded = false;
-
     /**
      * Check if we currently have a Chapter Pack leaded into the app.
      *
@@ -57,7 +55,6 @@ public class ChapterPackHandlerSupport {
 
     /**
      * Gets the current Chapter Pack.
-     * If one currently exists in the Downloads directory, we get that pack.
      * If no pack is or could be loaded, we return null.
      *
      * @param context the context to use
@@ -76,14 +73,29 @@ public class ChapterPackHandlerSupport {
      * @return the current Chapter Pack
      */
     public static ChapterPackHandler getChapterPackHandler(Context context, File pack) {
+
+        //If the new pack is the same as the old pack, return the old pack.
         if (currentHandler != null && currentHandler.getPackName().equals(pack.getName()))
             return currentHandler;
-        /*SharedPreferences preferences = context.getSharedPreferences("APP_PREFS", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(PreferenceHelper.PREF_CHAPTERPACK, pack.getName());*/
+
         currentHandler = new ChapterPackHandler(pack);
+
+        //Store the new event feed for later use
         PreferenceHelper.getPreferences(context).putChapterPackName(pack.getName()).putEventFeed(currentHandler.getEventUrl());
-        contactsLoaded = false;
+
+        //Store the new contact list for later use
+        ContactInfoWrapper[] inPack = currentHandler.getCsvHandler().getCtactInfoListFromCSV();
+        ContactDatabaseHandler ctdbh = new ContactDatabaseHandler(context);
+        if (inPack.length > 0) {
+            ctdbh.deleteContacts(null, null);
+            for (ContactInfoWrapper contact : inPack) {
+                try {
+                    ctdbh.addContact(contact);
+                } catch (ContactDatabaseHandler.ContactCSVReadError contactCSVReadError) {
+                    contactCSVReadError.printStackTrace();
+                }
+            }
+        }
         return currentHandler;
     }
 
@@ -98,21 +110,6 @@ public class ChapterPackHandlerSupport {
      */
     public static ContactDatabaseHandler getContactHandler(Context context) {
         ContactDatabaseHandler returnHandler = new ContactDatabaseHandler(context);
-        if (!contactsLoaded &&
-                (currentHandler != null || getChapterPackHandler(context) != null) &&
-                currentHandler.getCsvHandler() != null) {
-            ContactInfoWrapper[] inPack = currentHandler.getCsvHandler().getCtactInfoListFromCSV();
-            if (!(inPack.length <= 0)) {
-                returnHandler.deleteContacts(null, null);
-                for (ContactInfoWrapper contact : inPack) {
-                    try {
-                        returnHandler.addContact(contact);
-                    } catch (ContactDatabaseHandler.ContactCSVReadError contactCSVReadError) {
-                        contactCSVReadError.printStackTrace();
-                    }
-                }
-            }
-        }
         return returnHandler;
     }
 
