@@ -80,7 +80,18 @@ public class RidesOptimizer {
      * @param passengersToLoad the passengers to load
      * @return this
      */
-    public RidesOptimizer loadPassengers(ContactInfoWrapper... passengersToLoad) {
+    public RidesOptimizer loadDriverless(ContactInfoWrapper... passengersToLoad) {
+        for (ContactInfoWrapper a : passengersToLoad) passengersToOptimize.add(a);
+        return this;
+    }
+
+    /**
+     * Load driverless passengers into the optimizer.
+     *
+     * @param passengersToLoad the passengers to load
+     * @return this
+     */
+    public RidesOptimizer loadDriverless(Collection<? extends ContactInfoWrapper> passengersToLoad) {
         for (ContactInfoWrapper a : passengersToLoad) passengersToOptimize.add(a);
         return this;
     }
@@ -91,7 +102,18 @@ public class RidesOptimizer {
      * @param driversToLoad the drivers to load
      * @return this
      */
-    public RidesOptimizer loadDriver(DriverInfoWrapper... driversToLoad) {
+    public RidesOptimizer loadDrivers(DriverInfoWrapper... driversToLoad) {
+        for (DriverInfoWrapper d : driversToLoad) driversToOptimize.add(d);
+        return this;
+    }
+
+    /**
+     * Load drivers into the optimizer.
+     *
+     * @param driversToLoad the drivers to load
+     * @return this
+     */
+    public RidesOptimizer loadDrivers(Collection<? extends DriverInfoWrapper> driversToLoad) {
         for (DriverInfoWrapper d : driversToLoad) driversToOptimize.add(d);
         return this;
     }

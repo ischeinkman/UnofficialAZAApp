@@ -2,9 +2,7 @@ package org.ramonaza.unofficialazaapp.people.ui.activities;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
@@ -13,15 +11,18 @@ import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.frontpage.ui.activities.FrontalActivity;
 import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.unofficialazaapp.helpers.ui.activities.BaseActivity;
-import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.ui.fragments.GeneralContactFragment;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
+
+import rx.Subscription;
+import rx.functions.Action1;
 
 public class ContactDataActivity extends BaseActivity {
 
     public static final String EXTRA_CONTRUCTION_INFO = "org.ramonaza.unofficialazaapp.CONTACT_ID";
     public static final String EXTRA_LAYER = "org.ramonaza.unofficialazaapp.LAYER_NAME";
     private int inputId;
+    private Subscription refreshSub;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +32,7 @@ public class ContactDataActivity extends BaseActivity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setTitle("Blank Contact Data");
         inputId = intent.getIntExtra(EXTRA_CONTRUCTION_INFO, 0);
-        new intentToFrag(this).execute(inputId);
+        refreshFrag();
     }
 
 
@@ -54,29 +55,21 @@ public class ContactDataActivity extends BaseActivity {
     }
 
     public void refreshFrag() {
-        new intentToFrag(this).execute(inputId);
-    }
-
-    public class intentToFrag extends AsyncTask<Integer, Void, ContactInfoWrapper> {
-
-        private Context context;
-
-        public intentToFrag(Context context) {
-            this.context = context;
+        if (!(refreshSub == null) && !refreshSub.isUnsubscribed()) {
+            refreshSub.unsubscribe();
         }
-
-        @Override
-        protected ContactInfoWrapper doInBackground(Integer... params) {
-            ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(context);
-            return handler.getContact(inputId);
-        }
-
-        @Override
-        protected void onPostExecute(ContactInfoWrapper contactInfoWrapper) {
-            super.onPostExecute(contactInfoWrapper);
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction transaction = fragmentManager.beginTransaction().replace(R.id.container, GeneralContactFragment.newInstance(1, contactInfoWrapper));
-            transaction.commit();
-        }
+        refreshSub = ChapterPackHandlerSupport.getContactHandler(this).getContacts(inputId).subscribe(new Action1<ContactInfoWrapper>() {
+            @Override
+            public void call(ContactInfoWrapper contactInfoWrapper) {
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction().replace(R.id.container, GeneralContactFragment.newInstance(1, contactInfoWrapper));
+                transaction.commit();
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                showText(throwable.getMessage());
+            }
+        });
     }
 }

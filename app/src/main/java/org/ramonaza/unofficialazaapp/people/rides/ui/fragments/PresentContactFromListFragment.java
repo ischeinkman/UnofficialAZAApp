@@ -1,7 +1,6 @@
 package org.ramonaza.unofficialazaapp.people.rides.ui.fragments;
 
 import android.app.Fragment;
-import android.os.AsyncTask;
 import android.os.Bundle;
 
 import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
@@ -12,6 +11,8 @@ import org.ramonazaapi.contacts.ContactInfoWrapper;
 import org.ramonazaapi.interfaces.InfoWrapper;
 
 import java.util.Arrays;
+
+import rx.Observable;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,29 +35,17 @@ public class PresentContactFromListFragment extends InfoWrapperCheckBoxesFragmen
     }
 
     @Override
-    public void onSubmitButton(InfoWrapper[] checked, InfoWrapper[] unchecked) {
-        new SubmitFromList().execute(checked);
+    public Observable<?> onSubmitButton(InfoWrapper[] checked, InfoWrapper[] unchecked) {
+        ContactInfoWrapper[] presentContacts = Arrays.copyOf(checked, checked.length, ContactInfoWrapper[].class);
+        ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(getActivity());
+        return handler.updateContactField(AppDatabaseContract.ContactListTable.COLUMN_PRESENT, "1", presentContacts);
     }
 
     @Override
-    public ContactInfoWrapper[] generateInfo() {
+    public Observable<ContactInfoWrapper> generateInfo() {
         ContactDatabaseHandler handler = new ContactDatabaseHandler(getActivity());
         return handler.getContacts(new String[]{AppDatabaseContract.ContactListTable.COLUMN_PRESENT + "=0"},
                 AppDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
-    }
-
-
-    private class SubmitFromList extends AsyncTask<InfoWrapper, Void, Void> {
-
-        @Override
-        protected Void doInBackground(InfoWrapper... params) {
-            ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(getActivity());
-            ContactInfoWrapper[] presentContacts = Arrays.copyOf(params, params.length, ContactInfoWrapper[].class);
-            handler.updateContactField(AppDatabaseContract.ContactListTable.COLUMN_PRESENT, "1", presentContacts);
-            return null;
-        }
-
-
     }
 
 }

@@ -11,6 +11,12 @@ import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragmen
 import org.ramonaza.unofficialazaapp.helpers.ui.other.InfoWrapperCheckboxListAdapter;
 import org.ramonazaapi.interfaces.InfoWrapper;
 
+import rx.Observable;
+import rx.Observer;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 /**
  * Parent class for fragments with a checkbox list and a submit button.
  * WARNING: Parent activity should include an action_submit actionbar button.
@@ -19,6 +25,7 @@ public abstract class InfoWrapperCheckBoxesFragment extends InfoWrapperListFragm
 
 
     protected InfoWrapperCheckboxListAdapter mAdapter;
+    protected Subscription endingSubscription;
 
 
     @Override
@@ -34,7 +41,7 @@ public abstract class InfoWrapperCheckBoxesFragment extends InfoWrapperListFragm
     }
 
 
-    public abstract void onSubmitButton(InfoWrapper[] checked, InfoWrapper[] unchecked);
+    public abstract Observable<?> onSubmitButton(InfoWrapper[] checked, InfoWrapper[] unchecked);
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -45,8 +52,25 @@ public abstract class InfoWrapperCheckBoxesFragment extends InfoWrapperListFragm
 
         switch (id) {
             case R.id.action_submit:
-                onSubmitButton(mAdapter.getBoth()[0], mAdapter.getBoth()[1]);
-                getActivity().finish();
+                endingSubscription = onSubmitButton(mAdapter.getBoth()[0], mAdapter.getBoth()[1])
+                        .subscribeOn(Schedulers.computation())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<Object>() {
+                            @Override
+                            public void onCompleted() {
+                                if (endingSubscription != null) endingSubscription.unsubscribe();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                showText(e.getMessage());
+                            }
+
+                            @Override
+                            public void onNext(Object aVoid) {
+                                getActivity().finish();
+                            }
+                        });
                 break;
 
         }

@@ -52,7 +52,7 @@ public class NaiveHungarian implements RidesOptimizer.RidesAlgorithm {
             if (assignments[i] == -1) continue;
             ContactInfoWrapper passenger = indexedPassengers.get(assignments[i]);
             DriverInfoWrapper driver = driversList.get(driverIndicies.get(i));
-            driver.addPassengerToCar(passenger);
+            driver.addPassengersToCar(passenger);
         }
     }
 
@@ -91,7 +91,7 @@ public class NaiveHungarian implements RidesOptimizer.RidesAlgorithm {
             DriverInfoWrapper driver = driversList.get(driverIndicies.get(i));
             RidesCluster assignedCluster = clusters.get(clusterIndecies.get(assignments[i]));
             ContactInfoWrapper toAdd = assignedCluster.getPassengersInCluster()[0];
-            driver.addPassengerToCar(toAdd);
+            driver.addPassengersToCar(toAdd);
             assignedCluster.removePassengerFromCluster(toAdd);
         }
     }

@@ -2,8 +2,6 @@ package org.ramonaza.unofficialazaapp.people.rides.ui.fragments;
 
 import android.app.Fragment;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.text.Html;
@@ -17,7 +15,7 @@ import android.widget.Toast;
 
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
-import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
+import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
 import org.ramonazaapi.rides.DriverInfoWrapper;
@@ -33,7 +31,19 @@ import org.ramonazaapi.rides.clusters.RidesCluster;
 import org.ramonazaapi.rides.clusters.SnakeCluster;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,6 +68,7 @@ public class DisplayRidesFragment extends Fragment {
     private int clusterIndex;
     private boolean retainRides;
     private boolean optimize;
+    private Subscription ridesSub;
 
     public DisplayRidesFragment() {
         // Required empty public constructor
@@ -78,6 +89,10 @@ public class DisplayRidesFragment extends Fragment {
         args.putBoolean(EXTRA_OPTIMIZE, optimize);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    private static String createRidesList(Collection<? extends DriverInfoWrapper> drivers, Collection<? extends ContactInfoWrapper> contacts) {
+        return createRidesList(drivers.toArray(new DriverInfoWrapper[0]), contacts.toArray(new ContactInfoWrapper[0]));
     }
 
     private static String createRidesList(DriverInfoWrapper[] drivers, ContactInfoWrapper[] driverless) {
@@ -237,61 +252,102 @@ public class DisplayRidesFragment extends Fragment {
             }
         });
 
-        new CreateRidesText().execute();
+        ridesSub = doRides().subscribe(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                mBar.setVisibility(View.GONE);
+                ridesDisplay.setText(Html.fromHtml(s));
+                ridesLoaded = true;
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                Toast.makeText(getActivity(), "Error: " + throwable.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
         return rootView;
+    }
+
+    private Observable<String> doRides() {
+        final DriverInfoWrapper DRIVERLESS_KEY = new DriverInfoWrapper();
+
+        final RidesDatabaseHandler rhandler = new RidesDatabaseHandler(getActivity());
+        final ContactDatabaseHandler chandler = new ContactDatabaseHandler(rhandler);
+        final Map<DriverInfoWrapper, List<ContactInfoWrapper>> ridesmap = new HashMap<>();
+
+        return rhandler.getDrivers(null)
+                .map(new Func1<DriverInfoWrapper, DriverInfoWrapper>() {
+                    @Override
+                    public DriverInfoWrapper call(DriverInfoWrapper driverInfoWrapper) {
+                        ridesmap.put(driverInfoWrapper, driverInfoWrapper.getPassengersInCar());
+                        return driverInfoWrapper;
+                    }
+                })
+                .toList()
+                .flatMap(new Func1<List<DriverInfoWrapper>, Observable<ContactInfoWrapper>>() {
+                    @Override
+                    public Observable<ContactInfoWrapper> call(List<DriverInfoWrapper> driverInfoWrappers) {
+                        String[] whereclause;
+                        whereclause = new String[]{
+                                String.format("%s = %d", AppDatabaseContract.ContactListTable.COLUMN_PRESENT, 1),
+                                String.format("not %s in (SELECT %s FROM %s)", AppDatabaseContract.ContactListTable._ID,
+                                        AppDatabaseContract.RidesListTable.COLUMN_PASSENGER, AppDatabaseContract.RidesListTable.TABLE_NAME)
+                        };
+                        return chandler.getContacts(whereclause, null);
+                    }
+                })
+                .toList()
+                .map(new Func1<List<ContactInfoWrapper>, List<ContactInfoWrapper>>() {
+                    @Override
+                    public List<ContactInfoWrapper> call(List<ContactInfoWrapper> contactInfoWrappers) {
+                        ridesmap.put(DRIVERLESS_KEY, contactInfoWrappers);
+                        return contactInfoWrappers;
+                    }
+                })
+                .map(new Func1<List<ContactInfoWrapper>, Map<DriverInfoWrapper, List<ContactInfoWrapper>>>() {
+                    @Override
+                    public Map<DriverInfoWrapper, List<ContactInfoWrapper>> call(List<ContactInfoWrapper> contactInfoWrappers) {
+                        if (retainRides && !optimize) return ridesmap;
+                        RidesOptimizer optimizer = new RidesOptimizer();
+                        Set<DriverInfoWrapper> allDrivers = ridesmap.keySet();
+                        allDrivers.remove(DRIVERLESS_KEY);
+                        optimizer.loadDrivers(allDrivers);
+                        optimizer.loadDriverless(ridesmap.get(DRIVERLESS_KEY));
+                        if (optimize) {
+                            optimizer.setUpAlgorithms(getAlgorithmsByIndex(algorithmIndex), retainRides, getClusterByIndex(clusterIndex));
+                        } else {
+                            optimizer.setUpAlgorithms(null, retainRides, null);
+                        }
+                        optimizer.optimize();
+                        for (DriverInfoWrapper driver : optimizer.getDrivers()) {
+                            ridesmap.put(driver, driver.getPassengersInCar());
+                        }
+                        ridesmap.put(DRIVERLESS_KEY, Arrays.asList(optimizer.getDriverless()));
+                        return ridesmap;
+                    }
+                })
+                .map(new Func1<Map<DriverInfoWrapper, List<ContactInfoWrapper>>, Map<DriverInfoWrapper, List<ContactInfoWrapper>>>() {
+                    @Override
+                    public Map<DriverInfoWrapper, List<ContactInfoWrapper>> call(Map<DriverInfoWrapper, List<ContactInfoWrapper>> ridesmap) {
+                        Set<DriverInfoWrapper> drivers = ridesmap.keySet();
+                        drivers.remove(DRIVERLESS_KEY);
+                        rhandler.updateRides(drivers.toArray(new DriverInfoWrapper[0]), ridesmap.get(DRIVERLESS_KEY).toArray(new ContactInfoWrapper[0]));
+                        return ridesmap;
+                    }
+                })
+                .map(new Func1<Map<DriverInfoWrapper, List<ContactInfoWrapper>>, String>() {
+                    @Override
+                    public String call(Map<DriverInfoWrapper, List<ContactInfoWrapper>> driverInfoWrapperListMap) {
+                        Set<DriverInfoWrapper> drivers = ridesmap.keySet();
+                        drivers.remove(DRIVERLESS_KEY);
+                        return createRidesList(drivers, driverInfoWrapperListMap.get(DRIVERLESS_KEY));
+                    }
+                }).subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread());
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-    }
-
-    private class CreateRidesText extends AsyncTask<Void, Void, String> {
-
-        private RidesDatabaseHandler rhandler;
-
-        @Override
-        protected String doInBackground(Void... params) {
-            createRides();
-            if (retainRides && !optimize) {
-                return createRidesList(rides, driverless);
-            }
-            RidesOptimizer optimizer = new RidesOptimizer();
-            optimizer.loadDriver(rides);
-            optimizer.loadPassengers(driverless);
-            if (optimize) {
-                optimizer.setUpAlgorithms(getAlgorithmsByIndex(algorithmIndex), retainRides, getClusterByIndex(clusterIndex));
-            } else {
-                optimizer.setUpAlgorithms(null, retainRides, null);
-            }
-            optimizer.optimize();
-            RidesDatabaseHandler ridesDatabaseHandler = new RidesDatabaseHandler(getActivity());
-            ridesDatabaseHandler.updateRides(optimizer.getDrivers(), optimizer.getDriverless());
-            driverless = optimizer.getDriverless();
-            rhandler.updateRides(rides, driverless);
-            return createRidesList(rides, driverless);
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            mBar.setVisibility(View.GONE);
-            ridesDisplay.setText(Html.fromHtml(s));
-            ridesLoaded = true;
-        }
-
-        private void createRides() {
-            SQLiteDatabase db = new AppDatabaseHelper(getActivity()).getWritableDatabase();
-            rhandler = new RidesDatabaseHandler(db);
-            rides = rhandler.getDrivers(null, AppDatabaseContract.DriverListTable.COLUMN_NAME + " ASC");
-            String[] whereclause;
-            whereclause = new String[]{
-                    String.format("%s = %d", AppDatabaseContract.ContactListTable.COLUMN_PRESENT, 1),
-                    String.format("not %s in (SELECT %s FROM %s)", AppDatabaseContract.ContactListTable._ID,
-                            AppDatabaseContract.RidesListTable.COLUMN_PASSENGER, AppDatabaseContract.RidesListTable.TABLE_NAME)
-            };
-            driverless = rhandler.getContacts(whereclause, null);
-        }
     }
 
 }

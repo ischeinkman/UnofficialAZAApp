@@ -5,6 +5,8 @@ import org.ramonazaapi.interfaces.InfoWrapper;
 import org.ramonazaapi.interfaces.LocationPoint;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,6 +22,7 @@ public class DriverInfoWrapper implements LocationPoint, InfoWrapper {
     private double longitude;
     private int id;
     private ContactInfoWrapper contactInfo;
+    private int contactInfoId;
 
 
     private Set<ContactInfoWrapper> passengersInCar;
@@ -27,8 +30,17 @@ public class DriverInfoWrapper implements LocationPoint, InfoWrapper {
     public DriverInfoWrapper() {
         this.passengersInCar = new HashSet<ContactInfoWrapper>(spots + 1);
         this.contactInfo = null;
+        this.contactInfoId = -1;
     }
 
+    public int getContactInfoId() {
+        if (contactInfoId == -1 && contactInfo != null) contactInfoId = contactInfo.getId();
+        return contactInfoId;
+    }
+
+    public void setContactInfoId(int contactInfoId) {
+        this.contactInfoId = contactInfoId;
+    }
 
     public ContactInfoWrapper getContactInfo() {
         return contactInfo;
@@ -36,6 +48,7 @@ public class DriverInfoWrapper implements LocationPoint, InfoWrapper {
 
     public void setContactInfo(ContactInfoWrapper contactInfo) {
         this.contactInfo = contactInfo;
+        addPassengersToCar(contactInfo);
     }
 
     public boolean isContactable() {
@@ -102,8 +115,12 @@ public class DriverInfoWrapper implements LocationPoint, InfoWrapper {
         this.longitude = longitude;
     }
 
-    public void addPassengerToCar(ContactInfoWrapper passenger) {
-        passengersInCar.add(passenger);
+    public void addPassengersToCar(ContactInfoWrapper... passengers) {
+        passengersInCar.addAll(Arrays.asList(passengers));
+    }
+
+    public void addPassengersToCar(Collection<? extends ContactInfoWrapper> passengers) {
+        passengersInCar.addAll(passengers);
     }
 
     public void removePassengerFromCar(ContactInfoWrapper passenger) {

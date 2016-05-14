@@ -1,12 +1,15 @@
 package org.ramonaza.unofficialazaapp.people.rides.ui.fragments;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperCheckBoxesFragment;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesDriverManipActivity;
+import org.ramonazaapi.contacts.ContactInfoWrapper;
 import org.ramonazaapi.interfaces.InfoWrapper;
+
+import rx.Observable;
+import rx.functions.Func1;
 
 public class RemovePassengerFromDriverFragment extends InfoWrapperCheckBoxesFragment {
 
@@ -31,27 +34,19 @@ public class RemovePassengerFromDriverFragment extends InfoWrapperCheckBoxesFrag
     }
 
     @Override
-    public void onSubmitButton(InfoWrapper[] checked, InfoWrapper[] unchecked) {
-        new SubmitFromList().execute(checked);
+    public Observable<?> onSubmitButton(InfoWrapper[] checked, InfoWrapper[] unchecked) {
+        final RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
+        return Observable.from(checked).flatMap(new Func1<InfoWrapper, Observable<?>>() {
+            @Override
+            public Observable<?> call(InfoWrapper infoWrapper) {
+                return handler.removePassengersFromCar(infoWrapper.getId());
+            }
+        });
     }
 
     @Override
-    public InfoWrapper[] generateInfo() {
+    public Observable<ContactInfoWrapper> generateInfo() {
         RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
         return handler.getPassengersInCar(driverId);
-    }
-
-    private class SubmitFromList extends AsyncTask<InfoWrapper, Void, Void> {
-
-        @Override
-        protected Void doInBackground(InfoWrapper... params) {
-            RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
-            for (InfoWrapper passenger : params) {
-                handler.removePassengerFromCar(passenger.getId());
-            }
-            return null;
-        }
-
-
     }
 }

@@ -6,7 +6,6 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -26,8 +25,13 @@ import org.ramonaza.unofficialazaapp.events.backend.services.EventUpdateService;
 import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.unofficialazaapp.helpers.backend.PreferenceHelper;
 import org.ramonaza.unofficialazaapp.settings.ui.fragments.ChapterPackSelectorFragment;
+import org.ramonazaapi.chapterpacks.ChapterPackHandler;
 
 import java.util.List;
+
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -186,7 +190,21 @@ public class SettingsActivity extends PreferenceActivity {
             chapterPackButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    new PackCreator().execute();
+                    ChapterPackHandlerSupport
+                            .createChapterPack(SettingsActivity.this)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Action1<ChapterPackHandler>() {
+                                @Override
+                                public void call(ChapterPackHandler chapterPackHandler) {
+                                    Toast.makeText(SettingsActivity.this, "Pack Successfully Created", Toast.LENGTH_LONG);
+                                }
+                            }, new Action1<Throwable>() {
+                                @Override
+                                public void call(Throwable throwable) {
+                                    Toast.makeText(SettingsActivity.this, "Error: " + throwable.getMessage(), Toast.LENGTH_LONG);
+                                }
+                            });
                 }
             });
             ListView view = getListView();
@@ -258,20 +276,6 @@ public class SettingsActivity extends PreferenceActivity {
                     }
                 });
             }
-        }
-    }
-
-    private class PackCreator extends AsyncTask<Void, Void, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            return ChapterPackHandlerSupport.createChapterPack(SettingsActivity.this);
-        }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            super.onPostExecute(aBoolean);
-            Toast.makeText(SettingsActivity.this, aBoolean.toString(), Toast.LENGTH_LONG);
         }
     }
 }

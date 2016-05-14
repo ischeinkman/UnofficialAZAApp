@@ -7,6 +7,11 @@ import android.location.Geocoder;
 import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
 
+import rx.Observable;
+import rx.functions.Func1;
+import rx.observables.ConnectableObservable;
+import rx.schedulers.Schedulers;
+
 /**
  * Created by ilanscheinkman on 9/1/15.
  */
@@ -39,19 +44,26 @@ public class LocationSupport {
      *
      * @param context the context to retrieve contacts from and get coordinates
      */
-    public static void recalculateLatLong(Context context) {
-        ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(context);
-        ContactInfoWrapper[] toCalc = handler.getContacts(null, null);
-        for (ContactInfoWrapper contact : toCalc) {
-            double[] coords = getCoordsFromAddress(contact.getAddress(), context);
-            if (coords == null) continue;
-            contact.setLatitude(coords[0]);
-            contact.setLongitude(coords[1]);
-            try {
-                handler.updateContact(contact);
-            } catch (ContactDatabaseHandler.ContactCSVReadError contactCSVReadError) {
-                contactCSVReadError.printStackTrace();
+    public static Observable<ContactInfoWrapper> recalculateLatLong(final Context context) {
+        final ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(context);
+
+        ConnectableObservable<ContactInfoWrapper> rval = handler.getContacts(null, null).map(new Func1<ContactInfoWrapper, ContactInfoWrapper>() {
+            @Override
+            public ContactInfoWrapper call(ContactInfoWrapper contact) {
+                double[] coords = getCoordsFromAddress(contact.getAddress(), context);
+                if (coords != null) {
+                    contact.setLatitude(coords[0]);
+                    contact.setLongitude(coords[1]);
+                }
+                return contact;
             }
-        }
+        }).flatMap(new Func1<ContactInfoWrapper, Observable<ContactInfoWrapper>>() {
+            @Override
+            public Observable<ContactInfoWrapper> call(ContactInfoWrapper contactInfoWrapper) {
+                return handler.updateContacts(contactInfoWrapper);
+            }
+        }).subscribeOn(Schedulers.computation()).publish();
+        rval.connect();
+        return rval;
     }
 }

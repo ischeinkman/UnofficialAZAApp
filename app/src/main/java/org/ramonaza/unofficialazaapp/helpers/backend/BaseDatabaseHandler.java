@@ -3,9 +3,11 @@ package org.ramonaza.unofficialazaapp.helpers.backend;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
+
+import rx.Observable;
+import rx.Subscriber;
 
 /**
  * Created by ilan on 4/12/16.
@@ -26,17 +28,23 @@ public abstract class BaseDatabaseHandler<T> {
         this(other.db);
     }
 
-    protected Cursor query(String queryString, String[] selectionArgs) {
-        try {
-            return db.rawQuery(queryString, selectionArgs);
-        } catch (Exception e) {
-            Log.e("Database", e.getMessage());
-            return null;
-        }
+    protected Observable<Cursor> query(final String queryString, final String[] selectionArgs) {
+        return Observable.create(new Observable.OnSubscribe<Cursor>() {
+            @Override
+            public void call(Subscriber<? super Cursor> subscriber) {
+                try {
+                    subscriber.onNext(db.rawQuery(queryString, selectionArgs));
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+
     }
 
 
-    protected Cursor query(String queryString) {
+    protected Observable<Cursor> query(String queryString) {
         return query(queryString, null);
     }
 

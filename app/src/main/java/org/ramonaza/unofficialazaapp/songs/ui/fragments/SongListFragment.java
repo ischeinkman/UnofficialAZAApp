@@ -10,6 +10,8 @@ import org.ramonaza.unofficialazaapp.songs.backend.SongGenderedConstants;
 import org.ramonaza.unofficialazaapp.songs.ui.activities.SongDataActivity;
 import org.ramonazaapi.interfaces.InfoWrapper;
 
+import rx.Observable;
+
 /**
  * The fragment containing the list of songs.
  * Created by ilanscheinkman on 1/9/15.
@@ -57,8 +59,8 @@ public class SongListFragment extends InfoWrapperTextListFragment {
     }
 
     @Override
-    public InfoWrapper[] generateInfo() {
-        return SongGenderedConstants.SONG_LIST.getAllSongs();
+    public Observable<? extends InfoWrapper> generateInfo() {
+        return Observable.from(SongGenderedConstants.SONG_LIST.getAllSongs());
     }
 
 

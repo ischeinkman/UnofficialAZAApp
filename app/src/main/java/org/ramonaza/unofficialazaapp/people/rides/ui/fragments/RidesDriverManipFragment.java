@@ -3,13 +3,11 @@ package org.ramonaza.unofficialazaapp.people.rides.ui.fragments;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +21,15 @@ import org.ramonazaapi.contacts.ContactInfoWrapper;
 import org.ramonazaapi.interfaces.InfoWrapper;
 import org.ramonazaapi.rides.DriverInfoWrapper;
 
+import java.util.List;
+
+import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -35,8 +42,9 @@ public class RidesDriverManipFragment extends Fragment {
     private View rootView;
     private ListView passengersView;
     private InfoWrapperTextWithButtonAdapter mAdapter;
-    private PopulateViewTask popTask;
-    private DeleteFromCarTask deleteTask;
+    private Subscription popTask;
+    private Subscription deleteTask;
+    private RidesDatabaseHandler dbHandler;
 
     public RidesDriverManipFragment() {
     }
@@ -70,10 +78,22 @@ public class RidesDriverManipFragment extends Fragment {
 
             @Override
             public void onButton(InfoWrapper info) {
-                if (deleteTask != null) deleteTask.cancel(true);
-                deleteTask = new DeleteFromCarTask();
-                deleteTask.execute(info);
-                refreshData();
+                if (deleteTask != null && !deleteTask.isUnsubscribed()) deleteTask.unsubscribe();
+                if (dbHandler == null) dbHandler = new RidesDatabaseHandler(getActivity());
+                deleteTask = dbHandler.deleteDrivers(info.getId())
+                        .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Action1<Integer>() {
+                            @Override
+                            public void call(Integer integer) {
+                                refreshData();
+                                deleteTask.unsubscribe();
+                            }
+                        }, new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                Toast.makeText(getActivity(), throwable.getMessage(), Toast.LENGTH_SHORT);
+                            }
+                        });
             }
 
             @Override
@@ -108,60 +128,30 @@ public class RidesDriverManipFragment extends Fragment {
     }
 
     private void refreshData() {
-        popTask = new PopulateViewTask(this.driverId, this.rootView, this.mAdapter);
-        popTask.execute();
-    }
-
-    private class PopulateViewTask extends AsyncTask<Void, Void, ContactInfoWrapper[]> {
-
-        int driverId;
-        View view;
-        ArrayAdapter mAdapter;
-
-        public PopulateViewTask(int id, View rootView, ArrayAdapter adapter) {
-            this.driverId = id;
-            this.view = rootView;
-            this.mAdapter = adapter;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected ContactInfoWrapper[] doInBackground(Void... params) {
-            RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
-            return handler.getPassengersInCar(driverId);
-        }
-
-        @Override
-        protected void onPostExecute(ContactInfoWrapper[] contactInfoWrappers) {
-            super.onPostExecute(contactInfoWrappers);
-            if (!isAdded() || isDetached()) {
-                return; //In case the calling activity is no longer attached
-            }
-            mAdapter.clear();
-            RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
-            mDriver = handler.getDriver(driverId);
-            ActionBar actionBar = getActivity().getActionBar();
-            actionBar.setTitle(mDriver.getName());
-            ((TextView) view.findViewById(R.id.DriverName)).setText(mDriver.getName());
-            ((TextView) view.findViewById(R.id.FreeSpots)).setText("" + mDriver.getFreeSpots());
-            mAdapter.addAll(contactInfoWrappers);
-        }
-    }
-
-    private class DeleteFromCarTask extends AsyncTask<InfoWrapper, Void, Void> {
-
-        @Override
-        protected Void doInBackground(InfoWrapper... params) {
-            RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
-            for (InfoWrapper toDelete : params) {
-                handler.removePassengerFromCar(toDelete.getId());
-            }
-            return null;
-        }
-
+        if (popTask != null && !popTask.isUnsubscribed()) popTask.unsubscribe();
+        if (dbHandler == null) dbHandler = new RidesDatabaseHandler(getActivity());
+        popTask = dbHandler
+                .getDrivers(driverId)
+                .flatMap(new Func1<DriverInfoWrapper, Observable<ContactInfoWrapper>>() {
+                    @Override
+                    public Observable<ContactInfoWrapper> call(DriverInfoWrapper driverInfoWrapper) {
+                        mDriver = driverInfoWrapper;
+                        return dbHandler.getPassengersInCar(driverInfoWrapper.getId());
+                    }
+                })
+                .toList()
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<ContactInfoWrapper>>() {
+                    @Override
+                    public void call(List<ContactInfoWrapper> contactInfoWrappers) {
+                        mAdapter.clear();
+                        ActionBar actionBar = getActivity().getActionBar();
+                        actionBar.setTitle(mDriver.getName());
+                        ((TextView) rootView.findViewById(R.id.DriverName)).setText(mDriver.getName());
+                        ((TextView) rootView.findViewById(R.id.FreeSpots)).setText("" + mDriver.getFreeSpots());
+                        mAdapter.addAll(contactInfoWrappers);
+                        popTask.unsubscribe();
+                    }
+                });
     }
 }

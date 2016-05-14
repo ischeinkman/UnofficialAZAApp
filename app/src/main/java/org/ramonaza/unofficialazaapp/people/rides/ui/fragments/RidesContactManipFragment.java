@@ -1,9 +1,6 @@
 package org.ramonaza.unofficialazaapp.people.rides.ui.fragments;
 
 import android.app.Fragment;
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +9,21 @@ import android.widget.TextView;
 
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
-import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
+import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
+import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesContactManipActivity;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
 import org.ramonazaapi.rides.DriverInfoWrapper;
+
+import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Action2;
+import rx.functions.Func0;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,7 +36,9 @@ public class RidesContactManipFragment extends Fragment {
     private int contactID;
     private ContactInfoWrapper mContact;
     private TextView dataview;
-    private PopView popTask;
+    private Subscription popTask;
+    private RidesDatabaseHandler rhandler;
+    private ContactDatabaseHandler chandler;
 
     public RidesContactManipFragment() {
         // Required empty public constructor
@@ -68,50 +77,59 @@ public class RidesContactManipFragment extends Fragment {
     }
 
     private void refreshData() {
-        if (popTask != null) popTask.cancel(true);
-        popTask = new PopView(getActivity());
-        popTask.execute(contactID);
-    }
-
-
-    private class PopView extends AsyncTask<Integer, Void, Void> {
-
-        private Context context;
-        private DriverInfoWrapper[] drivers;
-
-        public PopView(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        protected Void doInBackground(Integer... params) {
-            SQLiteDatabase db = new AppDatabaseHelper(context).getWritableDatabase();
-            RidesDatabaseHandler rhandler = new RidesDatabaseHandler(db);
-            mContact = rhandler.getContact(params[0]);
-            String[] whereclause = new String[]{
-                    String.format("%s in (SELECT %s FROM %s WHERE %s = %s)", AppDatabaseContract.DriverListTable._ID,
-                            AppDatabaseContract.RidesListTable.COLUMN_CAR, AppDatabaseContract.RidesListTable.TABLE_NAME,
-                            AppDatabaseContract.RidesListTable.COLUMN_PASSENGER, mContact.getId())
-            };
-            drivers = rhandler.getDrivers(whereclause, null);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            String viewData = "Name: " + mContact.getName() + "\n\n" +
-                    "Address: " + mContact.getAddress() + "\n\n" +
-                    "School: " + mContact.getSchool() + "\n\n";
-            for (DriverInfoWrapper driver : drivers) {
-                viewData += "Currently in car: " + driver.getName() + "\n";
-            }
-            if (drivers.length == 0) viewData += "Not currently in car.";
-            dataview.setTextSize(20);
-            dataview.setText(viewData);
-            getActivity().getActionBar().setTitle(mContact.getName());
-            popTask = null;
-        }
+        if (popTask != null && !popTask.isUnsubscribed()) popTask.unsubscribe();
+        if (chandler == null) chandler = ChapterPackHandlerSupport.getContactHandler(getActivity());
+        if (rhandler == null) rhandler = new RidesDatabaseHandler(chandler);
+        popTask = chandler.getContacts(contactID)
+                .map(new Func1<ContactInfoWrapper, ContactInfoWrapper>() {
+                    @Override
+                    public ContactInfoWrapper call(ContactInfoWrapper contactInfoWrapper) {
+                        mContact = contactInfoWrapper;
+                        return contactInfoWrapper;
+                    }
+                })
+                .map(new Func1<ContactInfoWrapper, String[]>() {
+                    @Override
+                    public String[] call(ContactInfoWrapper contactInfoWrapper) {
+                        return new String[]{
+                                String.format("%s in (SELECT %s FROM %s WHERE %s = %s)", AppDatabaseContract.DriverListTable._ID,
+                                        AppDatabaseContract.RidesListTable.COLUMN_CAR, AppDatabaseContract.RidesListTable.TABLE_NAME,
+                                        AppDatabaseContract.RidesListTable.COLUMN_PASSENGER, mContact.getId())
+                        };
+                    }
+                })
+                .flatMap(new Func1<String[], Observable<DriverInfoWrapper>>() {
+                    @Override
+                    public Observable<DriverInfoWrapper> call(String[] strings) {
+                        return rhandler.getDrivers(strings, null);
+                    }
+                })
+                .defaultIfEmpty(new DriverInfoWrapper()).collect(new Func0<StringBuilder>() {
+                    @Override
+                    public StringBuilder call() {
+                        return new StringBuilder();
+                    }
+                }, new Action2<StringBuilder, DriverInfoWrapper>() {
+                    @Override
+                    public void call(StringBuilder stringBuilder, DriverInfoWrapper driver) {
+                        if (driver.getName() == null) stringBuilder.append("Not currently in car.");
+                        else stringBuilder.append("Currently in car: " + driver.getName() + "\n");
+                    }
+                })
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<StringBuilder>() {
+                    @Override
+                    public void call(StringBuilder stringBuilder) {
+                        String viewData = "Name: " + mContact.getName() + "\n\n" +
+                                "Address: " + mContact.getAddress() + "\n\n" +
+                                "School: " + mContact.getSchool() + "\n\n";
+                        viewData += stringBuilder.toString();
+                        dataview.setTextSize(20);
+                        dataview.setText(viewData);
+                        getActivity().getActionBar().setTitle(mContact.getName());
+                        popTask.unsubscribe();
+                    }
+                });
     }
 
 

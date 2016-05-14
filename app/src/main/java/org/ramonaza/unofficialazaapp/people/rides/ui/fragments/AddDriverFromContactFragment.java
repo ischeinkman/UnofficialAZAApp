@@ -11,6 +11,8 @@ import org.ramonaza.unofficialazaapp.people.rides.ui.activities.AddCustomDriverA
 import org.ramonazaapi.contacts.ContactInfoWrapper;
 import org.ramonazaapi.interfaces.InfoWrapper;
 
+import rx.Observable;
+
 /**
  * Created by ilanscheinkman on 8/25/15.
  */
@@ -33,9 +35,8 @@ public class AddDriverFromContactFragment extends InfoWrapperTextListFragment {
     }
 
     @Override
-    public InfoWrapper[] generateInfo() {
+    public Observable<? extends InfoWrapper> generateInfo() {
         ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(getActivity());
-        ContactInfoWrapper[] currentContacts = handler.getContacts(null, AppDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
-        return currentContacts;
+        return handler.getContacts(null, AppDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
     }
 }

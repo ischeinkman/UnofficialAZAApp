@@ -32,7 +32,7 @@ public class FlamboyantElephant implements RidesOptimizer.RidesAlgorithm {
                 } else {
                     ContactInfoWrapper passenger = getClosestPassenger(toOptimize, allPassengers);
                     if (passenger == null) break;
-                    toOptimize.addPassengerToCar(passenger);
+                    toOptimize.addPassengersToCar(passenger);
                     optimizedPassengers.add(passenger);
                     allFull = false;
                 }
@@ -70,7 +70,7 @@ public class FlamboyantElephant implements RidesOptimizer.RidesAlgorithm {
                 ContactInfoWrapper[] inCluster = ridesCluster.getPassengersInCluster();
                 for (ContactInfoWrapper clusterContact : inCluster) {
                     if (toOptimize.getFreeSpots() <= 0) break;
-                    toOptimize.addPassengerToCar(clusterContact);
+                    toOptimize.addPassengersToCar(clusterContact);
                     ridesCluster.removePassengerFromCluster(clusterContact);
                     optimizedPassengers.add(clusterContact);
                 }

@@ -15,10 +15,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
 import org.ramonaza.unofficialazaapp.R;
+import org.ramonaza.unofficialazaapp.events.backend.EventDatabaseHandler;
 import org.ramonaza.unofficialazaapp.events.ui.activities.EventPageActivity;
 import org.ramonaza.unofficialazaapp.frontpage.ui.activities.FrontalActivity;
 import org.ramonaza.unofficialazaapp.helpers.backend.PreferenceHelper;
-import org.ramonaza.unofficialazaapp.people.backend.EventDatabaseHandler;
 import org.ramonazaapi.events.EventInfoWrapper;
 
 import java.text.DateFormat;
@@ -26,6 +26,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by ilan on 1/11/16.
@@ -36,52 +39,59 @@ public class EventNotificationService extends Service {
     private static final long TIME_MULTIPLIER = 1000 * 60;
     NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
 
-    public static void setUpNotifications(Context context) {
-        long notifiyBeforeEvent = PreferenceHelper.getPreferences(context).getNotifyBeforeTime() * TIME_MULTIPLIER;
+    public static void setUpNotifications(final Context context) {
+
+        final long notifiyBeforeEvent = PreferenceHelper.getPreferences(context).getNotifyBeforeTime() * TIME_MULTIPLIER;
+        final AlarmManager mgr = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        final Date current = Calendar.getInstance().getTime();
+
         if (notifiyBeforeEvent < 0l) {
             cancelNotifications(context);
             return;
         }
         EventDatabaseHandler dbHandler = new EventDatabaseHandler(context);
-        EventInfoWrapper[] allEvents = dbHandler.getEvents(null, null);
-        AlarmManager mgr = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        Date current = Calendar.getInstance().getTime();
-        for (EventInfoWrapper event : allEvents) {
-            DateFormat df = new SimpleDateFormat("EEEE, MMMM dd yyyy");
-            Date eventDate;
-            try {
-                eventDate = df.parse(event.getDate());
-            } catch (ParseException e) {
-                continue;
+        dbHandler.getEvents(null).subscribeOn(Schedulers.io()).subscribe(new Action1<EventInfoWrapper>() {
+            @Override
+            public void call(EventInfoWrapper event) {
+                DateFormat df = new SimpleDateFormat("EEEE, MMMM dd yyyy");
+                Date eventDate;
+                try {
+                    eventDate = df.parse(event.getDate());
+                } catch (ParseException e) {
+                    return;
+                }
+                if (eventDate.before(current)) return;
+                eventDate.setTime(eventDate.getTime() - notifiyBeforeEvent);
+                Intent notificationIntent = new Intent(context, EventNotificationService.class);
+                notificationIntent.putExtra(EVENT_DB_ID, event.getId());
+                PendingIntent pendingNotifIntent = PendingIntent.getService(context, 0, notificationIntent, 0);
+                mgr.set(AlarmManager.RTC, eventDate.getTime(), pendingNotifIntent);
             }
-            if (eventDate.before(current)) continue;
-            eventDate.setTime(eventDate.getTime() - notifiyBeforeEvent);
-            Intent notificationIntent = new Intent(context, EventNotificationService.class);
-            notificationIntent.putExtra(EVENT_DB_ID, event.getId());
-            PendingIntent pendingNotifIntent = PendingIntent.getService(context, 0, notificationIntent, 0);
-            mgr.set(AlarmManager.RTC, eventDate.getTime(), pendingNotifIntent);
-        }
+        });
     }
 
-    public static void cancelNotifications(Context context) {
-        EventDatabaseHandler dbHandler = new EventDatabaseHandler(context);
-        EventInfoWrapper[] allEvents = dbHandler.getEvents(null, null);
-        AlarmManager mgr = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        Date current = Calendar.getInstance().getTime();
-        for (EventInfoWrapper event : allEvents) {
-            DateFormat df = new SimpleDateFormat("EEEE, MMMM dd yyyy");
-            Date eventDate;
-            try {
-                eventDate = df.parse(event.getDate());
-            } catch (ParseException e) {
-                continue;
+    public static void cancelNotifications(final Context context) {
+        final EventDatabaseHandler dbHandler = new EventDatabaseHandler(context);
+        final Date current = Calendar.getInstance().getTime();
+        final AlarmManager mgr = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+
+        dbHandler.getEvents(null).subscribe(new Action1<EventInfoWrapper>() {
+            @Override
+            public void call(EventInfoWrapper event) {
+                DateFormat df = new SimpleDateFormat("EEEE, MMMM dd yyyy");
+                Date eventDate;
+                try {
+                    eventDate = df.parse(event.getDate());
+                } catch (ParseException e) {
+                    return;
+                }
+                if (eventDate.before(current)) return;
+                Intent notificationIntent = new Intent(context, EventNotificationService.class);
+                notificationIntent.putExtra(EVENT_DB_ID, event.getId());
+                PendingIntent pendingNotifIntent = PendingIntent.getService(context, 0, notificationIntent, 0);
+                mgr.cancel(pendingNotifIntent);
             }
-            if (eventDate.before(current)) continue;
-            Intent notificationIntent = new Intent(context, EventNotificationService.class);
-            notificationIntent.putExtra(EVENT_DB_ID, event.getId());
-            PendingIntent pendingNotifIntent = PendingIntent.getService(context, 0, notificationIntent, 0);
-            mgr.cancel(pendingNotifIntent);
-        }
+        });
     }
 
     @Nullable
@@ -102,7 +112,7 @@ public class EventNotificationService extends Service {
 
         //Event with that ID exists in the db at all
         EventDatabaseHandler dbHandler = new EventDatabaseHandler(this);
-        EventInfoWrapper event = dbHandler.getEvent(eventId);
+        EventInfoWrapper event = dbHandler.getEventsSync(eventId)[0];
         if (event == null) {
             stopSelf();
             return START_NOT_STICKY;

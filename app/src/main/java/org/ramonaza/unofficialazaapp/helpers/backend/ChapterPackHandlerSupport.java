@@ -4,9 +4,7 @@ package org.ramonaza.unofficialazaapp.helpers.backend;
 import android.content.Context;
 import android.os.Environment;
 
-import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
-import org.ramonaza.unofficialazaapp.people.backend.LocationSupport;
 import org.ramonazaapi.chapterpacks.ChapterPackHandler;
 import org.ramonazaapi.contacts.ContactCSVHandler;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
@@ -15,8 +13,12 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.Calendar;
+import java.util.List;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.functions.Func1;
 
 /**
  * Created by ilan on 9/18/15.
@@ -25,6 +27,7 @@ public class ChapterPackHandlerSupport {
 
     public static final String NEW_PACK_DIRECTORY = "Generated Packs/";
     private static ChapterPackHandler currentHandler;
+    private static ContactDatabaseHandler contactHandler;
     /**
      * Check if we currently have a Chapter Pack leaded into the app.
      *
@@ -60,8 +63,8 @@ public class ChapterPackHandlerSupport {
      * @param context the context to use
      * @return the currently loaded Chapter Pack, or null
      */
-    public static ChapterPackHandler getChapterPackHandler(Context context) {
-        return currentHandler;
+    public static Observable<ChapterPackHandler> getChapterPackHandler(Context context) {
+        return Observable.just(currentHandler);
     }
 
     /**
@@ -72,31 +75,51 @@ public class ChapterPackHandlerSupport {
      *                folder or zip file.
      * @return the current Chapter Pack
      */
-    public static ChapterPackHandler getChapterPackHandler(Context context, File pack) {
+    public static Observable<ChapterPackHandler> getChapterPackHandler(final Context context, final File pack) {
 
         //If the new pack is the same as the old pack, return the old pack.
         if (currentHandler != null && currentHandler.getPackName().equals(pack.getName()))
-            return currentHandler;
+            return Observable.just(currentHandler);
 
-        currentHandler = new ChapterPackHandler(pack);
+        return Observable.just(currentHandler = new ChapterPackHandler(pack))
+                .map(new Func1<ChapterPackHandler, ChapterPackHandler>() {
+                    @Override
+                    public ChapterPackHandler call(ChapterPackHandler chapterPackHandler) {
+                        //Store the new event feed for later use
+                        PreferenceHelper.getPreferences(context).putChapterPackName(pack.getName()).putEventFeed(currentHandler.getEventUrl());
+                        return currentHandler;
+                    }
+                })
+                .flatMap(new Func1<ChapterPackHandler, Observable<List<ContactInfoWrapper>>>() {
+                    @Override
+                    public Observable<List<ContactInfoWrapper>> call(ChapterPackHandler chapterPackHandler) {
+                        final ContactDatabaseHandler ctdbh = new ContactDatabaseHandler(context);
+                        return currentHandler.getCsvHandler().getCtactInfoListFromCSV()
+                                .toList()
+                                .flatMap(new Func1<List<ContactInfoWrapper>, Observable<List<ContactInfoWrapper>>>() {
+                                    @Override
+                                    public Observable<List<ContactInfoWrapper>> call(final List<ContactInfoWrapper> inPack) {
+                                        if (inPack.size() > 0) {
+                                            return ctdbh.deleteContacts(null, null)
+                                                    .flatMap(new Func1<Integer, Observable<List<ContactInfoWrapper>>>() {
+                                                        @Override
+                                                        public Observable<List<ContactInfoWrapper>> call(Integer integer) {
+                                                            return ctdbh.addContacts(inPack.toArray(new ContactInfoWrapper[0])).toList();
+                                                        }
+                                                    });
+                                        }
+                                        return Observable.just(inPack);
+                                    }
+                                });
 
-        //Store the new event feed for later use
-        PreferenceHelper.getPreferences(context).putChapterPackName(pack.getName()).putEventFeed(currentHandler.getEventUrl());
-
-        //Store the new contact list for later use
-        ContactInfoWrapper[] inPack = currentHandler.getCsvHandler().getCtactInfoListFromCSV();
-        ContactDatabaseHandler ctdbh = new ContactDatabaseHandler(context);
-        if (inPack.length > 0) {
-            ctdbh.deleteContacts(null, null);
-            for (ContactInfoWrapper contact : inPack) {
-                try {
-                    ctdbh.addContact(contact);
-                } catch (ContactDatabaseHandler.ContactCSVReadError contactCSVReadError) {
-                    contactCSVReadError.printStackTrace();
-                }
-            }
-        }
-        return currentHandler;
+                    }
+                }).toList()
+                .map(new Func1<List<List<ContactInfoWrapper>>, ChapterPackHandler>() {
+                    @Override
+                    public ChapterPackHandler call(List<List<ContactInfoWrapper>> lists) {
+                        return currentHandler;
+                    }
+                });
     }
 
     /**
@@ -109,8 +132,8 @@ public class ChapterPackHandlerSupport {
      * @return the currently loaded contact handler
      */
     public static ContactDatabaseHandler getContactHandler(Context context) {
-        ContactDatabaseHandler returnHandler = new ContactDatabaseHandler(context);
-        return returnHandler;
+        if (contactHandler == null) contactHandler = new ContactDatabaseHandler(context);
+        return contactHandler;
     }
 
     /**
@@ -125,85 +148,105 @@ public class ChapterPackHandlerSupport {
         return (currentHandler.loadEventFeed() && currentHandler.loadContactList());
     }
 
-    public static boolean createChapterPack(Context context) {
+    public static Observable<ChapterPackHandler> createChapterPack(final Context context) {
+        return getPackName(context)
+                .map(new Func1<String, File>() {
+                    @Override
+                    public File call(String s) {
+                        File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                        File generalPackDir = new File(downloadDir, NEW_PACK_DIRECTORY);
+                        return new File(generalPackDir, s);
+                    }
+                })
+                .flatMap(new Func1<File, Observable<File>>() {
+                    @Override
+                    public Observable<File> call(File file) {
+                        return createEventFile(context, file);
+                    }
+                })
+                .flatMap(new Func1<File, Observable<File>>() {
+                    @Override
+                    public Observable<File> call(File file) {
+                        return createContactFile(context, file);
+                    }
+                })
+                .map(new Func1<File, ChapterPackHandler>() {
+                    @Override
+                    public ChapterPackHandler call(File file) {
+                        return new ChapterPackHandler(file);
+                    }
+                });
+    }
 
-        //Build the chapter packs data
-        String packName = (!PreferenceHelper.getPreferences(context).getChapterPackName().equals(""))
-                ? PreferenceHelper.getPreferences(context).getChapterPackName()
-                : "Chapter Pack :";
-        String url = PreferenceHelper.getPreferences(context).getEventFeed();
-
-        if (packName == null || url == null || packName.equals("") || url.equals("")) return false;
-        ContactDatabaseHandler handler = getContactHandler(context);
-        if (handler == null) return false;
-        ContactInfoWrapper[] allContacts = handler.getContacts(null, AppDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
-
-        //Corrects any location errors
-        for (ContactInfoWrapper contact : allContacts) {
-            if (contact.getX() == 0 && contact.getY() == 0) {
-                double[] coords = LocationSupport.getCoordsFromAddress(contact.getAddress(), context);
-                contact.setLatitude(coords[0]);
-                contact.setLongitude(coords[1]);
+    private static Observable<String> getPackName(final Context context) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
                 try {
-                    handler.updateContact(contact);
-                } catch (ContactDatabaseHandler.ContactCSVReadError contactCSVReadError) {
-                    contactCSVReadError.printStackTrace();
+                    Calendar cal = Calendar.getInstance();
+                    String suffix = String.format(
+                            " -- %d - %d - %d - %d:%d:%d",
+                            cal.get(Calendar.YEAR),
+                            cal.get(Calendar.MONTH) + 1,
+                            cal.get(Calendar.DAY_OF_MONTH),
+                            cal.get(Calendar.HOUR),
+                            cal.get(Calendar.MINUTE),
+                            cal.get(Calendar.SECOND)
+                    );
+                    String base = PreferenceHelper.getPreferences(context).getChapterPackName();
+                    if (base == null || base.equals("")) base = "Chapter Pack";
+                    subscriber.onNext(base + suffix);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
                 }
             }
-        }
+        });
+    }
 
-        //Create the necessary files and streams
-        Calendar cal = Calendar.getInstance();
-        String suffix = String.format(
-                " -- %d - %d - %d - %d:%d:%d",
-                cal.get(Calendar.YEAR),
-                cal.get(Calendar.MONTH) + 1,
-                cal.get(Calendar.DAY_OF_MONTH),
-                cal.get(Calendar.HOUR),
-                cal.get(Calendar.MINUTE),
-                cal.get(Calendar.SECOND)
-        );
-        File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        File generalPackDir = new File(downloadDir, NEW_PACK_DIRECTORY);
-        File newPackDir = new File(generalPackDir, packName + suffix);
-        File eventDataFile = new File(newPackDir, ChapterPackHandler.EVENT_FILE_NAME);
-        File contactDataFile = new File(newPackDir, ChapterPackHandler.CSV_NAME);
-        try {
-            boolean rootCreated = newPackDir.mkdirs();
-            boolean eventFileCreated = eventDataFile.createNewFile();
-            boolean contactFileCreated = contactDataFile.createNewFile();
-            if (!(rootCreated && eventFileCreated && contactFileCreated)) return false;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        BufferedWriter eventWriter;
-        try {
-            eventWriter = new BufferedWriter(new FileWriter(eventDataFile));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+    private static Observable<File> createEventFile(final Context context, final File packdir) {
+        return Observable.create(new Observable.OnSubscribe<File>() {
+            @Override
+            public void call(Subscriber<? super File> subscriber) {
+                try {
+                    String streamUrl = PreferenceHelper.getPreferences(context).getEventFeed();
+                    File eventDataFile = new File(packdir, ChapterPackHandler.EVENT_FILE_NAME);
+                    eventDataFile.createNewFile();
+                    BufferedWriter eventWriter = new BufferedWriter(new FileWriter(eventDataFile));
+                    eventWriter.write(streamUrl);
+                    eventWriter.flush();
+                    eventWriter.close();
+                    subscriber.onNext(packdir);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
 
-        //Write the event information
-        try {
-            eventWriter.write(url);
-            eventWriter.flush();
-            eventWriter.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        //Write the contact information
-        try {
-            ContactCSVHandler csvWritingHandler = new ContactCSVHandler(contactDataFile);
-            csvWritingHandler.writesContactsToCSV(allContacts, false);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        return true;
+    private static Observable<File> createContactFile(Context context, final File packdir) {
+        ContactDatabaseHandler dbHandler = getContactHandler(context);
+        return dbHandler.getContacts(null)
+                .toList()
+                .flatMap(new Func1<List<ContactInfoWrapper>, Observable<Boolean>>() {
+                    @Override
+                    public Observable<Boolean> call(List<ContactInfoWrapper> contactInfoWrappers) {
+                        ContactCSVHandler csvHandler;
+                        try {
+                            File csvFile = new File(packdir, ChapterPackHandler.CSV_NAME);
+                            csvFile.createNewFile();
+                            csvHandler = new ContactCSVHandler(csvFile);
+                        } catch (Exception e) {
+                            return Observable.error(e);
+                        }
+                        return csvHandler.writesContactsToCSV(contactInfoWrappers, false);
+                    }
+                }).map(new Func1<Boolean, File>() {
+                    @Override
+                    public File call(Boolean aBoolean) {
+                        return packdir;
+                    }
+                });
     }
 }

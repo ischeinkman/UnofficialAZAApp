@@ -2,9 +2,7 @@ package org.ramonaza.unofficialazaapp.people.rides.ui.fragments;
 
 
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +17,13 @@ import org.ramonaza.unofficialazaapp.people.rides.ui.activities.AddContactDriver
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.AddCustomDriverActivity;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesDriverManipActivity;
 import org.ramonazaapi.interfaces.InfoWrapper;
+import org.ramonazaapi.rides.DriverInfoWrapper;
+
+import rx.Observable;
+import rx.Observer;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,6 +32,8 @@ import org.ramonazaapi.interfaces.InfoWrapper;
  */
 public class DriversFragment extends InfoWrapperTextWithButtonFragment {
 
+    private RidesDatabaseHandler handler;
+    private Subscription deleteSubscription;
 
     public DriversFragment() {
         // Required empty public constructor
@@ -71,7 +78,28 @@ public class DriversFragment extends InfoWrapperTextWithButtonFragment {
 
     @Override
     public void onButtonClick(InfoWrapper mWrapper) {
-        new DeleteCar(getActivity()).execute(mWrapper.getId());
+        if (handler == null) handler = new RidesDatabaseHandler(getActivity());
+        if (deleteSubscription != null && !deleteSubscription.isUnsubscribed())
+            deleteSubscription.unsubscribe();
+        deleteSubscription = handler.deleteDrivers(mWrapper.getId())
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onCompleted() {
+                        refreshData();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        showText(e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+
+                    }
+                });
     }
 
     @Override
@@ -83,34 +111,9 @@ public class DriversFragment extends InfoWrapperTextWithButtonFragment {
 
 
     @Override
-    public InfoWrapper[] generateInfo() {
+    public Observable<DriverInfoWrapper> generateInfo() {
         RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
         return handler.getDrivers(null, AppDatabaseContract.DriverListTable.COLUMN_NAME + " ASC");
-    }
-
-
-    public class DeleteCar extends AsyncTask<Integer, Void, Void> {
-
-        private Context context;
-
-        public DeleteCar(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        protected Void doInBackground(Integer... params) {
-            RidesDatabaseHandler handler = new RidesDatabaseHandler(context);
-            for (int id : params) {
-                handler.deleteDriver(id);
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            refreshData();
-        }
     }
 }
 

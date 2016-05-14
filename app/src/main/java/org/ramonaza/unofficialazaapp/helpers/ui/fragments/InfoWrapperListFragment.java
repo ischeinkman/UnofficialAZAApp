@@ -1,8 +1,6 @@
 package org.ramonaza.unofficialazaapp.helpers.ui.fragments;
 
 import android.app.Fragment;
-import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +8,19 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonazaapi.interfaces.InfoWrapper;
+
+import java.util.List;
+
+import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,7 +29,7 @@ public abstract class InfoWrapperListFragment extends Fragment {
 
     protected ProgressBar progressBar;
     protected ListView listView;
-    protected GetInfoWrappers currentAsync;
+    protected Subscription subscription;
     protected ArrayAdapter mAdapter;
     protected int mLayoutId;
     protected View rootView;
@@ -32,7 +40,7 @@ public abstract class InfoWrapperListFragment extends Fragment {
 
     public abstract ArrayAdapter getAdapter();
 
-    public abstract InfoWrapper[] generateInfo();
+    public abstract Observable<? extends InfoWrapper> generateInfo();
 
 
     @Override
@@ -49,10 +57,39 @@ public abstract class InfoWrapperListFragment extends Fragment {
         return rootView;
     }
 
+    public void showText(String message) {
+        Toast.makeText(getActivity(), message, Toast.LENGTH_LONG);
+    }
+
     public void refreshData() {
-        if (currentAsync != null) currentAsync.cancel(true);
-        currentAsync = new GetInfoWrappers(getActivity(), mAdapter, progressBar);
-        currentAsync.execute();
+        progressBar.setVisibility(View.VISIBLE);
+        if (subscription != null && !subscription.isUnsubscribed()) {
+            subscription.unsubscribe();
+        }
+        subscription = generateInfo()
+                .toList()
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<? extends InfoWrapper>>() {
+                    @Override
+                    public void call(List<? extends InfoWrapper> contactInfoWrappers) {
+                        progressBar.setVisibility(View.GONE);
+                        mAdapter.clear();
+                        mAdapter.addAll(contactInfoWrappers);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        showText(throwable.getMessage());
+                    }
+                }, new Action0() {
+                    @Override
+                    public void call() {
+                        subscription.unsubscribe();
+                    }
+                });
+
     }
 
     @Override
@@ -63,58 +100,22 @@ public abstract class InfoWrapperListFragment extends Fragment {
 
     @Override
     public void onPause() {
-        if (currentAsync != null) currentAsync.cancel(true);
+        if (subscription != null && !subscription.isUnsubscribed()) {
+            subscription.unsubscribe();
+            subscription = null;
+        }
         super.onPause();
     }
 
     @Override
     public void onDetach() {
-        if (currentAsync != null) currentAsync.cancel(true);
+        if (subscription != null && !subscription.isUnsubscribed()) {
+            subscription.unsubscribe();
+            subscription = null;
+        }
         super.onDetach();
     }
 
-    /**
-     * The class for retrieving the InfoWrappers.
-     */
-    protected class GetInfoWrappers extends AsyncTask<Void, Integer, InfoWrapper[]> {
-        protected Context mContext;
-        protected ProgressBar mBar;
-        protected ArrayAdapter mAdapter;
 
-        /**
-         * Constructs the activity.
-         *
-         * @param context     the context to use
-         * @param adapter     adapter to populate
-         * @param progressBar the bar to report progress to
-         */
-        public GetInfoWrappers(Context context, ArrayAdapter adapter, ProgressBar progressBar) {
-            this.mContext = context;
-            this.mBar = progressBar;
-            this.mAdapter = adapter;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mBar.setVisibility(View.VISIBLE);
-            mAdapter.clear();
-        }
-
-        @Override
-        protected InfoWrapper[] doInBackground(Void... params) {
-            return generateInfo();
-        }
-
-        @Override
-        protected void onPostExecute(InfoWrapper[] infoWrappers) {
-            super.onPostExecute(infoWrappers);
-            if (!isAdded() || isDetached()) {
-                return; //In case the calling activity is no longer attached
-            }
-            mAdapter.addAll(infoWrappers);
-            mBar.setVisibility(View.GONE);
-        }
-    }
 
 }

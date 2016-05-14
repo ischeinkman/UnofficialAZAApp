@@ -21,7 +21,7 @@ public class SerialArson implements RidesOptimizer.RidesAlgorithm {
         for (ContactInfoWrapper toOptimize : allContacts) {
             DriverInfoWrapper driver = getClosestDriver(toOptimize, allDrivers, false);
             if (driver == null) break;
-            driver.addPassengerToCar(toOptimize);
+            driver.addPassengersToCar(toOptimize);
         }
     }
 
@@ -48,7 +48,7 @@ public class SerialArson implements RidesOptimizer.RidesAlgorithm {
                 if (closestDriver == null) break;
                 for (ContactInfoWrapper passengerToAdd : cluster.getPassengersInCluster()) {
                     if (closestDriver.getFreeSpots() <= 0) break;
-                    closestDriver.addPassengerToCar(passengerToAdd);
+                    closestDriver.addPassengersToCar(passengerToAdd);
                     cluster.removePassengerFromCluster(passengerToAdd);
                 }
             }

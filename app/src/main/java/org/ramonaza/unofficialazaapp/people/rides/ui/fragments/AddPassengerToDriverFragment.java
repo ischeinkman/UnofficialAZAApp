@@ -1,6 +1,5 @@
 package org.ramonaza.unofficialazaapp.people.rides.ui.fragments;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 
 import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
@@ -13,6 +12,8 @@ import org.ramonazaapi.contacts.ContactInfoWrapper;
 import org.ramonazaapi.interfaces.InfoWrapper;
 
 import java.util.Arrays;
+
+import rx.Observable;
 
 public class AddPassengerToDriverFragment extends InfoWrapperCheckBoxesFragment {
 
@@ -38,29 +39,18 @@ public class AddPassengerToDriverFragment extends InfoWrapperCheckBoxesFragment 
     }
 
     @Override
-    public void onSubmitButton(InfoWrapper[] checked, InfoWrapper[] unchecked) {
-        new SubmitFromList().execute(checked);
+    public Observable<?> onSubmitButton(InfoWrapper[] checked, InfoWrapper[] unchecked) {
+        ContactInfoWrapper[] newPassengers = Arrays.copyOf(checked, checked.length, ContactInfoWrapper[].class);
+        RidesDatabaseHandler rideshandler = new RidesDatabaseHandler(getActivity());
+        return rideshandler.addPassengersToCar(driverId, newPassengers);
     }
 
     @Override
-    public InfoWrapper[] generateInfo() {
+    public Observable<ContactInfoWrapper> generateInfo() {
         ContactDatabaseHandler dbhandler = ChapterPackHandlerSupport.getContactHandler(getActivity());
         return dbhandler.getContacts(new String[]{
                 AppDatabaseContract.ContactListTable.COLUMN_PRESENT + "=1",
                 AppDatabaseContract.ContactListTable._ID + " NOT IN (" + "SELECT " + AppDatabaseContract.RidesListTable.COLUMN_PASSENGER + " FROM " + AppDatabaseContract.RidesListTable.TABLE_NAME + ")"
         }, AppDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
-    }
-
-    private class SubmitFromList extends AsyncTask<InfoWrapper, Void, Void> {
-
-        @Override
-        protected Void doInBackground(InfoWrapper... params) {
-            RidesDatabaseHandler rideshandler = new RidesDatabaseHandler(getActivity());
-            ContactInfoWrapper[] newPassengers = Arrays.copyOf(params, params.length, ContactInfoWrapper[].class);
-            rideshandler.addPassengersToCar(driverId, newPassengers);
-            return null;
-        }
-
-
     }
 }

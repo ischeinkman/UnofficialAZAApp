@@ -6,26 +6,28 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+import org.ramonaza.unofficialazaapp.events.backend.EventDatabaseHandler;
 import org.ramonaza.unofficialazaapp.events.backend.services.EventUpdateService;
 import org.ramonaza.unofficialazaapp.events.ui.activities.EventPageActivity;
 import org.ramonaza.unofficialazaapp.helpers.backend.PreferenceHelper;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextListFragment;
-import org.ramonaza.unofficialazaapp.people.backend.EventDatabaseHandler;
 import org.ramonazaapi.events.EventInfoWrapper;
 import org.ramonazaapi.interfaces.InfoWrapper;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.functions.Func1;
 
 /*
  * Created by Ilan Scheinkman
@@ -33,6 +35,7 @@ import java.util.Date;
 public class EventListFragment extends InfoWrapperTextListFragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
+    private final long UPDATE_TIMEOUT = 10 * 1000;
 
     private EventDatabaseHandler handler;
     private EventUpdateService updateService;
@@ -88,50 +91,66 @@ public class EventListFragment extends InfoWrapperTextListFragment {
         startActivity(intent);
     }
 
+    private Observable<Boolean> updateEventsOrTimeOut() {
+        final long beginTime = System.currentTimeMillis();
+        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                while (System.currentTimeMillis() - beginTime < UPDATE_TIMEOUT) {
+                    if (serviceBound) {
+                        subscriber.onNext(true);
+                        subscriber.onCompleted();
+                    }
+                }
+                subscriber.onNext(false);
+                subscriber.onCompleted();
+            }
+        }).flatMap(new Func1<Boolean, Observable<Boolean>>() {
+            @Override
+            public Observable<Boolean> call(Boolean aBoolean) {
+                if (!aBoolean) return Observable.just(false);
+                return updateService.updateEvents().map(new Func1<List<EventInfoWrapper>, Boolean>() {
+                    @Override
+                    public Boolean call(List<EventInfoWrapper> eventInfoWrappers) {
+                        return true;
+                    }
+                });
+            }
+        });
+    }
+
     @Override
-    public InfoWrapper[] generateInfo() {
+    public Observable<? extends InfoWrapper> generateInfo() {
         String eventFeed = PreferenceHelper.getPreferences(getActivity()).getEventFeed();
         if (eventFeed == null || eventFeed.length() == 0) {
             EventInfoWrapper noFeed = new EventInfoWrapper();
             noFeed.setName("Please download a Chapter Pack to access this feature.");
             noFeed.setId(-1);
-            return new EventInfoWrapper[]{noFeed};
+            return Observable.just(noFeed);
         }
-        final long TIMEOUT = 10 * 1000;
-        long beginTime = System.currentTimeMillis();
-        while (System.currentTimeMillis() - beginTime < TIMEOUT) {
-            if (serviceBound) {
-                updateService.updateEventsSync();
-                break;
+        final EventInfoWrapper noEvent = new EventInfoWrapper();
+        noEvent.setName("No events found.");
+        noEvent.setId(-1);
+        return updateEventsOrTimeOut().flatMap(new Func1<Boolean, Observable<EventInfoWrapper>>() {
+            @Override
+            public Observable<EventInfoWrapper> call(Boolean aBoolean) {
+                if (!aBoolean) showText("Could not download new events from the server.");
+                final DateFormat df = new SimpleDateFormat("EEEE, MMMM dd yyyy");
+                final Date current = Calendar.getInstance().getTime();
+                return handler.getEvents(null).filter(new Func1<EventInfoWrapper, Boolean>() {
+                    @Override
+                    public Boolean call(EventInfoWrapper eventInfoWrapper) {
+                        Date eventDate = null;
+                        try {
+                            eventDate = df.parse(eventInfoWrapper.getDate());
+                        } catch (ParseException e) {
+                            return true;
+                        }
+                        return eventDate.after(current);
+                    }
+                }).defaultIfEmpty(noEvent);
             }
-        }
-        if (!serviceBound) {
-            Toast.makeText(getActivity(), "Could not connect to server in time.", Toast.LENGTH_SHORT);
-            Log.d("EventListFrag", "Service not bound in time");
-        }
-        handler = new EventDatabaseHandler(getActivity());
-        //TODO: Store event dates as MYSQL Date objects to allow for WHERE clause filtering
-        EventInfoWrapper[] allEvents = handler.getEvents(null, null);
-        DateFormat df = new SimpleDateFormat("EEEE, MMMM dd yyyy");
-        Date current = Calendar.getInstance().getTime();
-        ArrayList futureEvents = new ArrayList();
-        for (EventInfoWrapper wrapper : allEvents) {
-            try {
-                Date eventDate = df.parse(wrapper.getDate());
-                if (eventDate.after(current)) futureEvents.add(wrapper);
-            } catch (ParseException e) {
-                e.printStackTrace();
-                futureEvents.add(wrapper); //Just in case someone's date format is off
-            }
-        }
-        if (futureEvents.isEmpty()) {
-            EventInfoWrapper noEvent = new EventInfoWrapper();
-            noEvent.setName("No events found.");
-            noEvent.setId(-1);
-            return new EventInfoWrapper[]{noEvent};
-        }
-        return (EventInfoWrapper[]) futureEvents.toArray(new EventInfoWrapper[futureEvents.size()]);
+        });
     }
-
 
 }

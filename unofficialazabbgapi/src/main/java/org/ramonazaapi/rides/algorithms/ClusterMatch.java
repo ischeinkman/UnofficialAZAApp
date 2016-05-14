@@ -98,7 +98,7 @@ public class ClusterMatch implements RidesOptimizer.RidesAlgorithm {
                     driversToOptimize.remove(driver);
                     break;
                 }
-                driver.addPassengerToCar(inCluster);
+                driver.addPassengersToCar(inCluster);
                 passengersToOptimize.remove(inCluster);
                 onlyCluster.removePassengerFromCluster(inCluster);
             }
@@ -124,7 +124,7 @@ public class ClusterMatch implements RidesOptimizer.RidesAlgorithm {
                         driversToOptimize.remove(driver);
                         break;
                     }
-                    driver.addPassengerToCar(inCluster);
+                    driver.addPassengersToCar(inCluster);
                     cluster.removePassengerFromCluster(inCluster);
                     passengersToOptimize.remove(inCluster);
                 }
@@ -150,7 +150,7 @@ public class ClusterMatch implements RidesOptimizer.RidesAlgorithm {
                         driversToOptimize.remove(driver);
                         break;
                     }
-                    driver.addPassengerToCar(inCluster);
+                    driver.addPassengersToCar(inCluster);
                     cluster.removePassengerFromCluster(inCluster);
                     passengersToOptimize.remove(inCluster);
                 }
@@ -169,7 +169,7 @@ public class ClusterMatch implements RidesOptimizer.RidesAlgorithm {
                         driversToOptimize.remove(driver);
                         break;
                     }
-                    driver.addPassengerToCar(passengerInCluster);
+                    driver.addPassengersToCar(passengerInCluster);
                 }
             }
         }

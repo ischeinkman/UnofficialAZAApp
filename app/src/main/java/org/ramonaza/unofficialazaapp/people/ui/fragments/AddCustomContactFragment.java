@@ -128,7 +128,7 @@ public class AddCustomContactFragment extends Fragment {
             }
 
             try {
-                handler.addContact(mContact);
+                handler.addContacts(mContact);
             } catch (Exception e) {
                 e.printStackTrace();
             }

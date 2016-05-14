@@ -22,6 +22,8 @@ import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesContactMani
 import org.ramonaza.unofficialazaapp.people.ui.activities.AddCustomContactActivity;
 import org.ramonazaapi.interfaces.InfoWrapper;
 
+import rx.Observable;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link PassengersFragment#newInstance} factory method to
@@ -96,7 +98,7 @@ public class PassengersFragment extends InfoWrapperTextWithButtonFragment {
     }
 
     @Override
-    public InfoWrapper[] generateInfo() {
+    public Observable<? extends InfoWrapper> generateInfo() {
         ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(getActivity());
         return handler.getContacts(new String[]{
                 AppDatabaseContract.ContactListTable.COLUMN_PRESENT + "=1",

@@ -7,4 +7,5 @@ dependencies {
     compile 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
     compile 'org.json:json:20141113'
     compile 'commons-logging:commons-logging:1.1.1'
+    compile 'io.reactivex:rxjava:1.1.3'
 }
