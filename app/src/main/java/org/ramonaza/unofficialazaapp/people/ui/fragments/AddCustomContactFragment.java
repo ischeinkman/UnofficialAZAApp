@@ -23,6 +23,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link AddCustomContactFragment#newInstance} factory method to
@@ -33,6 +40,9 @@ public class AddCustomContactFragment extends Fragment {
     //The email to send new contact information to
     private static final String[] UPDATE_EMAIL = {"ramonazadev@gmail.com"};
 
+    private Subscription addContactSubscription;
+
+    private CheckBox globalUpdate;
 
     public AddCustomContactFragment() {
         // Required empty public constructor
@@ -62,6 +72,7 @@ public class AddCustomContactFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_add_custom_contact, container, false);
         Button submitButton = (Button) rootView.findViewById(R.id.SubmitButton);
+        globalUpdate = (CheckBox) rootView.findViewById(R.id.NewContactReqUpdate);
         submitButton.setOnClickListener(new SubmitListener(getActivity(), rootView));
         return rootView;
     }
@@ -80,68 +91,81 @@ public class AddCustomContactFragment extends Fragment {
 
     public class SubmitListener implements View.OnClickListener {
         Context context;
-        ContactInfoWrapper mContact;
         View myView;
 
         public SubmitListener(Context incontext, View inView) {
             this.myView = inView;
             this.context = incontext;
-            this.mContact = new ContactInfoWrapper();
         }
 
         @Override
         public void onClick(View v) {
-            ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(context);
-
-            EditText nameField = (EditText) myView.findViewById(R.id.NewContactName);
-            EditText addressField = (EditText) myView.findViewById(R.id.NewContactAddress);
-            EditText phoneField = (EditText) myView.findViewById(R.id.NewContactPhone);
-            EditText schoolField = (EditText) myView.findViewById(R.id.NewContactSchool);
-            EditText emailField = (EditText) myView.findViewById(R.id.NewContactEmail);
-            EditText gradeField = (EditText) myView.findViewById(R.id.NewContactGrade);
-            CheckBox globalUpdate = (CheckBox) myView.findViewById(R.id.NewContactReqUpdate);
-
-            String nameVal = nameField.getText().toString();
-            String addressVal = addressField.getText().toString();
-            String phoneVal = phoneField.getText().toString();
-            String schoolVal = schoolField.getText().toString();
-            String emailVal = emailField.getText().toString();
-            String gradeVal = gradeField.getText().toString();
-            Set<String> valArray = new HashSet<String>(Arrays.asList(nameVal, addressVal, phoneVal, schoolVal, emailVal, gradeVal));
-            if (valArray.contains(null) || valArray.contains("")) {
-                Toast.makeText(context, R.string.error_blank_responce, Toast.LENGTH_SHORT).show();
+            final ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(context);
+            if (addContactSubscription != null && !addContactSubscription.isUnsubscribed()) {
+                Toast.makeText(getActivity(), "Warning: already submitting contact", Toast.LENGTH_LONG);
                 return;
             }
+            addContactSubscription = Observable.just(new ContactInfoWrapper()).map(new Func1<ContactInfoWrapper, ContactInfoWrapper>() {
+                @Override
+                public ContactInfoWrapper call(ContactInfoWrapper mContact) {
+                    EditText nameField = (EditText) myView.findViewById(R.id.NewContactName);
+                    EditText addressField = (EditText) myView.findViewById(R.id.NewContactAddress);
+                    EditText phoneField = (EditText) myView.findViewById(R.id.NewContactPhone);
+                    EditText schoolField = (EditText) myView.findViewById(R.id.NewContactSchool);
+                    EditText emailField = (EditText) myView.findViewById(R.id.NewContactEmail);
+                    EditText gradeField = (EditText) myView.findViewById(R.id.NewContactGrade);
 
-            mContact.setName(nameVal);
-            mContact.setAddress(addressVal);
-            mContact.setPhoneNumber(phoneVal);
-            mContact.setSchool(schoolVal);
-            mContact.setEmail(emailVal);
-            int grade = Integer.parseInt(gradeVal);
-            mContact.setGrade(grade);
-            mContact.setPresent(true);
-            double[] coords = LocationSupport.getCoordsFromAddress(mContact.getAddress(), context);
-            if (coords != null) {
-                mContact.setLatitude(coords[0]);
-                mContact.setLongitude(coords[1]);
-            }
-
-            try {
-                handler.addContacts(mContact);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            if (globalUpdate.isChecked()) {
-                Intent updateEmailIntent = new Intent(Intent.ACTION_SEND);
-                updateEmailIntent.setType("text/html");
-                updateEmailIntent.putExtra(Intent.EXTRA_EMAIL, UPDATE_EMAIL);
-                updateEmailIntent.putExtra(Intent.EXTRA_SUBJECT, "NEW CONTACT:" + mContact.getName());
-                String message = String.format("Name: %s\nSchool: %s\nGraduation year: %s\nAddress: %s\nEmail: %s\n Phone: %s\n", mContact.getName(), mContact.getSchool(), mContact.getGradYear(), mContact.getAddress(), mContact.getEmail(), mContact.getPhoneNumber());
-                updateEmailIntent.putExtra(Intent.EXTRA_TEXT, message);
-                startActivity(Intent.createChooser(updateEmailIntent, "Request update using..."));
-            }
-            getActivity().finish();
+                    final String nameVal = nameField.getText().toString();
+                    final String addressVal = addressField.getText().toString();
+                    final String phoneVal = phoneField.getText().toString();
+                    final String schoolVal = schoolField.getText().toString();
+                    final String emailVal = emailField.getText().toString();
+                    final String gradeVal = gradeField.getText().toString();
+                    Set<String> valArray = new HashSet<String>(Arrays.asList(nameVal, addressVal, phoneVal, schoolVal, emailVal, gradeVal));
+                    if (valArray.contains(null) || valArray.contains("")) {
+                        throw new RuntimeException(getString(R.string.error_blank_responce));
+                    }
+                    mContact.setName(nameVal);
+                    mContact.setAddress(addressVal);
+                    mContact.setPhoneNumber(phoneVal);
+                    mContact.setSchool(schoolVal);
+                    mContact.setEmail(emailVal);
+                    int grade = Integer.parseInt(gradeVal);
+                    mContact.setGrade(grade);
+                    mContact.setPresent(true);
+                    return mContact;
+                }
+            }).map(new Func1<ContactInfoWrapper, ContactInfoWrapper>() {
+                @Override
+                public ContactInfoWrapper call(ContactInfoWrapper mContact) {
+                    double[] coords = LocationSupport.getCoordsFromAddress(mContact.getAddress(), context);
+                    if (coords != null) {
+                        mContact.setLatitude(coords[0]);
+                        mContact.setLongitude(coords[1]);
+                    }
+                    return mContact;
+                }
+            }).flatMap(new Func1<ContactInfoWrapper, Observable<ContactInfoWrapper>>() {
+                @Override
+                public Observable<ContactInfoWrapper> call(ContactInfoWrapper contactInfoWrapper) {
+                    return handler.addContacts(contactInfoWrapper);
+                }
+            }).subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Action1<ContactInfoWrapper>() {
+                        @Override
+                        public void call(ContactInfoWrapper mContact) {
+                            if (globalUpdate.isChecked()) {
+                                Intent updateEmailIntent = new Intent(Intent.ACTION_SEND);
+                                updateEmailIntent.setType("text/html");
+                                updateEmailIntent.putExtra(Intent.EXTRA_EMAIL, UPDATE_EMAIL);
+                                updateEmailIntent.putExtra(Intent.EXTRA_SUBJECT, "NEW CONTACT:" + mContact.getName());
+                                String message = String.format("Name: %s\nSchool: %s\nGraduation year: %s\nAddress: %s\nEmail: %s\n Phone: %s\n", mContact.getName(), mContact.getSchool(), mContact.getGradYear(), mContact.getAddress(), mContact.getEmail(), mContact.getPhoneNumber());
+                                updateEmailIntent.putExtra(Intent.EXTRA_TEXT, message);
+                                startActivity(Intent.createChooser(updateEmailIntent, "Request update using..."));
+                            }
+                            if (getActivity() != null) getActivity().finish();
+                        }
+                    });
         }
     }
 

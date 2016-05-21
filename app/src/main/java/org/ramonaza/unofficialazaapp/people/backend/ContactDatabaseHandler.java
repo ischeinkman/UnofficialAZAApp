@@ -49,10 +49,10 @@ public class ContactDatabaseHandler extends BaseDatabaseHandler<ContactInfoWrapp
         if (queryResults.getCount() == 0) {
             return Observable.empty();
         }
+        queryResults.moveToFirst();
         return Observable.create(new Observable.OnSubscribe<ContactInfoWrapper>() {
             @Override
             public void call(Subscriber<? super ContactInfoWrapper> subscriber) {
-                queryResults.moveToFirst();
                 do {
                     ContactInfoWrapper temp = new ContactInfoWrapper();
                     temp.setId(queryResults.getInt(queryResults.getColumnIndexOrThrow(AppDatabaseContract.ContactListTable._ID)));
@@ -72,6 +72,7 @@ public class ContactDatabaseHandler extends BaseDatabaseHandler<ContactInfoWrapp
                     }
                     subscriber.onNext(temp);
                 } while (queryResults.moveToNext());
+                subscriber.onCompleted();
             }
         }).subscribeOn(Schedulers.io()).publish().refCount();
     }
@@ -115,34 +116,24 @@ public class ContactDatabaseHandler extends BaseDatabaseHandler<ContactInfoWrapp
      * @param toAdd the contact to add
      */
     public Observable<ContactInfoWrapper> addContacts(final ContactInfoWrapper... toAdd) {
-
-        return Observable.create(new Observable.OnSubscribe<ContactInfoWrapper>() {
+        final ContactInfoWrapper[] store = new ContactInfoWrapper[1];
+        return Observable.from(toAdd).flatMap(new Func1<ContactInfoWrapper, Observable<ContentValues>>() {
             @Override
-            public void call(final Subscriber<? super ContactInfoWrapper> subscriber) {
-                try {
-                    for (final ContactInfoWrapper contact : toAdd) {
-                        prepareContactsForCursor(contact).map(new Func1<ContentValues, Long>() {
-
-                            @Override
-                            public Long call(ContentValues value) {
-                                return db.insert(AppDatabaseContract.ContactListTable.TABLE_NAME, null, value);
-                            }
-                        }).subscribe(new Action1<Long>() {
-                            @Override
-                            public void call(Long aLong) {
-                                if (aLong < 0) {
-                                    subscriber.onError(new IOException("Contact not inserted."));
-                                    return;
-                                }
-                                contact.setId(aLong.intValue());
-                                subscriber.onNext(contact);
-                            }
-                        });
-                    }
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
+            public Observable<ContentValues> call(ContactInfoWrapper contactInfoWrapper) {
+                store[0] = contactInfoWrapper;
+                return prepareContactsForCursor(contactInfoWrapper);
+            }
+        }).map(new Func1<ContentValues, Long>() {
+            @Override
+            public Long call(ContentValues contentValues) {
+                return db.insert(AppDatabaseContract.ContactListTable.TABLE_NAME, null, contentValues);
+            }
+        }).map(new Func1<Long, ContactInfoWrapper>() {
+            @Override
+            public ContactInfoWrapper call(Long aLong) {
+                if (aLong == -1l) throw new RuntimeException("Contact Not Inserted");
+                store[0].setId(aLong.intValue());
+                return store[0];
             }
         }).subscribeOn(Schedulers.computation()).publish().refCount();
     }
@@ -189,6 +180,16 @@ public class ContactDatabaseHandler extends BaseDatabaseHandler<ContactInfoWrapp
      * @param toDelete the ID of the contact to delete
      */
     public Observable<Integer> deleteContacts(ContactInfoWrapper... toDelete) {
+        if (toDelete == null) {
+            return Observable.create(new Observable.OnSubscribe<Integer>() {
+                @Override
+                public void call(Subscriber<? super Integer> subscriber) {
+                    db.delete(AppDatabaseContract.ContactListTable.TABLE_NAME, null, null);
+                    subscriber.onNext(0);
+                    subscriber.onCompleted();
+                }
+            }).subscribeOn(Schedulers.computation()).publish().refCount();
+        }
         return Observable.from(toDelete).map(new Func1<ContactInfoWrapper, Integer>() {
             @Override
             public Integer call(ContactInfoWrapper contactInfoWrapper) {
@@ -248,6 +249,7 @@ public class ContactDatabaseHandler extends BaseDatabaseHandler<ContactInfoWrapp
                         for (int id : ids) {
                             builder.append(id + ",");
                         }
+                        builder.deleteCharAt(builder.length()-1);
                         builder.append(")");
                         query = builder.toString();
                     } else {
@@ -258,6 +260,7 @@ public class ContactDatabaseHandler extends BaseDatabaseHandler<ContactInfoWrapp
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);
+                    subscriber.onCompleted();
                 }
             }
         }).flatMap(new Func1<String, Observable<Cursor>>() {
@@ -314,6 +317,7 @@ public class ContactDatabaseHandler extends BaseDatabaseHandler<ContactInfoWrapp
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);
+                    subscriber.onCompleted();
                 }
             }
         }).subscribeOn(Schedulers.computation()).publish().refCount();
@@ -382,6 +386,7 @@ public class ContactDatabaseHandler extends BaseDatabaseHandler<ContactInfoWrapp
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);
+                    subscriber.onCompleted();
                 }
             }
         }).flatMap(new Func1<String, Observable<Cursor>>() {

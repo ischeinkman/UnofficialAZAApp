@@ -130,6 +130,13 @@ public class EventDatabaseHandler extends BaseDatabaseHandler<EventInfoWrapper> 
     }
 
     public Observable<Integer> deleteEvents(int... toDelete) {
+        if (toDelete == null) return Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                subscriber.onNext(db.delete(AppDatabaseContract.EventListTable.TABLE_NAME, null, null));
+                subscriber.onCompleted();
+            }
+        });
         Integer[] allInts = new Integer[toDelete.length];
         for (int i = 0; i < toDelete.length; i++) allInts[i] = toDelete[i];
         return Observable.from(allInts).map(new Func1<Integer, Integer>() {
@@ -163,6 +170,7 @@ public class EventDatabaseHandler extends BaseDatabaseHandler<EventInfoWrapper> 
                     for (int id : ids) {
                         builder.append(id + ",");
                     }
+                    builder.deleteCharAt(builder.length()-1);
                     builder.append(")");
                     query = builder.toString();
                 } else {
@@ -195,6 +203,7 @@ public class EventDatabaseHandler extends BaseDatabaseHandler<EventInfoWrapper> 
             for (int id : ids) {
                 builder.append(id + ",");
             }
+            builder.deleteCharAt(builder.length() - 1);
             builder.append(")");
             query = builder.toString();
         } else {

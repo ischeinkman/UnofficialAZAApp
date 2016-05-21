@@ -18,6 +18,7 @@ import android.util.Log;
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.events.backend.EventDatabaseHandler;
 import org.ramonaza.unofficialazaapp.frontpage.ui.activities.FrontalActivity;
+import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.unofficialazaapp.helpers.backend.PreferenceHelper;
 import org.ramonazaapi.events.EventInfoWrapper;
 import org.ramonazaapi.events.EventRSSHandler;
@@ -49,6 +50,7 @@ public class EventUpdateService extends Service {
     NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(EventUpdateService.this);
     private boolean isRunning  = false;
     private Subscription updateThread;
+    private ConnectableObservable eventObservable;
     private MyBinder binder = new MyBinder();
     private boolean isBound = false;
 
@@ -103,6 +105,7 @@ public class EventUpdateService extends Service {
     public void stopRunning() {
         if (updateThread != null) updateThread.unsubscribe();
         updateThread = null;
+        eventObservable = null;
         if (isRunning) {
             NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             mNotificationManager.cancel(NOTIFICATION_ID);
@@ -111,15 +114,18 @@ public class EventUpdateService extends Service {
     }
 
     public Observable<List<EventInfoWrapper>> updateEvents() {
-        ConnectableObservable updateObservable = createUpdateObservable();
-        updateThread = updateObservable.connect();
-        return updateObservable.cache();
+        Log.v(TAG, "Updating Events");
+        if (updateThread == null) {
+            eventObservable = createUpdateObservable();
+            updateThread = eventObservable.connect();
+        }
+        return eventObservable.cache();
     }
 
     private ConnectableObservable<List<EventInfoWrapper>> createUpdateObservable() {
 
         final NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        final EventDatabaseHandler dbHandler = new EventDatabaseHandler(EventUpdateService.this);
+        final EventDatabaseHandler dbHandler = new EventDatabaseHandler(ChapterPackHandlerSupport.getContactHandler(EventUpdateService.this));
 
         return Observable.create(new Observable.OnSubscribe<String>() {
 
@@ -211,7 +217,8 @@ public class EventUpdateService extends Service {
             NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             mNotificationManager.cancel(NOTIFICATION_ID);
         }
-        updateThread = createUpdateObservable().connect();
+        eventObservable = createUpdateObservable();
+        updateThread = eventObservable.connect();
     }
 
 

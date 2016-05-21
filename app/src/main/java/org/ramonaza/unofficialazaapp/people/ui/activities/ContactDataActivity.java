@@ -5,6 +5,7 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.MenuItem;
 
 import org.ramonaza.unofficialazaapp.R;
@@ -58,12 +59,18 @@ public class ContactDataActivity extends BaseActivity {
         if (!(refreshSub == null) && !refreshSub.isUnsubscribed()) {
             refreshSub.unsubscribe();
         }
-        refreshSub = ChapterPackHandlerSupport.getContactHandler(this).getContacts(inputId).subscribe(new Action1<ContactInfoWrapper>() {
-            @Override
-            public void call(ContactInfoWrapper contactInfoWrapper) {
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction transaction = fragmentManager.beginTransaction().replace(R.id.container, GeneralContactFragment.newInstance(1, contactInfoWrapper));
-                transaction.commit();
+        refreshSub = ChapterPackHandlerSupport
+                .getContactHandler(this)
+                .getContacts(inputId)
+                .subscribe(new Action1<ContactInfoWrapper>() {
+                     @Override
+                     public void call(ContactInfoWrapper contactInfoWrapper) {
+                         Log.v(getClass().getName(), inputId+"->"+contactInfoWrapper.getName());
+                        FragmentManager fragmentManager = getFragmentManager();
+                        FragmentTransaction transaction = fragmentManager
+                            .beginTransaction()
+                            .replace(R.id.container, GeneralContactFragment.newInstance(1, contactInfoWrapper));
+                        transaction.commit();
             }
         }, new Action1<Throwable>() {
             @Override

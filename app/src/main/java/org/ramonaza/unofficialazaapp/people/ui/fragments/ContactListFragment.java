@@ -17,7 +17,10 @@ import org.ramonaza.unofficialazaapp.people.ui.activities.ContactDataActivity;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
 import org.ramonazaapi.interfaces.InfoWrapper;
 
+import java.util.Calendar;
+
 import rx.Observable;
+import rx.functions.Func1;
 
 /**
  * Created by Ilan Scheinkman on 1/12/15.
@@ -80,7 +83,16 @@ public class ContactListFragment extends InfoWrapperTextListFragment {
     @Override
     public Observable<ContactInfoWrapper> generateInfo() {
         ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(getActivity());
-        return handler.getContacts(null);
+        return handler.getContacts(null).filter(new Func1<ContactInfoWrapper, Boolean>() {
+            @Override
+            public Boolean call(ContactInfoWrapper contactInfoWrapper) {
+                try {
+                    return Integer.valueOf(contactInfoWrapper.getGradYear()) >= Calendar.getInstance().get(Calendar.YEAR);
+                } catch (NumberFormatException e){
+                    return true;
+                }
+            }
+        });
     }
 
 

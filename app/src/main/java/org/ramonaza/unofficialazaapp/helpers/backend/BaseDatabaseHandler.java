@@ -37,6 +37,7 @@ public abstract class BaseDatabaseHandler<T> {
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);
+                    subscriber.onCompleted();
                 }
             }
         });
