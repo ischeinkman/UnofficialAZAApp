@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import org.ramonaza.unofficialazaapp.events.backend.EventDatabaseHandler;
 import org.ramonaza.unofficialazaapp.events.backend.services.EventUpdateService;
 import org.ramonaza.unofficialazaapp.events.ui.activities.EventPageActivity;
+import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.unofficialazaapp.helpers.backend.PreferenceHelper;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextListFragment;
 import org.ramonazaapi.events.EventInfoWrapper;
@@ -24,10 +26,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
-import rx.Subscriber;
 import rx.functions.Func1;
+import rx.subjects.ReplaySubject;
 
 /*
  * Created by Ilan Scheinkman
@@ -35,21 +38,20 @@ import rx.functions.Func1;
 public class EventListFragment extends InfoWrapperTextListFragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
-    private final long UPDATE_TIMEOUT = 10 * 1000;
+    private final long UPDATE_TIMEOUT = 3; //in seconds
 
-    private EventDatabaseHandler handler;
     private EventUpdateService updateService;
-    private boolean serviceBound;
+    private ReplaySubject<Boolean> serviceBound;
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             updateService = ((EventUpdateService.MyBinder) iBinder).getService();
-            serviceBound = true;
+            serviceBound.onNext(true);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-            serviceBound = false;
+            serviceBound.onNext(false);
         }
     };
 
@@ -70,11 +72,15 @@ public class EventListFragment extends InfoWrapperTextListFragment {
 
     @Override
     public void onPause() {
-        if (serviceBound) {
-            getActivity().unbindService(mConnection);
-        }
-        serviceBound = false;
+        if (serviceBound.getValue()) getActivity().unbindService(mConnection);
         super.onPause();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        serviceBound = ReplaySubject.createWithSize(1);
+        serviceBound.onNext(false);
     }
 
     @Override
@@ -92,22 +98,16 @@ public class EventListFragment extends InfoWrapperTextListFragment {
     }
 
     private Observable<Boolean> updateEventsOrTimeOut() {
-        final long beginTime = System.currentTimeMillis();
-        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+        return serviceBound.buffer(UPDATE_TIMEOUT, TimeUnit.SECONDS).map(new Func1<List<Boolean>, Boolean>() {
             @Override
-            public void call(Subscriber<? super Boolean> subscriber) {
-                while (System.currentTimeMillis() - beginTime < UPDATE_TIMEOUT) {
-                    if (serviceBound) {
-                        subscriber.onNext(true);
-                        subscriber.onCompleted();
-                    }
-                }
-                subscriber.onNext(false);
-                subscriber.onCompleted();
+            public Boolean call(List<Boolean> booleen) {
+                Log.v(this.getClass().getName(), "Checking service binding");
+                return booleen.size() > 0 && booleen.contains(true);
             }
-        }).flatMap(new Func1<Boolean, Observable<Boolean>>() {
+        }).first().flatMap(new Func1<Boolean, Observable<Boolean>>() {
             @Override
             public Observable<Boolean> call(Boolean aBoolean) {
+                Log.v(this.getClass().getName(), "Checking service success");
                 if (!aBoolean) return Observable.just(false);
                 return updateService.updateEvents().map(new Func1<List<EventInfoWrapper>, Boolean>() {
                     @Override
@@ -134,10 +134,13 @@ public class EventListFragment extends InfoWrapperTextListFragment {
         return updateEventsOrTimeOut().flatMap(new Func1<Boolean, Observable<EventInfoWrapper>>() {
             @Override
             public Observable<EventInfoWrapper> call(Boolean aBoolean) {
-                if (!aBoolean) showText("Could not download new events from the server.");
+                if (!aBoolean) {
+                    showText("Could not download new events from the server");
+                }
                 final DateFormat df = new SimpleDateFormat("EEEE, MMMM dd yyyy");
                 final Date current = Calendar.getInstance().getTime();
-                return handler.getEvents(null).filter(new Func1<EventInfoWrapper, Boolean>() {
+                return new EventDatabaseHandler(ChapterPackHandlerSupport.getContactHandler(getActivity()))
+                        .getEvents(null).filter(new Func1<EventInfoWrapper, Boolean>() {
                     @Override
                     public Boolean call(EventInfoWrapper eventInfoWrapper) {
                         Date eventDate = null;
