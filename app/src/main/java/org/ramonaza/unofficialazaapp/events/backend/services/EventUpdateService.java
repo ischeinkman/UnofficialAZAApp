@@ -29,6 +29,7 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.observables.ConnectableObservable;
 import rx.schedulers.Schedulers;
@@ -46,7 +47,9 @@ public class EventUpdateService extends Service {
     private static final String TAG = "EventUpdateService";
     private static final int NOTIFICATION_ID = 8888;
     private static final long TIME_MULTIPLIER = 1000 * 60;
+
     private static boolean isRepeating = false;
+
     NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(EventUpdateService.this);
     private boolean isRunning  = false;
     private Subscription updateThread;
@@ -75,6 +78,14 @@ public class EventUpdateService extends Service {
         PendingIntent pi = PendingIntent.getService(context, 0, i, 0);
         mgr.cancel(pi);
         isRepeating = false;
+    }
+
+    public static long getLastUpdateTime(Context context){
+        return PreferenceHelper.getPreferences(context).getLastEventUpdate();
+    }
+
+    private static void updatedEvents(Context context){
+        PreferenceHelper.getPreferences(context).setLastEventUpdate(System.currentTimeMillis());
     }
 
     public void onCreate() {
@@ -191,11 +202,13 @@ public class EventUpdateService extends Service {
                     return dbHandler.deleteEvents(null).toList().flatMap(new Func1<List<Integer>, Observable<EventInfoWrapper>>() {
                         @Override
                         public Observable<EventInfoWrapper> call(List<Integer> integers) {
+                            updatedEvents(getApplicationContext());
                             return dbHandler.addEvents(rss);
                         }
                     });
                 } else {
                     mNotificationManager.cancel(NOTIFICATION_ID);
+                    updatedEvents(getApplicationContext());
                     return Observable.empty();
                 }
             }
@@ -206,6 +219,11 @@ public class EventUpdateService extends Service {
                 EventNotificationService.setUpNotifications(EventUpdateService.this);
                 isRunning = false;
                 return eventInfoWrappers;
+            }
+        }).doOnError(new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                mNotificationManager.cancel(NOTIFICATION_ID);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).publish();
     }

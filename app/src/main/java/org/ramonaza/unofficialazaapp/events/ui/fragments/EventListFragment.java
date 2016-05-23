@@ -23,6 +23,7 @@ import org.ramonazaapi.interfaces.InfoWrapper;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -98,7 +99,15 @@ public class EventListFragment extends InfoWrapperTextListFragment {
     }
 
     private Observable<Boolean> updateEventsOrTimeOut() {
-        return serviceBound.buffer(UPDATE_TIMEOUT, TimeUnit.SECONDS).map(new Func1<List<Boolean>, Boolean>() {
+        long lastUpdate = EventUpdateService.getLastUpdateTime(getActivity());
+        long minLastUpdate = System.currentTimeMillis() - (PreferenceHelper.getPreferences(getActivity()).getEventUpdateTime() *60000l);
+        if (lastUpdate> minLastUpdate) return Observable.just(true);
+        return serviceBound.buffer(UPDATE_TIMEOUT, TimeUnit.SECONDS).onErrorReturn(new Func1<Throwable, List<Boolean>>() {
+            @Override
+            public List<Boolean> call(Throwable throwable) {
+                return Arrays.asList(false);
+            }
+        }).map(new Func1<List<Boolean>, Boolean>() {
             @Override
             public Boolean call(List<Boolean> booleen) {
                 Log.v(this.getClass().getName(), "Checking service binding");
@@ -113,6 +122,11 @@ public class EventListFragment extends InfoWrapperTextListFragment {
                     @Override
                     public Boolean call(List<EventInfoWrapper> eventInfoWrappers) {
                         return true;
+                    }
+                }).onErrorReturn(new Func1<Throwable, Boolean>() {
+                    @Override
+                    public Boolean call(Throwable throwable) {
+                        return false;
                     }
                 });
             }

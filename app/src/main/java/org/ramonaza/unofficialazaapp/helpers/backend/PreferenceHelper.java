@@ -18,14 +18,14 @@ public class PreferenceHelper {
     public static final String PREF_NOTIFY_BEFORE_TIME = "notifiybeforetime";
     public static final String PREF_EVENT_UPDATE_TIME = "eventupdatetime";
 
+    public static final String TAG_LAST_UPDATE_TIME = "eventlastupdatetime";
+
     private static PreferenceHelper mHelper;
 
     private SharedPreferences prefs;
-    private SharedPreferences.Editor editor;
 
     private PreferenceHelper(Context context) {
         prefs = context.getSharedPreferences(PREF_FILE_TITLE, Context.MODE_PRIVATE);
-        editor = prefs.edit();
     }
 
     public static PreferenceHelper getPreferences(Context context) {
@@ -96,5 +96,13 @@ public class PreferenceHelper {
     public PreferenceHelper setEventUpdateTime(long updateTime) {
         prefs.edit().putString(PREF_EVENT_UPDATE_TIME, "" + updateTime);
         return this;
+    }
+
+    public long getLastEventUpdate(){
+        return prefs.getLong(TAG_LAST_UPDATE_TIME, -1l);
+    }
+
+    public void setLastEventUpdate(long time){
+        prefs.edit().putLong(TAG_LAST_UPDATE_TIME, time).commit();
     }
 }
