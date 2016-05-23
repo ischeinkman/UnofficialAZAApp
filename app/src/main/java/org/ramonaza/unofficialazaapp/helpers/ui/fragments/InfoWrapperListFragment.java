@@ -4,12 +4,20 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.jakewharton.rxbinding.widget.RxTextView;
 
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonazaapi.interfaces.InfoWrapper;
@@ -21,22 +29,37 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
+
+`
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public abstract class InfoWrapperListFragment extends Fragment {
 
+    //The background data retrieving task
+    protected Subscription subscription;
+
+    //Views we must manipulate
     protected ProgressBar progressBar;
     protected ListView listView;
-    protected Subscription subscription;
     protected ArrayAdapter mAdapter;
     protected int mLayoutId;
     protected View rootView;
+
+    //A subject to display toasts from multiple threads
     protected Subject<String, String> toastStorage;
+
+    //Layouts and values related to filtering
+    protected CharSequence filter;
+    protected LinearLayout searchLayout;
+    protected TextView searchBox;
+    protected ImageView searchButton;
+    protected Subscription filterSubscription;
 
     public InfoWrapperListFragment() {
 
@@ -46,16 +69,78 @@ public abstract class InfoWrapperListFragment extends Fragment {
 
     public abstract Observable<? extends InfoWrapper> generateInfo();
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        setUpToastSubject();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_infowrapper_list, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    public void hideSearchView(){
+        if (filterSubscription != null) {
+            filterSubscription.unsubscribe();
+            filterSubscription = null;
+        }
+        searchLayout.setVisibility(View.GONE);
+        filter = null;
+        refreshData();
+    }
+
+    public void showSearchView(){
+        searchLayout.setVisibility(View.VISIBLE);
+        filterSubscription = RxTextView.textChanges(searchBox)
+                .subscribe(new Action1<CharSequence>() {
+                    @Override
+                    public void call(CharSequence charSequence) {
+                        filter = charSequence;
+                        refreshData();
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        showText(throwable.getMessage());
+                    }
+                });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.openSearch) {
+            if (searchLayout.getVisibility() == View.GONE) {
+                showSearchView();
+            }
+            else{
+                hideSearchView();
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        setUpToastSubject();
         if (this.mAdapter == null) this.mAdapter = getAdapter();
         if (mLayoutId == 0) mLayoutId = R.layout.fragment_info_wrapper_list;
         rootView = inflater.inflate(mLayoutId, container, false);
         progressBar = (ProgressBar) rootView.findViewById(R.id.cProgressBar);
         listView = (ListView) rootView.findViewById(R.id.infowrapperadapterlist);
+        searchLayout = (LinearLayout) rootView.findViewById(R.id.cListLinearListSearch);
+        searchBox = (TextView) rootView.findViewById(R.id.searchNames);
+        /*searchButton = (ImageView) rootView.findViewById(R.id.searchIcon);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                hideSearchView();
+            }
+        });*/
         refreshData();
         listView.setAdapter(mAdapter);
         return rootView;
@@ -83,6 +168,13 @@ public abstract class InfoWrapperListFragment extends Fragment {
             subscription.unsubscribe();
         }
         subscription = generateInfo()
+                .filter(new Func1<InfoWrapper, Boolean>() {
+                    @Override
+                    public Boolean call(InfoWrapper infoWrapper) {
+                        return filter == null || filter.length() == 0
+                                || infoWrapper.getName().toLowerCase().contains(filter.toString().toLowerCase());
+                    }
+                })
                 .toList()
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())

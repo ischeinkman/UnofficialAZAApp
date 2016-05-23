@@ -52,6 +52,7 @@ public class ContactListFragment extends InfoWrapperTextListFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_contact_list, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
