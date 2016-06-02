@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
+import org.ramonaza.unofficialazaapp.helpers.backend.DatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonazaapi.chapterpacks.ChapterPackHandler;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
@@ -32,7 +33,7 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(AppDatabaseContract.RidesListTable.CREATE_TABLE);
         db.execSQL(AppDatabaseContract.EventListTable.CREATE_TABLE);
         try {
-            genDatabaseFromCSV(db);
+            genDatabaseFromCSV();
         } catch (ContactCSVReadError contactCSVReadError) {
             contactCSVReadError.printStackTrace();
         }
@@ -57,12 +58,12 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void genDatabaseFromCSV(SQLiteDatabase db) throws ContactCSVReadError {
+    public void genDatabaseFromCSV() throws ContactCSVReadError {
         ChapterPackHandler c = ChapterPackHandlerSupport.getChapterPackHandler(context);
         if (c != null && c.getCsvHandler() != null) {
             ContactInfoWrapper[] allInCSV = c.getCsvHandler().getCtactInfoListFromCSV();
             if (allInCSV.length <= 0) return;
-            ContactDatabaseHandler handler = new ContactDatabaseHandler(db);
+            ContactDatabaseHandler handler = (ContactDatabaseHandler) DatabaseHandler.getHandler(ContactDatabaseHandler.class);
             handler.deleteContacts(null, null);
             for (ContactInfoWrapper inCsv : allInCSV) {
                 try {

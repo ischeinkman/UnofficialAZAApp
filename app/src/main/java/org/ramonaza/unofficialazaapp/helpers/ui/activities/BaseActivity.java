@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import org.ramonaza.unofficialazaapp.R;
+import org.ramonaza.unofficialazaapp.helpers.backend.DatabaseHandler;
 import org.ramonaza.unofficialazaapp.settings.ui.activities.SettingsActivity;
 
 /**
@@ -28,5 +29,16 @@ public abstract class BaseActivity extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_default, menu);
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DatabaseHandler.init(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 }

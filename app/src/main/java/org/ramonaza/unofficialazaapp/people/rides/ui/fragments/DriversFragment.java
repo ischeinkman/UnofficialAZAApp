@@ -13,6 +13,7 @@ import android.widget.Button;
 
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
+import org.ramonaza.unofficialazaapp.helpers.backend.DatabaseHandler;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextWithButtonFragment;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.AddContactDriverActivity;
@@ -84,7 +85,7 @@ public class DriversFragment extends InfoWrapperTextWithButtonFragment {
 
     @Override
     public InfoWrapper[] generateInfo() {
-        RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
+        RidesDatabaseHandler handler = (RidesDatabaseHandler) DatabaseHandler.getHandler(RidesDatabaseHandler.class);;
         return handler.getDrivers(null, AppDatabaseContract.DriverListTable.COLUMN_NAME + " ASC");
     }
 
@@ -99,7 +100,7 @@ public class DriversFragment extends InfoWrapperTextWithButtonFragment {
 
         @Override
         protected Void doInBackground(Integer... params) {
-            RidesDatabaseHandler handler = new RidesDatabaseHandler(context);
+            RidesDatabaseHandler handler = (RidesDatabaseHandler) DatabaseHandler.getHandler(RidesDatabaseHandler.class);;
             for (int id : params) {
                 handler.deleteDriver(id);
             }

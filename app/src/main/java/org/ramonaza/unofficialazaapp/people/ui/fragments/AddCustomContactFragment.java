@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.ramonaza.unofficialazaapp.R;
-import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
+import org.ramonaza.unofficialazaapp.helpers.backend.DatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.backend.LocationSupport;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
@@ -91,7 +91,7 @@ public class AddCustomContactFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(context);
+            ContactDatabaseHandler handler = (ContactDatabaseHandler) DatabaseHandler.getHandler(ContactDatabaseHandler.class);
 
             EditText nameField = (EditText) myView.findViewById(R.id.NewContactName);
             EditText addressField = (EditText) myView.findViewById(R.id.NewContactAddress);

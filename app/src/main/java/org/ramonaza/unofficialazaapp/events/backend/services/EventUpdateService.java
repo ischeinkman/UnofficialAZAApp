@@ -8,7 +8,6 @@ import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Binder;
@@ -17,8 +16,8 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import org.ramonaza.unofficialazaapp.R;
-import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
 import org.ramonaza.unofficialazaapp.frontpage.ui.activities.FrontalActivity;
+import org.ramonaza.unofficialazaapp.helpers.backend.DatabaseHandler;
 import org.ramonaza.unofficialazaapp.helpers.backend.PreferenceHelper;
 import org.ramonaza.unofficialazaapp.people.backend.EventDatabaseHandler;
 import org.ramonazaapi.events.EventInfoWrapper;
@@ -119,8 +118,6 @@ public class EventUpdateService extends Service {
         Log.v(TAG, "Service Started");
         isRunning = true;
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        AppDatabaseHelper ap = new AppDatabaseHelper(EventUpdateService.this);
-        SQLiteDatabase myDB = ap.getWritableDatabase();
         String eventFeed = PreferenceHelper.getPreferences(this).getEventFeed();
 
         if (eventFeed == null || eventFeed.length() == 0) {
@@ -129,7 +126,7 @@ public class EventUpdateService extends Service {
             return;
         }
         EventRSSHandler rssHandler = new EventRSSHandler(eventFeed, true);
-        EventDatabaseHandler dbHandler = new EventDatabaseHandler(myDB);
+        EventDatabaseHandler dbHandler = (EventDatabaseHandler) DatabaseHandler.getHandler(EventDatabaseHandler.class);
 
         Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
         mBuilder.setSmallIcon(R.drawable.ic_launcher)
@@ -184,8 +181,6 @@ public class EventUpdateService extends Service {
                 eventCSVReadError.printStackTrace();
             }
         }
-
-        myDB.close();
         EventNotificationService.setUpNotifications(this);
         isRunning = false;
     }

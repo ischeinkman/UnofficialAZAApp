@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
-import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
+import org.ramonaza.unofficialazaapp.helpers.backend.DatabaseHandler;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperCheckBoxesFragment;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
@@ -40,7 +40,7 @@ public class PresentContactFromListFragment extends InfoWrapperCheckBoxesFragmen
 
     @Override
     public ContactInfoWrapper[] generateInfo() {
-        ContactDatabaseHandler handler = new ContactDatabaseHandler(getActivity());
+        ContactDatabaseHandler handler = (ContactDatabaseHandler) DatabaseHandler.getHandler(ContactDatabaseHandler.class);
         return handler.getContacts(new String[]{AppDatabaseContract.ContactListTable.COLUMN_PRESENT + "=0"},
                 AppDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
     }
@@ -50,7 +50,7 @@ public class PresentContactFromListFragment extends InfoWrapperCheckBoxesFragmen
 
         @Override
         protected Void doInBackground(InfoWrapper... params) {
-            ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(getActivity());
+            ContactDatabaseHandler handler = (ContactDatabaseHandler) DatabaseHandler.getHandler(ContactDatabaseHandler.class);
             ContactInfoWrapper[] presentContacts = Arrays.copyOf(params, params.length, ContactInfoWrapper[].class);
             handler.updateContactField(AppDatabaseContract.ContactListTable.COLUMN_PRESENT, "1", presentContacts);
             return null;

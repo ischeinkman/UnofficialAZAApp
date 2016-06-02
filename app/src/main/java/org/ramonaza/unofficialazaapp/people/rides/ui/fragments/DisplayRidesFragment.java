@@ -2,7 +2,6 @@ package org.ramonaza.unofficialazaapp.people.rides.ui.fragments;
 
 import android.app.Fragment;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.SmsManager;
@@ -17,7 +16,8 @@ import android.widget.Toast;
 
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
-import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
+import org.ramonaza.unofficialazaapp.helpers.backend.DatabaseHandler;
+import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
 import org.ramonazaapi.rides.DriverInfoWrapper;
@@ -257,7 +257,7 @@ public class DisplayRidesFragment extends Fragment {
                 return createRidesList(rides, driverless);
             }
             RidesOptimizer optimizer = new RidesOptimizer();
-            optimizer.loadDriver(rides);
+            optimizer.loadDrivers(rides);
             optimizer.loadPassengers(driverless);
             if (optimize) {
                 optimizer.setUpAlgorithms(getAlgorithmsByIndex(algorithmIndex), retainRides, getClusterByIndex(clusterIndex));
@@ -265,7 +265,7 @@ public class DisplayRidesFragment extends Fragment {
                 optimizer.setUpAlgorithms(null, retainRides, null);
             }
             optimizer.optimize();
-            RidesDatabaseHandler ridesDatabaseHandler = new RidesDatabaseHandler(getActivity());
+            RidesDatabaseHandler ridesDatabaseHandler = (RidesDatabaseHandler) DatabaseHandler.getHandler(RidesDatabaseHandler.class);;
             ridesDatabaseHandler.updateRides(optimizer.getDrivers(), optimizer.getDriverless());
             driverless = optimizer.getDriverless();
             rhandler.updateRides(rides, driverless);
@@ -281,8 +281,7 @@ public class DisplayRidesFragment extends Fragment {
         }
 
         private void createRides() {
-            SQLiteDatabase db = new AppDatabaseHelper(getActivity()).getWritableDatabase();
-            rhandler = new RidesDatabaseHandler(db);
+            rhandler = (RidesDatabaseHandler) DatabaseHandler.getHandler(RidesDatabaseHandler.class);;
             rides = rhandler.getDrivers(null, AppDatabaseContract.DriverListTable.COLUMN_NAME + " ASC");
             String[] whereclause;
             whereclause = new String[]{
@@ -290,7 +289,8 @@ public class DisplayRidesFragment extends Fragment {
                     String.format("not %s in (SELECT %s FROM %s)", AppDatabaseContract.ContactListTable._ID,
                             AppDatabaseContract.RidesListTable.COLUMN_PASSENGER, AppDatabaseContract.RidesListTable.TABLE_NAME)
             };
-            driverless = rhandler.getContacts(whereclause, null);
+            ContactDatabaseHandler chandler = (ContactDatabaseHandler) DatabaseHandler.getHandler(ContactDatabaseHandler.class);
+            driverless = chandler.getContacts(whereclause, null);
         }
     }
 

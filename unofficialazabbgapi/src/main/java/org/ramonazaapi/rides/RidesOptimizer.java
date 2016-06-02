@@ -6,6 +6,7 @@ import org.ramonazaapi.rides.clusters.RidesCluster;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -81,7 +82,7 @@ public class RidesOptimizer {
      * @return this
      */
     public RidesOptimizer loadPassengers(ContactInfoWrapper... passengersToLoad) {
-        for (ContactInfoWrapper a : passengersToLoad) passengersToOptimize.add(a);
+        Collections.addAll(passengersToOptimize, passengersToLoad);
         return this;
     }
 
@@ -91,8 +92,8 @@ public class RidesOptimizer {
      * @param driversToLoad the drivers to load
      * @return this
      */
-    public RidesOptimizer loadDriver(DriverInfoWrapper... driversToLoad) {
-        for (DriverInfoWrapper d : driversToLoad) driversToOptimize.add(d);
+    public RidesOptimizer loadDrivers(DriverInfoWrapper... driversToLoad) {
+        Collections.addAll(driversToOptimize, driversToLoad);
         return this;
     }
 

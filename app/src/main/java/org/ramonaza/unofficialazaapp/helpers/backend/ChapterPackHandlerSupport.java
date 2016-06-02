@@ -41,7 +41,7 @@ public class ChapterPackHandlerSupport {
      */
     public static File[] getOptions() {
         File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        File[] ddFiles = downloadDir.listFiles(new FilenameFilter() {
+        return downloadDir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String filename) {
                 return (filename.contains(ChapterPackHandler.PREFIX)
@@ -50,7 +50,6 @@ public class ChapterPackHandlerSupport {
 
             }
         });
-        return ddFiles;
     }
 
     /**
@@ -85,7 +84,7 @@ public class ChapterPackHandlerSupport {
 
         //Store the new contact list for later use
         ContactInfoWrapper[] inPack = currentHandler.getCsvHandler().getCtactInfoListFromCSV();
-        ContactDatabaseHandler ctdbh = new ContactDatabaseHandler(context);
+        ContactDatabaseHandler ctdbh = (ContactDatabaseHandler) DatabaseHandler.getHandler(ContactDatabaseHandler.class);
         if (inPack.length > 0) {
             ctdbh.deleteContacts(null, null);
             for (ContactInfoWrapper contact : inPack) {
@@ -97,20 +96,6 @@ public class ChapterPackHandlerSupport {
             }
         }
         return currentHandler;
-    }
-
-    /**
-     * Gets the current ContactDatabaseHandler from the environment.
-     * First checks if we have a newly loaded Chapter Pack, and if we do
-     * return the pack's handler. If not we return a handler created from
-     * the provided context.
-     *
-     * @param context the context to use
-     * @return the currently loaded contact handler
-     */
-    public static ContactDatabaseHandler getContactHandler(Context context) {
-        ContactDatabaseHandler returnHandler = new ContactDatabaseHandler(context);
-        return returnHandler;
     }
 
     /**
@@ -134,7 +119,7 @@ public class ChapterPackHandlerSupport {
         String url = PreferenceHelper.getPreferences(context).getEventFeed();
 
         if (packName == null || url == null || packName.equals("") || url.equals("")) return false;
-        ContactDatabaseHandler handler = getContactHandler(context);
+        ContactDatabaseHandler handler = (ContactDatabaseHandler) DatabaseHandler.getHandler(ContactDatabaseHandler.class);
         if (handler == null) return false;
         ContactInfoWrapper[] allContacts = handler.getContacts(null, AppDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
 

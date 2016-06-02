@@ -3,6 +3,7 @@ package org.ramonaza.unofficialazaapp.people.rides.ui.fragments;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import org.ramonaza.unofficialazaapp.helpers.backend.DatabaseHandler;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperCheckBoxesFragment;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesDriverManipActivity;
@@ -37,7 +38,7 @@ public class RemovePassengerFromDriverFragment extends InfoWrapperCheckBoxesFrag
 
     @Override
     public InfoWrapper[] generateInfo() {
-        RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
+        RidesDatabaseHandler handler = (RidesDatabaseHandler) DatabaseHandler.getHandler(RidesDatabaseHandler.class);
         return handler.getPassengersInCar(driverId);
     }
 
@@ -45,7 +46,7 @@ public class RemovePassengerFromDriverFragment extends InfoWrapperCheckBoxesFrag
 
         @Override
         protected Void doInBackground(InfoWrapper... params) {
-            RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
+            RidesDatabaseHandler handler = (RidesDatabaseHandler) DatabaseHandler.getHandler(RidesDatabaseHandler.class);
             for (InfoWrapper passenger : params) {
                 handler.removePassengerFromCar(passenger.getId());
             }

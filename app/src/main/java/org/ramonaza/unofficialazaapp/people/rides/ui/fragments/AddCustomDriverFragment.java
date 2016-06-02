@@ -3,7 +3,6 @@ package org.ramonaza.unofficialazaapp.people.rides.ui.fragments;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,8 +13,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.ramonaza.unofficialazaapp.R;
-import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
-import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
+import org.ramonaza.unofficialazaapp.helpers.backend.DatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
@@ -84,7 +82,7 @@ public class AddCustomDriverFragment extends Fragment {
         protected Void doInBackground(Void... params) {
             if (contactID < 1) return null;
             presContact = new ContactInfoWrapper();
-            ContactDatabaseHandler dbHandler = ChapterPackHandlerSupport.getContactHandler(context);
+            ContactDatabaseHandler dbHandler = (ContactDatabaseHandler) DatabaseHandler.getHandler(ContactDatabaseHandler.class);
             presContact = dbHandler.getContact(contactID);
             return null;
         }
@@ -142,8 +140,8 @@ public class AddCustomDriverFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... params) {
-            SQLiteDatabase db = new AppDatabaseHelper(context).getWritableDatabase();
-            RidesDatabaseHandler handler = new RidesDatabaseHandler(db);
+            RidesDatabaseHandler dhandler = (RidesDatabaseHandler) DatabaseHandler.getHandler(RidesDatabaseHandler.class);
+            ContactDatabaseHandler chandler = (ContactDatabaseHandler) DatabaseHandler.getHandler(ContactDatabaseHandler.class);
 
             mDriver.setName(driverName);
             int inpSpots = Integer.parseInt(driverSpots);
@@ -160,7 +158,7 @@ public class AddCustomDriverFragment extends Fragment {
             if (presContact != null) mDriver.setContactInfo(presContact);
 
             try {
-                handler.addDriver(mDriver);
+                dhandler.addDriver(mDriver);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -168,11 +166,11 @@ public class AddCustomDriverFragment extends Fragment {
             if (presContact != null) {
                 presContact.setPresent(true);
                 try {
-                    handler.updateContact(presContact);
+                    chandler.updateContact(presContact);
                 } catch (ContactDatabaseHandler.ContactCSVReadError contactCSVReadError) {
                     contactCSVReadError.printStackTrace();
                 }
-                handler.addPassengersToCar(mDriver.getId(), new ContactInfoWrapper[]{presContact});
+                dhandler.addPassengersToCar(mDriver.getId(), new ContactInfoWrapper[]{presContact});
             }
 
             getActivity().finish();

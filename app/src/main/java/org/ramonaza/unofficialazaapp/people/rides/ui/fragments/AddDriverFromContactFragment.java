@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
-import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
+import org.ramonaza.unofficialazaapp.helpers.backend.DatabaseHandler;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextListFragment;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.AddCustomDriverActivity;
@@ -34,7 +34,7 @@ public class AddDriverFromContactFragment extends InfoWrapperTextListFragment {
 
     @Override
     public InfoWrapper[] generateInfo() {
-        ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(getActivity());
+        ContactDatabaseHandler handler = (ContactDatabaseHandler) DatabaseHandler.getHandler(ContactDatabaseHandler.class);
         ContactInfoWrapper[] currentContacts = handler.getContacts(null, AppDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
         return currentContacts;
     }

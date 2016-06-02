@@ -3,7 +3,6 @@ package org.ramonaza.unofficialazaapp.people.rides.ui.fragments;
 
 import android.app.Fragment;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +12,7 @@ import android.widget.Button;
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
 import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
-import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
+import org.ramonaza.unofficialazaapp.helpers.backend.DatabaseHandler;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextWithButtonFragment;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
@@ -30,8 +29,6 @@ import org.ramonazaapi.interfaces.InfoWrapper;
 public class PassengersFragment extends InfoWrapperTextWithButtonFragment {
 
     private static final String EXTRA_PARENT_ACTIVITY = "parent activity";
-
-    private SQLiteDatabase db;
 
     public PassengersFragment() {
 
@@ -53,7 +50,6 @@ public class PassengersFragment extends InfoWrapperTextWithButtonFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AppDatabaseHelper dbh = new AppDatabaseHelper(getActivity());
-        this.db = dbh.getWritableDatabase();
     }
 
     @Override
@@ -83,7 +79,7 @@ public class PassengersFragment extends InfoWrapperTextWithButtonFragment {
 
     @Override
     public void onButtonClick(InfoWrapper mWrapper) {
-        RidesDatabaseHandler handler = new RidesDatabaseHandler(db);
+        RidesDatabaseHandler handler = (RidesDatabaseHandler) DatabaseHandler.getHandler(RidesDatabaseHandler.class);;
         handler.setContactAbsent(mWrapper.getId());
         refreshData();
     }
@@ -97,7 +93,7 @@ public class PassengersFragment extends InfoWrapperTextWithButtonFragment {
 
     @Override
     public InfoWrapper[] generateInfo() {
-        ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(getActivity());
+        ContactDatabaseHandler handler = (ContactDatabaseHandler) DatabaseHandler.getHandler(ContactDatabaseHandler.class);
         return handler.getContacts(new String[]{
                 AppDatabaseContract.ContactListTable.COLUMN_PRESENT + "=1",
         }, AppDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
@@ -106,13 +102,11 @@ public class PassengersFragment extends InfoWrapperTextWithButtonFragment {
     @Override
     public void onPause() {
         super.onPause();
-        db.close();
     }
 
     @Override
     public void onResume() {
         AppDatabaseHelper databaseHelper = new AppDatabaseHelper(getActivity());
-        db = databaseHelper.getWritableDatabase();
         super.onResume();
     }
 }

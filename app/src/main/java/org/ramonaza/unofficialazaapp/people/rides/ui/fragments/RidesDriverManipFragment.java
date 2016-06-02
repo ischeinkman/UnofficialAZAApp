@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.ramonaza.unofficialazaapp.R;
+import org.ramonaza.unofficialazaapp.helpers.backend.DatabaseHandler;
 import org.ramonaza.unofficialazaapp.helpers.ui.other.InfoWrapperTextWithButtonAdapter;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.AddPassengerToDriverActivity;
@@ -131,7 +132,7 @@ public class RidesDriverManipFragment extends Fragment {
 
         @Override
         protected ContactInfoWrapper[] doInBackground(Void... params) {
-            RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
+            RidesDatabaseHandler handler = (RidesDatabaseHandler) DatabaseHandler.getHandler(RidesDatabaseHandler.class);;
             return handler.getPassengersInCar(driverId);
         }
 
@@ -142,7 +143,7 @@ public class RidesDriverManipFragment extends Fragment {
                 return; //In case the calling activity is no longer attached
             }
             mAdapter.clear();
-            RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
+            RidesDatabaseHandler handler = (RidesDatabaseHandler) DatabaseHandler.getHandler(RidesDatabaseHandler.class);;
             mDriver = handler.getDriver(driverId);
             ActionBar actionBar = getActivity().getActionBar();
             actionBar.setTitle(mDriver.getName());
@@ -156,7 +157,7 @@ public class RidesDriverManipFragment extends Fragment {
 
         @Override
         protected Void doInBackground(InfoWrapper... params) {
-            RidesDatabaseHandler handler = new RidesDatabaseHandler(getActivity());
+            RidesDatabaseHandler handler = (RidesDatabaseHandler) DatabaseHandler.getHandler(RidesDatabaseHandler.class);;
             for (InfoWrapper toDelete : params) {
                 handler.removePassengerFromCar(toDelete.getId());
             }

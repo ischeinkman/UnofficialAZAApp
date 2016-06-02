@@ -4,7 +4,7 @@ import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 
-import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
+import org.ramonaza.unofficialazaapp.helpers.backend.DatabaseHandler;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
 
 /**
@@ -40,7 +40,7 @@ public class LocationSupport {
      * @param context the context to retrieve contacts from and get coordinates
      */
     public static void recalculateLatLong(Context context) {
-        ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(context);
+        ContactDatabaseHandler handler = (ContactDatabaseHandler) DatabaseHandler.getHandler(ContactDatabaseHandler.class);
         ContactInfoWrapper[] toCalc = handler.getContacts(null, null);
         for (ContactInfoWrapper contact : toCalc) {
             double[] coords = getCoordsFromAddress(contact.getAddress(), context);

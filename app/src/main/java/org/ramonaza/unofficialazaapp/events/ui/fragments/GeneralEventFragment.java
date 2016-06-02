@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.ramonaza.unofficialazaapp.R;
+import org.ramonaza.unofficialazaapp.helpers.backend.DatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.backend.EventDatabaseHandler;
 import org.ramonazaapi.events.EventInfoWrapper;
 
@@ -47,7 +48,7 @@ public class GeneralEventFragment extends Fragment {
         TextView tView = (TextView) rootView.findViewById(R.id.EventPageTextView);
         LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.EventPageScrollLayout);
         eventID = getArguments().getInt(EVENT_DATA);
-        final EventInfoWrapper myEvent = new EventDatabaseHandler(getActivity()).getEvent(eventID);
+        final EventInfoWrapper myEvent = ((EventDatabaseHandler) DatabaseHandler.getHandler(EventDatabaseHandler.class)).getEvent(eventID);
         actionBar.setTitle(myEvent.getName());
         String displayText = String.format(
                 "<b><u>%s</u></b><br><br>Description: %s<br>",

@@ -1,13 +1,12 @@
 package org.ramonaza.unofficialazaapp.people.rides.backend;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 
 import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
-import org.ramonaza.unofficialazaapp.helpers.backend.BaseDatabaseHandler;
+import org.ramonaza.unofficialazaapp.helpers.backend.DatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
 import org.ramonazaapi.rides.DriverInfoWrapper;
@@ -15,23 +14,13 @@ import org.ramonazaapi.rides.DriverInfoWrapper;
 /**
  * Created by ilanscheinkman on 7/16/15.
  */
-public class RidesDatabaseHandler extends BaseDatabaseHandler<DriverInfoWrapper> {
+public class RidesDatabaseHandler extends DatabaseHandler {
 
     private ContactDatabaseHandler passangerHandler;
 
-    public RidesDatabaseHandler(Context context) {
-        super(context);
-        passangerHandler = new ContactDatabaseHandler(this);
-    }
-
-    public RidesDatabaseHandler(SQLiteDatabase db) {
+    protected RidesDatabaseHandler(SQLiteDatabase db) {
         super(db);
-        passangerHandler = new ContactDatabaseHandler(this);
-    }
-
-    public RidesDatabaseHandler(BaseDatabaseHandler other) {
-        super(other);
-        passangerHandler = new ContactDatabaseHandler(this);
+        passangerHandler = (ContactDatabaseHandler) getHandler(ContactDatabaseHandler.class);
     }
 
     /**

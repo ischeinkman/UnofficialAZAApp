@@ -17,6 +17,7 @@ import android.support.v4.app.NotificationCompat;
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.events.ui.activities.EventPageActivity;
 import org.ramonaza.unofficialazaapp.frontpage.ui.activities.FrontalActivity;
+import org.ramonaza.unofficialazaapp.helpers.backend.DatabaseHandler;
 import org.ramonaza.unofficialazaapp.helpers.backend.PreferenceHelper;
 import org.ramonaza.unofficialazaapp.people.backend.EventDatabaseHandler;
 import org.ramonazaapi.events.EventInfoWrapper;
@@ -37,12 +38,17 @@ public class EventNotificationService extends Service {
     NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
 
     public static void setUpNotifications(Context context) {
+        boolean weInited = false;
+        if (!DatabaseHandler.isInitialized()){
+            DatabaseHandler.init(context);
+            weInited = true;
+        }
         long notifiyBeforeEvent = PreferenceHelper.getPreferences(context).getNotifyBeforeTime() * TIME_MULTIPLIER;
         if (notifiyBeforeEvent < 0l) {
             cancelNotifications(context);
             return;
         }
-        EventDatabaseHandler dbHandler = new EventDatabaseHandler(context);
+        EventDatabaseHandler dbHandler = (EventDatabaseHandler) DatabaseHandler.getHandler(EventDatabaseHandler.class);
         EventInfoWrapper[] allEvents = dbHandler.getEvents(null, null);
         AlarmManager mgr = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         Date current = Calendar.getInstance().getTime();
@@ -64,7 +70,12 @@ public class EventNotificationService extends Service {
     }
 
     public static void cancelNotifications(Context context) {
-        EventDatabaseHandler dbHandler = new EventDatabaseHandler(context);
+        boolean weInited = false;
+        if (!DatabaseHandler.isInitialized()){
+            DatabaseHandler.init(context);
+            weInited = true;
+        }
+        EventDatabaseHandler dbHandler = (EventDatabaseHandler) DatabaseHandler.getHandler(EventDatabaseHandler.class);
         EventInfoWrapper[] allEvents = dbHandler.getEvents(null, null);
         AlarmManager mgr = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         Date current = Calendar.getInstance().getTime();
@@ -92,6 +103,11 @@ public class EventNotificationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        boolean weInited = false;
+        if (!DatabaseHandler.isInitialized()){
+            DatabaseHandler.init(this);
+            weInited = true;
+        }
         int eventId = intent.getIntExtra(EVENT_DB_ID, -1);
 
         //ID was not passed correctly
@@ -101,7 +117,7 @@ public class EventNotificationService extends Service {
         }
 
         //Event with that ID exists in the db at all
-        EventDatabaseHandler dbHandler = new EventDatabaseHandler(this);
+        EventDatabaseHandler dbHandler = (EventDatabaseHandler) DatabaseHandler.getHandler(EventDatabaseHandler.class);
         EventInfoWrapper event = dbHandler.getEvent(eventId);
         if (event == null) {
             stopSelf();

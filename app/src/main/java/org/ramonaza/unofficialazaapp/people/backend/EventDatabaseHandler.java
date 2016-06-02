@@ -1,30 +1,21 @@
 package org.ramonaza.unofficialazaapp.people.backend;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 
 import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
-import org.ramonaza.unofficialazaapp.helpers.backend.BaseDatabaseHandler;
+import org.ramonaza.unofficialazaapp.helpers.backend.DatabaseHandler;
 import org.ramonazaapi.events.EventInfoWrapper;
 
 /**
  * Created by Yuval Zach aka kingi2001 on 12/28/2015.
  */
-public class EventDatabaseHandler extends BaseDatabaseHandler<EventInfoWrapper> {
+public class EventDatabaseHandler extends DatabaseHandler{
 
-    public EventDatabaseHandler(Context context) {
-        super(context);
-    }
-
-    public EventDatabaseHandler(SQLiteDatabase db) {
+    protected EventDatabaseHandler(SQLiteDatabase db) {
         super(db);
-    }
-
-    public EventDatabaseHandler(BaseDatabaseHandler other) {
-        super(other);
     }
 
     public static EventInfoWrapper[] getEventsFromCursor(Cursor queryResults) {
@@ -50,10 +41,6 @@ public class EventDatabaseHandler extends BaseDatabaseHandler<EventInfoWrapper> 
         return events;
     }
 
-    public void close() {
-        db.close();
-    }
-
     public void addEvent(EventInfoWrapper toAdd) throws EventCSVReadError {
         ContentValues value = new ContentValues();
         value.put(AppDatabaseContract.EventListTable.COLUMN_NAME, toAdd.getName());
@@ -65,7 +52,7 @@ public class EventDatabaseHandler extends BaseDatabaseHandler<EventInfoWrapper> 
         value.put(AppDatabaseContract.EventListTable.COLUMN_DATE, toAdd.getDate());
 
         long rowId = db.insert(AppDatabaseContract.EventListTable.TABLE_NAME, null, value);
-        if (rowId == -1l) throw new EventCSVReadError("Null Event Read", toAdd);
+        if (rowId == -1L) throw new EventCSVReadError("Null Event Read", toAdd);
         else toAdd.setId((int) rowId);
     }
 
@@ -81,7 +68,7 @@ public class EventDatabaseHandler extends BaseDatabaseHandler<EventInfoWrapper> 
 
         long rowId = db.update(AppDatabaseContract.EventListTable.TABLE_NAME, value,
                 AppDatabaseContract.EventListTable._ID + "=?", new String[]{"" + toUpdate.getId()});
-        if (rowId == -1l) throw new EventCSVReadError("Null Event Read", toUpdate);
+        if (rowId == -1L) throw new EventCSVReadError("Null Event Read", toUpdate);
     }
 
     public void deleteEvent(int toDelete) {
@@ -134,7 +121,7 @@ public class EventDatabaseHandler extends BaseDatabaseHandler<EventInfoWrapper> 
         if (toUpdate == null) {
             query = String.format("UPDATE %s SET %s=%s ",
                     AppDatabaseContract.EventListTable.TABLE_NAME,
-                    field);
+                    field, value);
         } else if (toUpdate.length > 0) {
             query = String.format("UPDATE %s SET %s=%s WHERE %s IN (",
                     AppDatabaseContract.EventListTable.TABLE_NAME,

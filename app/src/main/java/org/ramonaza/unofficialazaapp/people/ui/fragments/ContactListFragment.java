@@ -13,6 +13,7 @@ import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
 import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
 import org.ramonaza.unofficialazaapp.frontpage.ui.activities.FrontalActivity;
 import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
+import org.ramonaza.unofficialazaapp.helpers.backend.DatabaseHandler;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextListFragment;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.ui.activities.AddCustomContactActivity;
@@ -83,7 +84,7 @@ public class ContactListFragment extends InfoWrapperTextListFragment {
         if (!ChapterPackHandlerSupport.chapterPackIsLoaded() && ChapterPackHandlerSupport.getOptions().length > 0) {
             ChapterPackHandlerSupport.getChapterPackHandler(getActivity(), ChapterPackHandlerSupport.getOptions()[0]);
         }
-        ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(getActivity());
+        ContactDatabaseHandler handler = (ContactDatabaseHandler) DatabaseHandler.getHandler(ContactDatabaseHandler.class);
         ContactInfoWrapper[] currentContacts = handler.getContacts(null, AppDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
         if (currentContacts.length <= 1) {
             AppDatabaseHelper dbh = new AppDatabaseHelper(getActivity());

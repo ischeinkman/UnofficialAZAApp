@@ -1,13 +1,12 @@
 package org.ramonaza.unofficialazaapp.people.backend;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 
 import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
-import org.ramonaza.unofficialazaapp.helpers.backend.BaseDatabaseHandler;
+import org.ramonaza.unofficialazaapp.helpers.backend.DatabaseHandler;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
 
 
@@ -15,20 +14,11 @@ import org.ramonazaapi.contacts.ContactInfoWrapper;
  * An object for easily manipulating the Contact-Rides database.
  * Created by ilanscheinkman on 7/16/15.
  */
-public class ContactDatabaseHandler extends BaseDatabaseHandler<ContactInfoWrapper> {
+public class ContactDatabaseHandler extends DatabaseHandler {
 
-    public ContactDatabaseHandler(Context context) {
-        super(context);
-    }
-
-    public ContactDatabaseHandler(SQLiteDatabase db) {
+    protected ContactDatabaseHandler(SQLiteDatabase db) {
         super(db);
     }
-
-    public ContactDatabaseHandler(BaseDatabaseHandler other) {
-        super(other);
-    }
-
     /**
      * Retrieve the ContactInfoWrapper objects from raw cursor data.
      *
@@ -63,13 +53,6 @@ public class ContactDatabaseHandler extends BaseDatabaseHandler<ContactInfoWrapp
             i++;
         } while (queryResults.moveToNext());
         return contacts;
-    }
-
-    /**
-     * Closes the database connection.
-     */
-    public void close() {
-        db.close();
     }
 
     /**

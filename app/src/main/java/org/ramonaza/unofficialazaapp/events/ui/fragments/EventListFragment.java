@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import org.ramonaza.unofficialazaapp.events.backend.services.EventUpdateService;
 import org.ramonaza.unofficialazaapp.events.ui.activities.EventPageActivity;
+import org.ramonaza.unofficialazaapp.helpers.backend.DatabaseHandler;
 import org.ramonaza.unofficialazaapp.helpers.backend.PreferenceHelper;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextListFragment;
 import org.ramonaza.unofficialazaapp.people.backend.EventDatabaseHandler;
@@ -109,7 +110,7 @@ public class EventListFragment extends InfoWrapperTextListFragment {
             Toast.makeText(getActivity(), "Could not connect to server in time.", Toast.LENGTH_SHORT);
             Log.d("EventListFrag", "Service not bound in time");
         }
-        handler = new EventDatabaseHandler(getActivity());
+        handler = (EventDatabaseHandler) DatabaseHandler.getHandler(EventDatabaseHandler.class);
         //TODO: Store event dates as MYSQL Date objects to allow for WHERE clause filtering
         EventInfoWrapper[] allEvents = handler.getEvents(null, null);
         DateFormat df = new SimpleDateFormat("EEEE, MMMM dd yyyy");

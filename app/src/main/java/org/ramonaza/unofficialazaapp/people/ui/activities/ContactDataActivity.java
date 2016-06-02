@@ -11,7 +11,7 @@ import android.view.MenuItem;
 
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.frontpage.ui.activities.FrontalActivity;
-import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
+import org.ramonaza.unofficialazaapp.helpers.backend.DatabaseHandler;
 import org.ramonaza.unofficialazaapp.helpers.ui.activities.BaseActivity;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.ui.fragments.GeneralContactFragment;
@@ -67,7 +67,7 @@ public class ContactDataActivity extends BaseActivity {
 
         @Override
         protected ContactInfoWrapper doInBackground(Integer... params) {
-            ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(context);
+            ContactDatabaseHandler handler = (ContactDatabaseHandler) DatabaseHandler.getHandler(ContactDatabaseHandler.class);
             return handler.getContact(inputId);
         }
 

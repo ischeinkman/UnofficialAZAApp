@@ -4,7 +4,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
-import org.ramonaza.unofficialazaapp.helpers.backend.ChapterPackHandlerSupport;
+import org.ramonaza.unofficialazaapp.helpers.backend.DatabaseHandler;
 import org.ramonaza.unofficialazaapp.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperCheckBoxesFragment;
 import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
@@ -44,7 +44,7 @@ public class AddPassengerToDriverFragment extends InfoWrapperCheckBoxesFragment 
 
     @Override
     public InfoWrapper[] generateInfo() {
-        ContactDatabaseHandler dbhandler = ChapterPackHandlerSupport.getContactHandler(getActivity());
+        ContactDatabaseHandler dbhandler = (ContactDatabaseHandler) DatabaseHandler.getHandler(ContactDatabaseHandler.class);
         return dbhandler.getContacts(new String[]{
                 AppDatabaseContract.ContactListTable.COLUMN_PRESENT + "=1",
                 AppDatabaseContract.ContactListTable._ID + " NOT IN (" + "SELECT " + AppDatabaseContract.RidesListTable.COLUMN_PASSENGER + " FROM " + AppDatabaseContract.RidesListTable.TABLE_NAME + ")"
@@ -55,7 +55,7 @@ public class AddPassengerToDriverFragment extends InfoWrapperCheckBoxesFragment 
 
         @Override
         protected Void doInBackground(InfoWrapper... params) {
-            RidesDatabaseHandler rideshandler = new RidesDatabaseHandler(getActivity());
+            RidesDatabaseHandler rideshandler = (RidesDatabaseHandler) DatabaseHandler.getHandler(RidesDatabaseHandler.class);;
             ContactInfoWrapper[] newPassengers = Arrays.copyOf(params, params.length, ContactInfoWrapper[].class);
             rideshandler.addPassengersToCar(driverId, newPassengers);
             return null;

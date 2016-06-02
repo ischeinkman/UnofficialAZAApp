@@ -2,7 +2,6 @@ package org.ramonaza.unofficialazaapp.people.rides.ui.fragments;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,7 +11,8 @@ import android.widget.TextView;
 
 import org.ramonaza.unofficialazaapp.R;
 import org.ramonaza.unofficialazaapp.database.AppDatabaseContract;
-import org.ramonaza.unofficialazaapp.database.AppDatabaseHelper;
+import org.ramonaza.unofficialazaapp.helpers.backend.DatabaseHandler;
+import org.ramonaza.unofficialazaapp.people.backend.ContactDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.backend.RidesDatabaseHandler;
 import org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesContactManipActivity;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
@@ -85,9 +85,9 @@ public class RidesContactManipFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Integer... params) {
-            SQLiteDatabase db = new AppDatabaseHelper(context).getWritableDatabase();
-            RidesDatabaseHandler rhandler = new RidesDatabaseHandler(db);
-            mContact = rhandler.getContact(params[0]);
+            RidesDatabaseHandler rhandler = (RidesDatabaseHandler) DatabaseHandler.getHandler(RidesDatabaseHandler.class);
+            ContactDatabaseHandler chandler = (ContactDatabaseHandler) DatabaseHandler.getHandler(ContactDatabaseHandler.class);
+            mContact = chandler.getContact(params[0]);
             String[] whereclause = new String[]{
                     String.format("%s in (SELECT %s FROM %s WHERE %s = %s)", AppDatabaseContract.DriverListTable._ID,
                             AppDatabaseContract.RidesListTable.COLUMN_CAR, AppDatabaseContract.RidesListTable.TABLE_NAME,

@@ -117,12 +117,13 @@ public class DriverInfoWrapper implements LocationPoint, InfoWrapper {
 
     @Override
     public boolean equals(Object o) {
-        return (o instanceof DriverInfoWrapper && ((DriverInfoWrapper) o).getName().equals(getName()));
+        return (o instanceof DriverInfoWrapper && (((DriverInfoWrapper) o).getName() == getName() || ((DriverInfoWrapper) o).getName().equals(getName())));
     }
 
 
     @Override
     public int hashCode() {
-        return (id + 1) * name.hashCode() + (id + 1) * spots;
+        if (name == null) return (spots+2)*(id+3);
+        return (id + 3) * name.hashCode() + (id + 3) * spots;
     }
 }
