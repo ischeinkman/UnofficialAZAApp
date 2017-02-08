@@ -1,12 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
+    compileSdkVersion 25
+    // Watch out updating buildToolsVersion (color book pdf)
     buildToolsVersion "20.0.0"
     defaultConfig {
         applicationId "org.ramonaza.unofficialazaapp"
-        minSdkVersion 16
-        targetSdkVersion 21
+        minSdkVersion 21
+        targetSdkVersion 25
         versionCode 13
         versionName "1.3"
     }
@@ -25,8 +26,8 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v4:21.0.3'
-    compile 'com.android.support:support-v13:21.0.3'
+    compile 'com.android.support:support-v4:25.1.1'
+    compile 'com.android.support:support-v13:25.1.1'
     compile 'com.opencsv:opencsv:3.1'
     compile project(':unofficialazabbgapi')
     compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.4.1'
