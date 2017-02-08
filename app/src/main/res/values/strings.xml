@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Unofficial AZA App</string>
+    <string name="app_name">Android Zadik Application</string>
     <string name="title_section1">Frontpage</string>
     <string name="title_section2">Songs</string>
     <string name="title_section3">Rides</string>

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="org.ramonaza.unofficialazaapp.people.rides.ui.fragments.RidesDriverManipFragment">
+    tools:context="org.ramonaza.androidzadikapplication.people.rides.ui.fragments.RidesDriverManipFragment">
     <TableLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/DriverManipInfoTable"

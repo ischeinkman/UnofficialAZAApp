@@ -3,7 +3,7 @@
     <!-- These settings headers are only used on tablets. -->
 
     <header
-        android:fragment="org.ramonaza.unofficialazaapp.settings.ui.activities.SettingsActivity$GeneralPreferenceFragment"
+        android:fragment="org.ramonaza.androidzadikapplication.settings.ui.activities.SettingsActivity$GeneralPreferenceFragment"
         android:title="@string/pref_header_general" />
 
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.ramonaza.unofficialazaapp" >
+    package="org.ramonaza.androidzadikapplication" >
 
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -17,19 +17,19 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <service
-            android:name=".events.backend.services.EventUpdateService"
+            android:name="org.ramonaza.androidzadikapplication.events.backend.services.EventUpdateService"
             android:enabled="true" />
         <service
-            android:name=".events.backend.services.EventNotificationService"
+            android:name="org.ramonaza.androidzadikapplication.events.backend.services.EventNotificationService"
             android:enabled="true" />
-        <receiver android:name=".helpers.backend.AutoStart"
+        <receiver android:name="org.ramonaza.androidzadikapplication.helpers.backend.AutoStart"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"></action>
             </intent-filter>
         </receiver>
         <activity
-            android:name=".frontpage.ui.activities.FrontalActivity"
+            android:name="org.ramonaza.androidzadikapplication.frontpage.ui.activities.FrontalActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop">
             <intent-filter>
@@ -39,118 +39,118 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".people.ui.activities.ContactDataActivity"
+            android:name="org.ramonaza.androidzadikapplication.people.ui.activities.ContactDataActivity"
             android:label="@string/title_activity_layer2"
-            android:parentActivityName=".frontpage.ui.activities.FrontalActivity">
+            android:parentActivityName="org.ramonaza.androidzadikapplication.frontpage.ui.activities.FrontalActivity">
         </activity>
         <activity
-            android:name=".songs.ui.activities.SongDataActivity"
+            android:name="org.ramonaza.androidzadikapplication.songs.ui.activities.SongDataActivity"
             android:label="@string/title_activity_song_data"
-            android:parentActivityName=".frontpage.ui.activities.FrontalActivity">
+            android:parentActivityName="org.ramonaza.androidzadikapplication.frontpage.ui.activities.FrontalActivity">
         </activity>
         <activity
-            android:name=".events.ui.activities.EventPageActivity"
+            android:name="org.ramonaza.androidzadikapplication.events.ui.activities.EventPageActivity"
             android:label="@string/title_activity_event_page"
-            android:parentActivityName=".frontpage.ui.activities.FrontalActivity">
+            android:parentActivityName="org.ramonaza.androidzadikapplication.frontpage.ui.activities.FrontalActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.ramonaza.unofficialazaapp.frontpage.ui.activities.FrontalActivity" />
+                android:value="org.ramonaza.androidzadikapplication.frontpage.ui.activities.FrontalActivity" />
         </activity>
         <activity
-            android:name=".settings.ui.activities.SettingsActivity"
+            android:name="org.ramonaza.androidzadikapplication.settings.ui.activities.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:launchMode="singleInstance">
         </activity>
         <activity
-            android:name=".people.rides.ui.activities.RidesActivity"
+            android:name="org.ramonaza.androidzadikapplication.people.rides.ui.activities.RidesActivity"
             android:label="@string/title_activity_rides"
             android:launchMode="singleTop"
-            android:parentActivityName=".frontpage.ui.activities.FrontalActivity">
+            android:parentActivityName="org.ramonaza.androidzadikapplication.frontpage.ui.activities.FrontalActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.ramonaza.unofficialazaapp.frontpage.ui.activities.FrontalActivity" />
+                android:value="org.ramonaza.androidzadikapplication.frontpage.ui.activities.FrontalActivity" />
         </activity>
         <activity
-            android:name=".people.ui.activities.AddCustomContactActivity"
+            android:name="org.ramonaza.androidzadikapplication.people.ui.activities.AddCustomContactActivity"
             android:label="@string/title_activity_add_custom_contact"
-            android:parentActivityName=".people.rides.ui.activities.RidesActivity">
+            android:parentActivityName="org.ramonaza.androidzadikapplication.people.rides.ui.activities.RidesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesActivity" />
+                android:value="org.ramonaza.androidzadikapplication.people.rides.ui.activities.RidesActivity" />
         </activity>
         <activity
-            android:name=".people.rides.ui.activities.PresentListedContactActivity"
+            android:name="org.ramonaza.androidzadikapplication.people.rides.ui.activities.PresentListedContactActivity"
             android:label="@string/title_activity_present_listed_contact"
             android:launchMode="singleTop"
-            android:parentActivityName=".people.rides.ui.activities.RidesActivity">
+            android:parentActivityName="org.ramonaza.androidzadikapplication.people.rides.ui.activities.RidesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesActivity" />
+                android:value="org.ramonaza.androidzadikapplication.people.rides.ui.activities.RidesActivity" />
         </activity>
         <activity
-            android:name=".people.rides.ui.activities.AddCustomDriverActivity"
+            android:name="org.ramonaza.androidzadikapplication.people.rides.ui.activities.AddCustomDriverActivity"
             android:label="@string/title_activity_add_custom_driver"
-            android:parentActivityName=".people.rides.ui.activities.RidesActivity">
+            android:parentActivityName="org.ramonaza.androidzadikapplication.people.rides.ui.activities.RidesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesActivity" />
+                android:value="org.ramonaza.androidzadikapplication.people.rides.ui.activities.RidesActivity" />
         </activity>
         <activity
-            android:name=".people.rides.ui.activities.RidesDriverManipActivity"
+            android:name="org.ramonaza.androidzadikapplication.people.rides.ui.activities.RidesDriverManipActivity"
             android:label="@string/title_activity_rides_driver_manip"
             android:launchMode="singleTop"
-            android:parentActivityName=".people.rides.ui.activities.RidesActivity">
+            android:parentActivityName="org.ramonaza.androidzadikapplication.people.rides.ui.activities.RidesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesActivity" />
+                android:value="org.ramonaza.androidzadikapplication.people.rides.ui.activities.RidesActivity" />
         </activity>
         <activity
-            android:name=".people.rides.ui.activities.AddPassengerToDriverActivity"
+            android:name="org.ramonaza.androidzadikapplication.people.rides.ui.activities.AddPassengerToDriverActivity"
             android:label="@string/title_activity_add_passenger_to_driver"
-            android:parentActivityName=".people.rides.ui.activities.RidesDriverManipActivity">
+            android:parentActivityName="org.ramonaza.androidzadikapplication.people.rides.ui.activities.RidesDriverManipActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesDriverManipActivity" />
+                android:value="org.ramonaza.androidzadikapplication.people.rides.ui.activities.RidesDriverManipActivity" />
         </activity>
         <activity
-            android:name=".people.rides.ui.activities.RemovePassengerFromDriverActivity"
+            android:name="org.ramonaza.androidzadikapplication.people.rides.ui.activities.RemovePassengerFromDriverActivity"
             android:label="@string/title_activity_remove_passenger_from_car"
-            android:parentActivityName=".people.rides.ui.activities.RidesDriverManipActivity">
+            android:parentActivityName="org.ramonaza.androidzadikapplication.people.rides.ui.activities.RidesDriverManipActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesDriverManipActivity" />
+                android:value="org.ramonaza.androidzadikapplication.people.rides.ui.activities.RidesDriverManipActivity" />
         </activity>
         <activity
-            android:name=".people.rides.ui.activities.DisplayRidesActivity"
+            android:name="org.ramonaza.androidzadikapplication.people.rides.ui.activities.DisplayRidesActivity"
             android:label="@string/title_activity_display_rides"
-            android:parentActivityName=".people.rides.ui.activities.ConfigureRidesDisplayActivity">
+            android:parentActivityName="org.ramonaza.androidzadikapplication.people.rides.ui.activities.ConfigureRidesDisplayActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.ramonaza.unofficialazaapp.people.rides.ui.activities.ConfigureRidesDisplayActivity" />
+                android:value="org.ramonaza.androidzadikapplication.people.rides.ui.activities.ConfigureRidesDisplayActivity" />
         </activity>
         <activity
-            android:name=".people.rides.ui.activities.RidesContactManipActivity"
+            android:name="org.ramonaza.androidzadikapplication.people.rides.ui.activities.RidesContactManipActivity"
             android:label="@string/title_activity_rides_contact_manip"
-            android:parentActivityName=".people.rides.ui.activities.RidesActivity">
+            android:parentActivityName="org.ramonaza.androidzadikapplication.people.rides.ui.activities.RidesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesActivity" />
+                android:value="org.ramonaza.androidzadikapplication.people.rides.ui.activities.RidesActivity" />
         </activity>
         <activity
-            android:name=".people.rides.ui.activities.AddContactDriverActivity"
+            android:name="org.ramonaza.androidzadikapplication.people.rides.ui.activities.AddContactDriverActivity"
             android:label="@string/title_activity_add_preset_driver"
-            android:parentActivityName=".people.rides.ui.activities.RidesActivity">
+            android:parentActivityName="org.ramonaza.androidzadikapplication.people.rides.ui.activities.RidesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesActivity" />
+                android:value="org.ramonaza.androidzadikapplication.people.rides.ui.activities.RidesActivity" />
         </activity>
         <activity
-            android:name=".people.rides.ui.activities.ConfigureRidesDisplayActivity"
+            android:name="org.ramonaza.androidzadikapplication.people.rides.ui.activities.ConfigureRidesDisplayActivity"
             android:label="@string/action_rides_generate"
-            android:parentActivityName=".people.rides.ui.activities.RidesActivity">
+            android:parentActivityName="org.ramonaza.androidzadikapplication.people.rides.ui.activities.RidesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.ramonaza.unofficialazaapp.people.rides.ui.activities.RidesActivity" />
+                android:value="org.ramonaza.androidzadikapplication.people.rides.ui.activities.RidesActivity" />
         </activity>
     </application>
 

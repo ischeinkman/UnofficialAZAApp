@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="org.ramonaza.unofficialazaapp.people.rides.ui.fragments.AddCustomDriverFragment">
+    tools:context="org.ramonaza.androidzadikapplication.people.rides.ui.fragments.AddCustomDriverFragment">
 
     <ProgressBar
         android:id="@+id/cProgressBar"

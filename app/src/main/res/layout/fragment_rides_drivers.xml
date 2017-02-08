@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="org.ramonaza.unofficialazaapp.people.rides.ui.fragments.DriversFragment">
+    tools:context="org.ramonaza.androidzadikapplication.people.rides.ui.fragments.DriversFragment">
 
 
     <ProgressBar

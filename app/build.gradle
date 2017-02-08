@@ -5,7 +5,7 @@ android {
     // Watch out updating buildToolsVersion (color book pdf)
     buildToolsVersion "20.0.0"
     defaultConfig {
-        applicationId "org.ramonaza.unofficialazaapp"
+        applicationId "org.ramonaza.androidzadikapplication"
         minSdkVersion 21
         targetSdkVersion 25
         versionCode 13
