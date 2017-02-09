@@ -84,18 +84,21 @@ public class ContactListFragment extends InfoWrapperTextListFragment {
             ChapterPackHandlerSupport.getChapterPackHandler(getActivity(), ChapterPackHandlerSupport.getOptions()[0]);
         }
         ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(getActivity());
-        ContactInfoWrapper[] currentContacts = handler.getContacts(null, AppDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
+
+        // Filters out Alephs who had already graduated
+        String[] escapeAlumni = new String[] {
+                AppDatabaseContract.ContactListTable.COLUMN_GRADYEAR + " > " + ContactInfoWrapper.getAlumnusGradYear()
+        };
+        ContactInfoWrapper[] currentContacts = handler.getContacts(escapeAlumni, AppDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
         if (currentContacts.length <= 1) {
             AppDatabaseHelper dbh = new AppDatabaseHelper(getActivity());
             SQLiteDatabase db = dbh.getWritableDatabase();
             dbh.onDelete(db);
             dbh.onCreate(db);
-            currentContacts = handler.getContacts(null, AppDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
+            currentContacts = handler.getContacts(escapeAlumni, AppDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
         }
         return currentContacts;
     }
-
-
 }
 
 

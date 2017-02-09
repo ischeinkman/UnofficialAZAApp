@@ -63,13 +63,16 @@ public class ContactInfoWrapper implements PersonInfoWrapper {
      * @param grade the grade integer
      * @return the graduation year;
      */
-
     private static int gradYearFromGrade(int grade) {
         Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         if (month > 8) year--;
         return year + (12 - grade);
+    }
+
+    public static int getAlumnusGradYear() {
+        return gradYearFromGrade(13);
     }
 
     private static int gradeFromGradYear(int gradYear) {
