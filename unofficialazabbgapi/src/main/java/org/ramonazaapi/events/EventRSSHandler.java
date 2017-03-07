@@ -77,6 +77,9 @@ public class EventRSSHandler {
             currentEvent.setBring(splitFeed[6]);
             currentEvent.setPlanner(splitFeed[7]);
             currentEvent.setMapsLocation(splitFeed[8]);
+            currentEvent.setFood(splitFeed[9]);
+            currentEvent.setHouse(splitFeed[10]);
+            currentEvent.setStaff(splitFeed[11]);
             currentEvent.setId(i);
             String curDateString = currentEvent.getDate();
             for (int ind = curDateString.length() - 4; ind < curDateString.length(); ind++) {

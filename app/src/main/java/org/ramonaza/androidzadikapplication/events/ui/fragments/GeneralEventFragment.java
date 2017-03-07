@@ -54,10 +54,16 @@ public class GeneralEventFragment extends Fragment {
                 myEvent.getName(),
                 myEvent.getDesc()
         );
-        if (myEvent.getBring() != null && !myEvent.getBring().replaceAll(" ", "").equals(""))
-            displayText += String.format("Bring: %s<br>", myEvent.getBring());
         if (myEvent.getMeet() != null && myEvent.getMeet().replaceAll(" ", "").length() > 3)
             displayText += String.format("Meet: %s<br>", myEvent.getMeet());
+        if (myEvent.getFood() != null && myEvent.getFood().replaceAll(" ", "").length() > 3)
+            displayText += String.format("Food: %s<br>", myEvent.getFood());
+        if (myEvent.getHouse() != null && myEvent.getHouse().replaceAll(" ", "").length() > 3)
+            displayText += String.format("House: %s<br>", myEvent.getHouse());
+        if (myEvent.getStaff() != null && myEvent.getStaff().replaceAll(" ", "").length() > 3)
+            displayText += String.format("Staff: %s<br>", myEvent.getStaff());
+        if (myEvent.getBring() != null && !myEvent.getBring().replaceAll(" ", "").equals(""))
+            displayText += String.format("Bring: %s<br>", myEvent.getBring());
         if (myEvent.getPlanner() != null && !myEvent.getPlanner().replaceAll(" ", "").equals(""))
             displayText += String.format("Planned By: %s<br>", myEvent.getPlanner());
 

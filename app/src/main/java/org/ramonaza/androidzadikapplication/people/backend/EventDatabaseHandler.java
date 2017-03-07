@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 
 import org.ramonaza.androidzadikapplication.database.AppDatabaseContract;
 import org.ramonaza.androidzadikapplication.database.AppDatabaseHelper;
+import org.ramonaza.androidzadikapplication.people.ui.fragments.ContactListFragment;
 import org.ramonazaapi.events.EventInfoWrapper;
 
 /**
@@ -42,6 +43,9 @@ public class EventDatabaseHandler {
             temp.setMapsLocation(queryResults.getString(queryResults.getColumnIndexOrThrow(AppDatabaseContract.EventListTable.COLUMN_LOCATION)));
             temp.setBring(queryResults.getString(queryResults.getColumnIndexOrThrow(AppDatabaseContract.EventListTable.COLUMN_BRING)));
             temp.setDate(queryResults.getString(queryResults.getColumnIndexOrThrow(AppDatabaseContract.EventListTable.COLUMN_DATE)));
+            temp.setFood(queryResults.getString(queryResults.getColumnIndexOrThrow(AppDatabaseContract.EventListTable.COLUMN_FOOD)));
+            temp.setHouse(queryResults.getString(queryResults.getColumnIndexOrThrow(AppDatabaseContract.EventListTable.COLUMN_HOUSE)));
+            temp.setStaff(queryResults.getString(queryResults.getColumnIndexOrThrow(AppDatabaseContract.EventListTable.COLUMN_STAFF)));
             events[i] = temp;
             i++;
         } while (queryResults.moveToNext());
@@ -61,6 +65,9 @@ public class EventDatabaseHandler {
         value.put(AppDatabaseContract.EventListTable.COLUMN_LOCATION, toAdd.getMapsLocation());
         value.put(AppDatabaseContract.EventListTable.COLUMN_BRING, toAdd.getBring());
         value.put(AppDatabaseContract.EventListTable.COLUMN_DATE, toAdd.getDate());
+        value.put(AppDatabaseContract.EventListTable.COLUMN_FOOD, toAdd.getFood());
+        value.put(AppDatabaseContract.EventListTable.COLUMN_HOUSE, toAdd.getHouse());
+        value.put(AppDatabaseContract.EventListTable.COLUMN_STAFF, toAdd.getStaff());
 
         long rowId = db.insert(AppDatabaseContract.EventListTable.TABLE_NAME, null, value);
         if (rowId == -1l) throw new EventCSVReadError("Null Event Read", toAdd);
@@ -76,6 +83,9 @@ public class EventDatabaseHandler {
         value.put(AppDatabaseContract.EventListTable.COLUMN_LOCATION, toUpdate.getMapsLocation());
         value.put(AppDatabaseContract.EventListTable.COLUMN_BRING, toUpdate.getBring());
         value.put(AppDatabaseContract.EventListTable.COLUMN_DATE, toUpdate.getDate());
+        value.put(AppDatabaseContract.EventListTable.COLUMN_FOOD, toUpdate.getFood());
+        value.put(AppDatabaseContract.EventListTable.COLUMN_HOUSE, toUpdate.getHouse());
+        value.put(AppDatabaseContract.EventListTable.COLUMN_STAFF, toUpdate.getStaff());
 
         long rowId = db.update(AppDatabaseContract.EventListTable.TABLE_NAME, value,
                 AppDatabaseContract.EventListTable._ID + "=?", new String[]{"" + toUpdate.getId()});

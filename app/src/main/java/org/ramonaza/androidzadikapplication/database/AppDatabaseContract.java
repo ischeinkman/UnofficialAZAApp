@@ -42,13 +42,16 @@ public final class AppDatabaseContract {
 
     public static abstract class EventListTable implements BaseColumns {
         public static final String TABLE_NAME = "events";
-        public static final String COLUMN_NAME= "eventname";
+        public static final String COLUMN_NAME = "eventname";
         public static final String COLUMN_DESC = "eventdesc";
         public static final String COLUMN_PLANNER = "eventplanner";
         public static final String COLUMN_MEET = "eventmeet";
         public static final String COLUMN_LOCATION = "eventlocation";
         public static final String COLUMN_BRING = "eventbring";
         public static final String COLUMN_DATE = "eventdate";
+        public static final String COLUMN_FOOD = "eventfood";
+        public static final String COLUMN_HOUSE = "eventhouse";
+        public static final String COLUMN_STAFF = "eventstaff";
         public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" +
                 EventListTable._ID + " INTEGER PRIMARY KEY, " +
                 COLUMN_NAME + " " + VTYPE_TEXT + "," +
@@ -57,8 +60,10 @@ public final class AppDatabaseContract {
                 COLUMN_MEET + " " + VTYPE_TEXT + "," +
                 COLUMN_LOCATION + " " + VTYPE_TEXT + "," +
                 COLUMN_BRING + " " + VTYPE_TEXT + "," +
-                COLUMN_DATE + " " + VTYPE_TEXT +
-
+                COLUMN_DATE + " " + VTYPE_TEXT + ", " +
+                COLUMN_FOOD + " " + VTYPE_TEXT + ", " +
+                COLUMN_HOUSE + " " + VTYPE_TEXT + ", " +
+                COLUMN_STAFF + " " + VTYPE_TEXT + ", " +
                 ")";
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }

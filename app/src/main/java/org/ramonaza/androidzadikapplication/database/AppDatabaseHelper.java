@@ -17,7 +17,7 @@ import org.ramonazaapi.contacts.ContactInfoWrapper;
 public class AppDatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "ContactDriverDatabase";
-    public static final int DATABASE_VERSION = 5;
+    public static final int DATABASE_VERSION = 6;
     private Context context;
 
     public AppDatabaseHelper(Context context) {
@@ -53,6 +53,28 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
             db.execSQL(addTableStatement);
             String setDefault = "UPDATE " + AppDatabaseContract.DriverListTable.TABLE_NAME +
                     " SET " + AppDatabaseContract.DriverListTable.COLUMN_CONTACT_INFO + " =-1 ";
+            db.execSQL(setDefault);
+        }
+
+        if (oldVersion <= 5 && newVersion >= 6) {
+            String addTableStatement = "ALTER TABLE " + AppDatabaseContract.EventListTable.TABLE_NAME +
+                    " ADD " + AppDatabaseContract.EventListTable.COLUMN_FOOD + " " + AppDatabaseContract.VTYPE_INT;
+            db.execSQL(addTableStatement);
+            addTableStatement = "ALTER TABLE " + AppDatabaseContract.EventListTable.TABLE_NAME +
+                    " ADD " + AppDatabaseContract.EventListTable.COLUMN_HOUSE + " " + AppDatabaseContract.VTYPE_INT;
+            db.execSQL(addTableStatement);
+            addTableStatement = "ALTER TABLE " + AppDatabaseContract.EventListTable.TABLE_NAME +
+                    " ADD " + AppDatabaseContract.EventListTable.COLUMN_STAFF + " " + AppDatabaseContract.VTYPE_INT;
+            db.execSQL(addTableStatement);
+
+            String setDefault = "UPDATE " + AppDatabaseContract.EventListTable.TABLE_NAME +
+                    " SET " + AppDatabaseContract.EventListTable.COLUMN_FOOD + " =-1 ";
+            db.execSQL(setDefault);
+            setDefault = "UPDATE " + AppDatabaseContract.EventListTable.TABLE_NAME +
+                    " SET " + AppDatabaseContract.EventListTable.COLUMN_HOUSE + " =-1 ";
+            db.execSQL(setDefault);
+            setDefault = "UPDATE " + AppDatabaseContract.EventListTable.TABLE_NAME +
+                    " SET " + AppDatabaseContract.EventListTable.COLUMN_STAFF + " =-1 ";
             db.execSQL(setDefault);
         }
     }

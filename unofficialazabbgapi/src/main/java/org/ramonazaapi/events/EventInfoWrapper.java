@@ -15,6 +15,9 @@ public class EventInfoWrapper implements InfoWrapper {
     private String mapsLocation;
     private String bring;
     private String date;
+    private String food;
+    private String house;
+    private String staff;
     private int Id;
 
     public String getName() {
@@ -65,6 +68,18 @@ public class EventInfoWrapper implements InfoWrapper {
         this.bring = bring;
     }
 
+    public String getFood() { return food; }
+
+    public void setFood(String food) { this.food = food; }
+
+    public String getHouse() { return house; }
+
+    public void setHouse(String house) { this.house = house; }
+
+    public String getStaff() { return staff; }
+
+    public void setStaff(String staff) { this.staff = staff; }
+
     public String getDate() {
         return date;
     }
@@ -98,6 +113,7 @@ public class EventInfoWrapper implements InfoWrapper {
                         && getPlanner().equals(((EventInfoWrapper) obj).getPlanner())
                         && getMeet().equals(((EventInfoWrapper) obj).getMeet())
                         && getMapsLocation().equals(((EventInfoWrapper) obj).getMapsLocation())
+                        && getHouse().equals(((EventInfoWrapper) obj).getHouse())
                 );
     }
 }

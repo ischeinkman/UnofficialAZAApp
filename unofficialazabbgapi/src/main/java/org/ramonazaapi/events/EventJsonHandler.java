@@ -20,6 +20,9 @@ public class EventJsonHandler extends InfoWrapperJsonHandler<EventInfoWrapper> {
         attrs.put("location", toGetAttributes.getMeet());
         attrs.put("mapslocation", toGetAttributes.getMapsLocation());
         attrs.put("bring", toGetAttributes.getBring());
+        attrs.put("food", toGetAttributes.getFood());
+        attrs.put("house", toGetAttributes.getHouse());
+        attrs.put("staff", toGetAttributes.getStaff());
         return attrs;
     }
 
@@ -34,6 +37,9 @@ public class EventJsonHandler extends InfoWrapperJsonHandler<EventInfoWrapper> {
         fromAttrs.setMeet(attributes.get("location"));
         fromAttrs.setMapsLocation(attributes.get("mapslocation"));
         fromAttrs.setBring(attributes.get("bring"));
+        fromAttrs.setFood(attributes.get("food"));
+        fromAttrs.setHouse(attributes.get("house"));
+        fromAttrs.setStaff(attributes.get("staff"));
         return fromAttrs;
     }
 }
