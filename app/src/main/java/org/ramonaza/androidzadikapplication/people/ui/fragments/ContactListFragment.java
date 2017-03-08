@@ -9,7 +9,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import org.ramonaza.androidzadikapplication.R;
-import org.ramonaza.androidzadikapplication.database.AppDatabaseContract;
 import org.ramonaza.androidzadikapplication.database.AppDatabaseHelper;
 import org.ramonaza.androidzadikapplication.frontpage.ui.activities.FrontalActivity;
 import org.ramonaza.androidzadikapplication.helpers.backend.ChapterPackHandlerSupport;
