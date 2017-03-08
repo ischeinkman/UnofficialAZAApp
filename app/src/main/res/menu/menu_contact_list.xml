@@ -4,5 +4,9 @@
         android:orderInCategory="1"
         android:showAsAction="always"
         android:title="@string/AddCustomContactMenuButton" />
-
+    <item
+        android:id="@+id/action_display_display_mode"
+        android:orderInCategory="500"
+        android:showAsAction="never"
+        android:title="@string/DisplayModeMenuButton" />
 </menu>
