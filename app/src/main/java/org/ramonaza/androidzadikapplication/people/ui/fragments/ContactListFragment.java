@@ -9,25 +9,31 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import org.ramonaza.androidzadikapplication.R;
-import org.ramonaza.androidzadikapplication.database.AppDatabaseContract;
 import org.ramonaza.androidzadikapplication.database.AppDatabaseHelper;
 import org.ramonaza.androidzadikapplication.frontpage.ui.activities.FrontalActivity;
 import org.ramonaza.androidzadikapplication.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.androidzadikapplication.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextListFragment;
 import org.ramonaza.androidzadikapplication.people.backend.ContactDatabaseHandler;
+import org.ramonaza.androidzadikapplication.people.backend.ContactListConstants;
 import org.ramonaza.androidzadikapplication.people.ui.activities.AddCustomContactActivity;
 import org.ramonaza.androidzadikapplication.people.ui.activities.ContactDataActivity;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
 import org.ramonazaapi.interfaces.InfoWrapper;
+import android.app.DialogFragment;
 
 /**
  * Created by Ilan Scheinkman on 1/12/15.
  */
-public class ContactListFragment extends InfoWrapperTextListFragment {
+public class ContactListFragment extends InfoWrapperTextListFragment implements ContactListDisplayModeDialog.ContactListCallbacks {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String PAGE_NAME = "Contact List";
+
+    private String[] contactListQuery = ContactListConstants.ALEPHS_QUERY;
+    private String contactListSortBy = ContactListConstants.NAME_SORT;
     public int fraglayer;
+
+    private MenuItem displayModeItem;
 
     public ContactListFragment() {
     }
@@ -50,6 +56,7 @@ public class ContactListFragment extends InfoWrapperTextListFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_contact_list, menu);
+        displayModeItem = menu.findItem(R.id.action_display_display_mode);
     }
 
     @Override
@@ -59,8 +66,20 @@ public class ContactListFragment extends InfoWrapperTextListFragment {
                 Intent intent = new Intent(getActivity(), AddCustomContactActivity.class);
                 intent.putExtra(AddCustomContactActivity.EXTRA_PARENT_ACTIVITY, getActivity().getClass());
                 startActivity(intent);
+            case R.id.action_display_display_mode:
+                DialogFragment contentsTable = new ContactListDisplayModeDialog();
+                contentsTable.setTargetFragment(this, 0);
+                contentsTable.show(getFragmentManager(), "Title");
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void setSortingQuery(String[] query, String sortyBy, String name) {
+        contactListQuery = query;
+        contactListSortBy = sortyBy;
+        displayModeItem.setTitle(name);
+        refreshData();
     }
 
     @Override
@@ -85,17 +104,13 @@ public class ContactListFragment extends InfoWrapperTextListFragment {
         }
         ContactDatabaseHandler handler = ChapterPackHandlerSupport.getContactHandler(getActivity());
 
-        // Filters out Alephs who had already graduated
-        String[] escapeAlumni = new String[] {
-                AppDatabaseContract.ContactListTable.COLUMN_GRADYEAR + " > " + ContactInfoWrapper.getAlumnusGradYear()
-        };
-        ContactInfoWrapper[] currentContacts = handler.getContacts(escapeAlumni, AppDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
+        ContactInfoWrapper[] currentContacts = handler.getContacts(contactListQuery, contactListSortBy);
         if (currentContacts.length <= 1) {
             AppDatabaseHelper dbh = new AppDatabaseHelper(getActivity());
             SQLiteDatabase db = dbh.getWritableDatabase();
             dbh.onDelete(db);
             dbh.onCreate(db);
-            currentContacts = handler.getContacts(escapeAlumni, AppDatabaseContract.ContactListTable.COLUMN_NAME + " ASC");
+            currentContacts = handler.getContacts(contactListQuery, contactListSortBy);
         }
         return currentContacts;
     }

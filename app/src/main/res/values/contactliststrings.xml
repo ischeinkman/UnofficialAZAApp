@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_section_contact_list">Contact List</string>
+    <string name="DisplayModeMenuButton">Alephs</string>
+    <string-array name="DisplayMode">
+        <item>Alephs</item>
+        <item>Advisors</item>
+        <item>Alumni</item>
+    </string-array>
+</resources>

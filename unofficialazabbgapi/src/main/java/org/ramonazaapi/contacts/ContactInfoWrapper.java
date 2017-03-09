@@ -191,6 +191,8 @@ public class ContactInfoWrapper implements PersonInfoWrapper {
             } catch (NumberFormatException e) {
                 if (gradYear.equals("Advisor")) {
                     grade = -1;
+                } else if (gradYear.equals("Parent")) {
+                    grade = -2;
                 }
             }
             this.year = yearStringFromGrade(grade);
