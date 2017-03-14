@@ -8,8 +8,8 @@ android {
         applicationId "org.ramonaza.androidzadikapplication"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 23
-        versionName "1.8"
+        versionCode 24
+        versionName "1.8.0.1"
     }
     buildTypes {
         release {
