@@ -3,13 +3,13 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 25
     // Watch out updating buildToolsVersion (color book pdf)
-    buildToolsVersion "20.0.0"
+    buildToolsVersion '21.1.2'
     defaultConfig {
         applicationId "org.ramonaza.androidzadikapplication"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 20
-        versionName "1.7.3"
+        versionCode 23
+        versionName "1.8"
     }
     buildTypes {
         release {
