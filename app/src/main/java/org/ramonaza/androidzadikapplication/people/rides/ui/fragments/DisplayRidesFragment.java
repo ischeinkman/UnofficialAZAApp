@@ -1,10 +1,14 @@
 package org.ramonaza.androidzadikapplication.people.rides.ui.fragments;
 
+import android.Manifest;
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.telephony.SmsManager;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -19,6 +23,7 @@ import org.ramonaza.androidzadikapplication.R;
 import org.ramonaza.androidzadikapplication.database.AppDatabaseContract;
 import org.ramonaza.androidzadikapplication.database.AppDatabaseHelper;
 import org.ramonaza.androidzadikapplication.people.rides.backend.RidesDatabaseHandler;
+import org.ramonaza.androidzadikapplication.settings.ui.activities.SettingsActivity;
 import org.ramonazaapi.contacts.ContactInfoWrapper;
 import org.ramonazaapi.rides.DriverInfoWrapper;
 import org.ramonazaapi.rides.RidesOptimizer;
@@ -165,8 +170,9 @@ public class DisplayRidesFragment extends Fragment {
         textButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if (ridesLoaded) {
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED)
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.SEND_SMS}, 0);
+                else if (ridesLoaded) {
                     String driverMsg = getString(R.string.rides_driver_text_send_format);
                     String passengerMsg = getString(R.string.rides_passenger_text_send_format);
                     String driverlessMsg = getString(R.string.rides_driverless_text_send_format);
