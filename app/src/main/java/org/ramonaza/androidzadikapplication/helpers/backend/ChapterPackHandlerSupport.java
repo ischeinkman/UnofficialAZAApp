@@ -52,7 +52,7 @@ public class ChapterPackHandlerSupport {
 
             }
         });
-        return ddFiles;
+        return ddFiles == null ?  new File[0]:ddFiles;
     }
 
     /**

@@ -35,8 +35,7 @@ public class ChapterPackSelectorFragment extends DialogFragment {
         }
         fileOptions = ChapterPackHandlerSupport.getOptions();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        if (fileOptions == null) {
-
+        if (fileOptions.length == 0) {
             builder.setTitle(R.string.chapter_pack_not_found_title);
         } else {
             CharSequence[] titles = new CharSequence[fileOptions.length];
