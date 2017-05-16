@@ -30,7 +30,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 /*
@@ -44,6 +43,7 @@ public class EventListFragment extends InfoWrapperTextListFragment {
     private EventUpdateService updateService;
     private boolean serviceBound;
     private boolean readAccessRequested = false;
+    private ArrayList<EventInfoWrapper> futureEvents;
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -121,41 +121,42 @@ public class EventListFragment extends InfoWrapperTextListFragment {
             noFeed.setId(-1);
             return new EventInfoWrapper[]{noFeed};
         }
-        final long TIMEOUT = 10 * 1000;
-        long beginTime = System.currentTimeMillis();
-        while (System.currentTimeMillis() - beginTime < TIMEOUT) {
-            if (serviceBound) {
-                updateService.updateEventsSync();
-                break;
+        if (futureEvents == null) {
+            futureEvents = new ArrayList<EventInfoWrapper>();
+            final long TIMEOUT = 10 * 1000;
+            long beginTime = System.currentTimeMillis();
+            while (System.currentTimeMillis() - beginTime < TIMEOUT) {
+                if (serviceBound) {
+                    updateService.updateEventsSync();
+                    break;
+                }
             }
+            if (!serviceBound) {
+                Toast.makeText(getActivity(), "Could not connect to server in time.", Toast.LENGTH_SHORT);
+                Log.d("EventListFrag", "Service not bound in time");
+            }
+            handler = new EventDatabaseHandler(getActivity());
         }
-        if (!serviceBound) {
-            Toast.makeText(getActivity(), "Could not connect to server in time.", Toast.LENGTH_SHORT);
-            Log.d("EventListFrag", "Service not bound in time");
-        }
-        handler = new EventDatabaseHandler(getActivity());
         //TODO: Store event dates as MYSQL Date objects to allow for WHERE clause filtering
         EventInfoWrapper[] allEvents = handler.getEvents(null, null);
         DateFormat df = new SimpleDateFormat("EEEE, MMMM dd yyyy");
         Date yesterday = new Date(System.currentTimeMillis() - 1000L * 60L * 60L * 24L);
-        ArrayList futureEvents = new ArrayList();
-        for (EventInfoWrapper wrapper : allEvents) {
-            try {
-                Date eventDate = df.parse(wrapper.getDate());
-                if (eventDate.after(yesterday)) futureEvents.add(wrapper);
-            } catch (ParseException e) {
-                e.printStackTrace();
-                futureEvents.add(wrapper); //Just in case someone's date format is off
+        if (futureEvents.isEmpty())
+            for (EventInfoWrapper wrapper : allEvents) {
+                try {
+                    Date eventDate = df.parse(wrapper.getDate());
+                    if (eventDate.after(yesterday)) futureEvents.add(wrapper);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    futureEvents.add(wrapper); //Just in case someone's date format is off
+                }
             }
-        }
         if (futureEvents.isEmpty()) {
             EventInfoWrapper noEvent = new EventInfoWrapper();
             noEvent.setName("No events found.");
             noEvent.setId(-1);
             return new EventInfoWrapper[]{noEvent};
         }
-        return (EventInfoWrapper[]) futureEvents.toArray(new EventInfoWrapper[futureEvents.size()]);
+        return futureEvents.toArray(new EventInfoWrapper[futureEvents.size()]);
     }
-
-
 }
