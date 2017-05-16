@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -14,11 +15,14 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.Manifest;
 
 import org.ramonaza.androidzadikapplication.R;
 import org.ramonaza.androidzadikapplication.events.backend.services.EventNotificationService;
@@ -40,7 +44,10 @@ import java.util.List;
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends PreferenceActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
+
+    public static final int FILE_READ = 17;
+
     /**
      * Determines whether to always show the simplified settings UI, where
      * settings are presented in a single list. When false, settings are shown
@@ -259,6 +266,19 @@ public class SettingsActivity extends PreferenceActivity {
                 });
             }
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == FILE_READ)
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                DialogFragment newFragment = new ChapterPackSelectorFragment();
+                newFragment.show(ft, "dialog");
+            }
+
+
     }
 
     private class PackCreator extends AsyncTask<Void, Void, Boolean> {

@@ -26,9 +26,9 @@ public class FrontalActivity extends BaseActivity
     public static final String EXTRA_OPENEDPAGE = "org.ramonaza.androidzadikapplication.OPENED_PAGE";
     public static final int EVENTS_PAGE_INDEX = 0;
     public static final int SONGS_PAGE_INDEX = 1;
-    public static final int BLUEBOOK_PAGE_INDEX = 2;
-    public static final int CONTACTS_PAGE_INDEX = 3;
-    public static final int RIDES_LINK_INDEX = 4;
+    public static final int BLUEBOOK_PAGE_INDEX = -1; // TODO: Make relevant
+    public static final int CONTACTS_PAGE_INDEX = 2;
+    public static final int RIDES_LINK_INDEX = 3;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.

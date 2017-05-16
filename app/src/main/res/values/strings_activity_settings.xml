@@ -17,6 +17,7 @@
     <string name="pref_title_create_pack_button">Create Chapter Pack</string>
 
     <string name="chapter_pack_dialog_title">Select Pack To Load</string>
+    <string name="chapter_pack_not_found_title">Cannot Find Any Packs</string>
     <string name="chapter_pack_dialog_ok">OK</string>
     <string name="chapter_pack_dialog_cancel">CANCEL</string>
 

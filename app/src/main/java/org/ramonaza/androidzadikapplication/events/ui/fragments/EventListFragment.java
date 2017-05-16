@@ -1,11 +1,15 @@
 package org.ramonaza.androidzadikapplication.events.ui.fragments;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +18,11 @@ import android.widget.Toast;
 
 import org.ramonaza.androidzadikapplication.events.backend.services.EventUpdateService;
 import org.ramonaza.androidzadikapplication.events.ui.activities.EventPageActivity;
+import org.ramonaza.androidzadikapplication.helpers.backend.ChapterPackHandlerSupport;
 import org.ramonaza.androidzadikapplication.helpers.backend.PreferenceHelper;
 import org.ramonaza.androidzadikapplication.helpers.ui.fragments.InfoWrapperListFragStyles.InfoWrapperTextListFragment;
 import org.ramonaza.androidzadikapplication.people.backend.EventDatabaseHandler;
+import org.ramonaza.androidzadikapplication.settings.ui.activities.SettingsActivity;
 import org.ramonazaapi.events.EventInfoWrapper;
 import org.ramonazaapi.interfaces.InfoWrapper;
 
@@ -37,6 +43,8 @@ public class EventListFragment extends InfoWrapperTextListFragment {
     private EventDatabaseHandler handler;
     private EventUpdateService updateService;
     private boolean serviceBound;
+    private boolean readAccessRequested = false;
+
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -82,7 +90,11 @@ public class EventListFragment extends InfoWrapperTextListFragment {
 
     @Override
     public void onButtonClick(InfoWrapper mWrapper) {
-        if (mWrapper.getId() < 0) return;
+        if (mWrapper.getId() < 0) {
+            if (readAccessRequested)
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, SettingsActivity.FILE_READ);
+            return;
+        }
         Intent intent = new Intent(getActivity(), EventPageActivity.class);
         intent.putExtra(EventPageActivity.EVENT_DATA, mWrapper.getId());
         startActivity(intent);
@@ -90,10 +102,22 @@ public class EventListFragment extends InfoWrapperTextListFragment {
 
     @Override
     public InfoWrapper[] generateInfo() {
+        // Automatically searches for a chapter pack if there are none already loaded.
+        if (!ChapterPackHandlerSupport.chapterPackIsLoaded() && ChapterPackHandlerSupport.getOptions().length > 0)
+            ChapterPackHandlerSupport.getChapterPackHandler(getActivity(), ChapterPackHandlerSupport.getOptions()[0]);
+
         String eventFeed = PreferenceHelper.getPreferences(getActivity()).getEventFeed();
         if (eventFeed == null || eventFeed.length() == 0) {
             EventInfoWrapper noFeed = new EventInfoWrapper();
-            noFeed.setName("Please download a Chapter Pack to access this feature.");
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                if (!readAccessRequested) {
+                    readAccessRequested = true;
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, SettingsActivity.FILE_READ);
+                }
+                noFeed.setName("Please allow file read access to load your Chapter Pack.");
+            } else {
+                noFeed.setName("Please download a Chapter Pack to access this feature.");
+            }
             noFeed.setId(-1);
             return new EventInfoWrapper[]{noFeed};
         }

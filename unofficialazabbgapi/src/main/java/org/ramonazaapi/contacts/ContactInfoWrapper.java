@@ -161,8 +161,8 @@ public class ContactInfoWrapper implements PersonInfoWrapper {
 
     public boolean phoneNumberIsValid() {
         return phoneNumber != null && //has a phone number
-                (phoneNumber.length() == 7 || phoneNumber.length() == 9 || phoneNumber.length() == 10) && //valid length
-                phoneNumber.matches("\\d");
+                (phoneNumber.length() == 7 || phoneNumber.length() == 9 || phoneNumber.length() == 10 || phoneNumber.length() == 11) && //valid length
+                phoneNumber.matches("\\d+");
     }
 
     public String getAddress() {
