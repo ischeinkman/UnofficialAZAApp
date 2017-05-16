@@ -137,12 +137,12 @@ public class EventListFragment extends InfoWrapperTextListFragment {
         //TODO: Store event dates as MYSQL Date objects to allow for WHERE clause filtering
         EventInfoWrapper[] allEvents = handler.getEvents(null, null);
         DateFormat df = new SimpleDateFormat("EEEE, MMMM dd yyyy");
-        Date current = Calendar.getInstance().getTime();
+        Date yesterday = new Date(System.currentTimeMillis() - 1000L * 60L * 60L * 24L);
         ArrayList futureEvents = new ArrayList();
         for (EventInfoWrapper wrapper : allEvents) {
             try {
                 Date eventDate = df.parse(wrapper.getDate());
-                if (eventDate.after(current)) futureEvents.add(wrapper);
+                if (eventDate.after(yesterday)) futureEvents.add(wrapper);
             } catch (ParseException e) {
                 e.printStackTrace();
                 futureEvents.add(wrapper); //Just in case someone's date format is off
